@@ -58,8 +58,8 @@ The AnkiNick-Mon add-on consists of two main components:
 
 **License**
 
-  This project is licensed under the MIT License. See the LICENSE file for details.
+  This project is licensed under the MIT License and is based on the AnkiMon-Project. See the LICENSE file for details.
 
 **Contact**
 
-  For questions, suggestions, or collaboration, please contact AnkiNick.
+  For questions, suggestions, or collaboration, please contact AnkiNick or AnkiMon.
