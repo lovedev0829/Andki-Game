@@ -58,7 +58,10 @@ The AnkiNick-Mon add-on consists of two main components:
 
 **License**
 
-  This project is licensed under the MIT License and is based on the AnkiMon-Project. See the LICENSE file for details.
+  This project is licensed under the MIT License. See the LICENSE file for details. 
+  This project was conceptualized and initiated by AnkiNick (=AnkiMon). 
+  The original code was developed by Times0 (https://github.com/Times0/) under contract based on Discord communication and payment through PayPal. 
+  Subsequent adaptations and further developments were carried out by Namelless (https://github.com/namelless) under contract based on Fiverr.
 
 **Contact**
 
