@@ -2,7 +2,7 @@ MIT License
 
 Copyright (c) 2024 AnkiNick, AnkiMon
 
-This project was conceptualized and initiated by AnkiNick. The original implementation of the code was developed by Times0 (https://github.com/Times0/) under contract based on via Discord communication and payment through PayPal. Subsequent adaptations and further developments were carried out by Namelless (https://github.com/namelless).
+This project was conceptualized and initiated by AnkiNick (=AnkiMon). The original implementation of the code was developed by Times0 (https://github.com/Times0/) under contract based on Discord communication and payment through PayPal. Subsequent adaptations and further developments were carried out by Namelless (https://github.com/namelless) under contract based on Fiverr.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
