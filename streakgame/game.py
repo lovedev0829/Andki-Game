@@ -129,6 +129,7 @@ class Game:
         self.load_anki_data()
 
         # Music
+        pygame.mixer.init()
         pygame.mixer.music.load(os.path.join(cwd, "assets", "music", "music.mp3"))
         pygame.mixer.music.play(-1)
         self.slider_music.current_value = 100
@@ -244,7 +245,6 @@ class Game:
         self.win.fill(Color("black"))
         self.ptmx.draw(win)
         self.draw_ui(win)
-        pygame.display.flip()
 
     def draw_ui(self, win):
         W = win.get_width()
@@ -488,3 +488,47 @@ class Pytmx:
         self.map_layer.draw(win, win.get_rect())
         self.objects_under_npc.draw(win)
         self.objects.draw(win)
+
+
+
+class GameNoWindow(Game):
+    def __init__(self, win):
+        super().__init__(win)
+    def run(self):
+        clock = pygame.time.Clock()
+        while self.running:
+            dt = clock.tick(FPS) / 1000
+            self.time_since_last_late_update += dt
+            # print(f"\rFPS: {clock.get_fps()}", end="")
+            self.events()
+            self.update(dt)
+            if self.time_since_last_late_update >= 1000 / LATE_UPDATE_FPS:
+                self.time_since_last_late_update = 0
+                self.late_update()
+            self.draw(self.win)
+            yield self.win
+    def events(self):
+        try:
+            events = pygame.event.get()
+        except Exception:
+            events = []
+
+            
+            
+        # If no game window is open, we handle basic game events
+        if not self.ui_manager.active_element:
+            self.ptmx.handle_events(events)
+            for e in self.ui_elements:
+                for event in events:
+                    e.handle_event(event)
+
+        for gw in self.special_ui:
+            if gw.isVisible():
+                gw.handle_events(events)
+
+        # important events
+        for event in events:
+            self.ui_manager.handle_event(event)
+            if event.type == pygame.QUIT:
+                self.running = False
+                self.dump_save()

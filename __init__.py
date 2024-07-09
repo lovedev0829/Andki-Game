@@ -2,12 +2,14 @@ import datetime
 import json
 import os.path
 import sys
+sys.path.append(os.path.dirname(__file__))
 import threading
 import aqt.utils
+from PyQt5 import QtCore, QtGui, QtWidgets
 import pygame
 from aqt import gui_hooks, mw
-
-sys.path.append(os.path.dirname(__file__))
+from aqt.qt import * 
+from PyQt5.QtOpenGL import QGLWidget
 import streakgame.main
 from rpg.main import mainloop
 
@@ -82,8 +84,12 @@ def start_game():
 def start_rpg():
     mainloop()
 
+class GLWidget(QGLWidget):  # Change to QGLWidget for broader compatibility
+    def __init__(self, parent=None):
+        super(GLWidget, self).__init__(parent)    
 def on_profile_open():
-    aqt.utils.showInfo("Welcome back !")
+
+
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
@@ -94,8 +100,7 @@ def on_profile_open():
         start_game()
     except pygame.error as e:
         print(e)
-
-
+        
 
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
