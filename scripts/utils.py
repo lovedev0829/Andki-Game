@@ -17,6 +17,13 @@ def process_file(a, b, c):
 
     json.dump(anki_data, open(anki_data_path, "w"))
 
+def center_widget(widget):
+    window_size = widget.geometry().size()
+    window_size = [window_size.width(), window_size.height()]    
+    screen_size = mw.app.primaryScreen().size()
+    screen_size = [screen_size.width(), screen_size.height()]
+    widget.setGeometry(screen_size[0]//2-window_size[0]//2, screen_size[1]//2-window_size[1]//2, *window_size)
+
 def add_msg_to_db(msg):
     if not os.path.exists(anki_data_path):
         with open(anki_data_path, "w") as f:
