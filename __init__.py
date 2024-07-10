@@ -8,13 +8,11 @@ import aqt.utils
 import pygame
 from aqt import gui_hooks, mw
 from aqt.qt import * 
-from PyQt5 import QtWidgets
-from PyQt5.QtOpenGL import QGLWidget
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import process_file, add_msg_to_db, add_btn
+from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget
 import asyncio, time
-from scripts.popups import rpg_popup
+from scripts.popups import rpg_popup, trainer_challenge, trainer_popup
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
@@ -45,29 +43,20 @@ def start_game():
 
 def start_rpg():
     global pygame_instace
-    choose_option = QMainWindow()
+    mw.win = win = QMainWindow()
+    ui = trainer_popup(win)
     
-    ui = rpg_popup()
-    print(1)
-    ui.setupUi(choose_option)
-    print(2)
-    choose_option.showNormal()
-    print(3)
-    mw.win = choose_option
-    print(4)
+    
 
     pygame_instace = mainloop()
-
 def on_profile_open():
-
+    center_widget(mw.menuWidget())
     
-    # gl = QGLWidget()
-    # gl.show()
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
         aqt.utils.showInfo(f"You have {to_review} cards to learn today. Good luck !")
-
+    
     json.dump({"nb_cards_to_review_today": to_review}, open(anki_data_path, "w"))
     try:
         start_game()
