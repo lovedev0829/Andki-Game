@@ -276,7 +276,7 @@ class Pytmx:
             for j, i, gid in layer:
                 if gid == 2:
                     self.free_places.append((j + 1, i))  # Fix to make it look better
-        print(self.free_places)
+        
 
     def ortho_to_iso(self, j: int, i: int) -> tuple[float, float]:
         return ((j - i) * self.zoomed_tile_width / 2 + self.x_start,

@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import aqt
+from aqt import mw
 from scripts.constants import anki_data_path
 # requires arguments a, b, c because of how Anki calls the hook
 def process_file(a, b, c):
