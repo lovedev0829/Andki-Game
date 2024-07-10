@@ -202,6 +202,7 @@ class Game:
     def update(self, dt):
         self.ptmx.update(dt)
         self.ui_manager.update(dt)
+        pygame.display.update()
 
     def late_update(self):
         """Ran every seconds"""
