@@ -106,16 +106,25 @@ AnkiMon trainer here, not you!""", win)
 		self.text_label.adjustSize()
 		self.text_label.move(10,15)
 		# loading image
-		self.pixmap = QPixmap(random.choice(TRAINERS))
-
+		scaler = 2
+		
+		image_name = random.choice(TRAINERS)
+		self.pixmap = QPixmap(image_name)
+		# self.pixmap.	
 		# adding image to label
 		self.label.setPixmap(self.pixmap)
 
 		# Optional, resize label to image size
-		self.label.resize(self.pixmap.width(),
-						self.pixmap.height())
-		self.label.move(380,-30)
-
+		self.label.resize(self.pixmap.width()*scaler,
+						self.pixmap.height()*scaler)
+		self.label.setScaledContents(True)
+		self.label.move(380,20)
+		if image_name.startswith('Scientist'):		
+			# Flip the QPixmap horizontally if the name of trainer starts with scientist
+			transform = QTransform().scale(-1, 1)
+			flipped_pixmap = self.pixmap.transformed(transform)
+			# Set the flipped QPixmap to the QLabel
+			self.label.setPixmap(flipped_pixmap)               
 		self.okbutton = QPushButton(win)
 		self.okbutton.setGeometry(QRect(180, 140, 91, 51))
 		self.okbutton.setObjectName("okbutton")
