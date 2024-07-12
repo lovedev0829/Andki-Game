@@ -129,6 +129,7 @@ class Game:
         self.load_anki_data()
 
         # Music
+    def play_audio(self):
         pygame.mixer.init()
         pygame.mixer.music.load(os.path.join(cwd, "assets", "music", "music.mp3"))
         pygame.mixer.music.play(-1)
@@ -165,6 +166,7 @@ class Game:
 
     def run(self):
         clock = pygame.time.Clock()
+        self.play_audio()
         while self.running:
             dt = clock.tick(FPS) / 1000
             self.time_since_last_late_update += dt
@@ -495,9 +497,12 @@ class Pytmx:
 class GameNoWindow(Game):
     def __init__(self, win):
         super().__init__(win)
+        self.frame = 1
+
     def run(self):
         clock = pygame.time.Clock()
         while self.running:
+            self.frame += 1
             dt = clock.tick(FPS) / 1000
             self.time_since_last_late_update += dt
             # print(f"\rFPS: {clock.get_fps()}", end="")
@@ -507,7 +512,9 @@ class GameNoWindow(Game):
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
-            yield self.win
+            if not self.frame % 30:
+                pygame.image.save(self.win,'image.png')
+            
     def events(self):
         try:
             events = pygame.event.get()

@@ -4,6 +4,7 @@ import os
 import aqt
 from aqt import mw
 from scripts.constants import anki_data_path
+
 # requires arguments a, b, c because of how Anki calls the hook
 def process_file(a, b, c):
     # get today's ordinal date
@@ -15,8 +16,18 @@ def process_file(a, b, c):
         anki_data["nb_cards_learned_today"] = 1
     else:
         anki_data["nb_cards_learned_today"] += 1
-
+    
     json.dump(anki_data, open(anki_data_path, "w"))
+
+def change_data(data, value):
+    anki_data = json.load(open(anki_data_path))
+    if data in anki_data:
+        anki_data[data] = value
+    json.dump(data, open(anki_data_path,'w'))
+def get_data() -> dict:
+    print(os.getcwd())
+    print(anki_data_path)
+    return json.load(open(os.path.join(os.getcwd(),anki_data_path), 'r'))
 
 def center_widget(widget):
     window_size = widget.geometry().size()
@@ -44,6 +55,8 @@ def add_btn(
     soup = bs4.BeautifulSoup(content.table, "html.parser")
     # add a button called "Start learning with AnkiRPG"
     btn = soup.new_tag("button")
+    image = soup.new_tag('img', src='image.png')
+    soup.append(image)
     btn["class"] = "btn"
     btn.string = "Start learning with AnkiNick-Mon."
     # hook
