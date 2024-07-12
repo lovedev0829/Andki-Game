@@ -583,8 +583,10 @@
             }
         ]
     },
-    "inventory": {},
+    "inventory": {
+        "fire seeds": 18
+    },
     "cards_learned_today": 0,
-    "time": 739076,
-    "wallet": 3500
+    "time": 739079,
+    "wallet": 3520
 }

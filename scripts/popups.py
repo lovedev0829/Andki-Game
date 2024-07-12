@@ -1,9 +1,8 @@
-from scripts.utils import center_widget
+from scripts.utils import center_widget, get_data
 from aqt.qt import *
 from aqt import mw
 import random
 from scripts.constants import *
-
 class rpg_popup():
     def setupUi(self, choose_option):
         choose_option.setObjectName("choose_option")
@@ -95,8 +94,7 @@ class trainer_popup():
 		# setting the geometry of window
 		win.setFixedSize(500,200)
 		center_widget(win)
-		
-        
+
 		# creating label
 		self.label = QLabel(win)
 		self.text_label = QLabel("""So you want to take on the next challenge?
@@ -133,6 +131,33 @@ AnkiMon trainer here, not you!""", win)
         
 		# show all the widgets
 		win.show()
+
+class attribute_popup():
+	def __init__(self, win):
+		# set the title
+		win.setWindowTitle("Anki Habitica")        
+		# setting the geometry of window
+		win.setFixedSize(700,400)
+		center_widget(win)
+		data = get_data()
+        
+		buttons : list[QPushButton] = []
+		if not data['default_ankimon']:
+			for i in range(3):
+				buttons.append(QPushButton(win))
+				
+				buttons[i].animateClick()
+				buttons[i].setGeometry(40+i*220,70,180,200)
+				
+				buttons[i].setStyleSheet(f'''background-image : url(assets/ui/empty.PNG);
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-repeat: no-repeat;                           ''')
+		# show all the widgets
+		win.show()
+	
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ import streakgame.main
 from rpg.main import mainloop
 from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget
 import asyncio, time
-from scripts.popups import rpg_popup, trainer_challenge, trainer_popup
+from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
@@ -37,9 +37,11 @@ aqt.gui_hooks.overview_will_render_content.append(add_btn)
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
 
 # Add a button to the main screen with title "start game" and that starts the game when clicked
+pygame_surf = None
 def start_game():
     global pygame_instace
-    pygame_instace = streakgame.main.main(showwin=False)
+    pygame_instace = streakgame.main.mainnowin()
+    
 
 def start_rpg():
     global pygame_instace
@@ -50,14 +52,18 @@ def start_rpg():
 
     pygame_instace = mainloop()
 def on_profile_open():
-    center_widget(mw.menuWidget())
     
+    mw.win = win = QMainWindow()
+    attribute_popup(win)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
         aqt.utils.showInfo(f"You have {to_review} cards to learn today. Good luck !")
     
-    json.dump({"nb_cards_to_review_today": to_review}, open(anki_data_path, "w"))
+    data = json.load(open(anki_data_path, 'r'))
+    data['nb_cards_to_review_today'] = to_review
+    json.dump(data, open(anki_data_path, "w"))
+    center_widget(mw.menuWidget())
     try:
         start_game()
     except pygame.error as e:

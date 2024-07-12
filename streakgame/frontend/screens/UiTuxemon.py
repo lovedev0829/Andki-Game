@@ -21,6 +21,7 @@ class TuxemonCard(Hoverable):
         self.offset = offset
         self.tuxemon = tux
         self.imgs = [tux.imgs["menu01"], tux.imgs["menu02"]]
+        
         # Make the animation start at a random frame to make the cards look more alive
         self.time_since_last_img = random.random() * (1 / self.ANIMATION_FPS)
         self.frame_index = 0

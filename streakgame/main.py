@@ -12,23 +12,34 @@ logging.basicConfig(level=logging.INFO, filename="game.log", filemode="w",
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-def main(showwin=True):
+def main():
     pygame.init()
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
+    pygame.display.set_caption("AnkiStreak")
+    from streakgame.game import Game
+    game = Game(win)
+    from streakgame.game import PlantSpot
+    from streakgame.backend.tuxemons import Tuxemon
+    PlantSpot.counter = 0  # reset class counter (used as id) there is probably a better way to do this
+    Tuxemon.counter = 0
     
-    if showwin:
-        win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
-        pygame.display.set_caption("AnkiStreak")
-        from streakgame.game import Game
-        game = Game(win)
-        from streakgame.game import PlantSpot
-        from streakgame.backend.tuxemons import Tuxemon
-        PlantSpot.counter = 0  # reset class counter (used as id) there is probably a better way to do this
-        Tuxemon.counter = 0
+    game.run()
+    pygame.quit()
+
+def mainnowin():
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-2000,-2000)
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
+    from streakgame.game import GameNoWindow
+    game = GameNoWindow(win)
+    
+
+    from streakgame.game import PlantSpot
+    from streakgame.backend.tuxemons import Tuxemon
+    PlantSpot.counter = 0  # reset class counter (used as id) there is probably a better way to do this
+    Tuxemon.counter = 0
+    
+    game.run()
         
-        game.run()
-        pygame.quit()
-    else:
-        pass
 
 if __name__ == "__main__":
     main()
