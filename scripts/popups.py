@@ -1,6 +1,7 @@
 from scripts.utils import center_widget, get_data
 from aqt.qt import *
 from aqt import mw
+from functools import partial
 import random
 from scripts.constants import *
 class rpg_popup():
@@ -155,10 +156,13 @@ class attribute_popup():
 				width: 100%;                             
 				background-position: center;
 				background-repeat: no-repeat;                           ''')
+				buttons[i].clicked.connect(partial(self.clicked,i))
 		# show all the widgets
 		win.show()
 	
 
+	def clicked(self, index):
+            print(index)
 
 if __name__ == "__main__":
     import sys
