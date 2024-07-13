@@ -24,13 +24,13 @@ def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
     if data in anki_data:
         anki_data[data] = value
-    json.dump(data, open(anki_data_path,'w'))
+    json.dump(anki_data, open(anki_data_path,'w'))
 
-def change_data(data, value):
+def add_data(data, value):
     anki_data = json.load(open(anki_data_path))
     if data not in anki_data:
         anki_data[data] = value
-    json.dump(data, open(anki_data_path,'w'))
+    json.dump(anki_data, open(anki_data_path,'w'))
 def get_data() -> dict:
     print(os.getcwd())
     print(anki_data_path)

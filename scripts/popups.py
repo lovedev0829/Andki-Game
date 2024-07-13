@@ -137,6 +137,7 @@ class attribute_popup:
 	def __init__(self, win):
 		self.counter = 0
 		# set the title
+		self.things = []
 		self.selected = [None for i in range(3)]
 		win.setWindowTitle("Anki Habitica")        
 		# setting the geometry of window
@@ -146,21 +147,21 @@ class attribute_popup:
 		self.Ankimons = list(range(14))
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
-		if not data['default_ankimon']:
-			for i in range(3):
-				self.buttons.append(QPushButton(win))
-				
-				self.buttons[i].animateClick()
-				self.buttons[i].setGeometry(70+i*200,90,150,150)
-				
-				self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
-				
-				height: 100%;
-				width: 100%;                             
-				background-position: center;
-				background-repeat: no-repeat;                           ''')
-				self.buttons[i].clicked.connect(partial(self.clicked,i))
-		else:
+	
+		for i in range(3):
+			self.buttons.append(QPushButton(win))
+			
+			self.buttons[i].animateClick()
+			self.buttons[i].setGeometry(70+i*200,90,150,150)
+			
+			self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
+			
+			height: 100%;
+			width: 100%;                             
+			background-position: center;
+			background-repeat: no-repeat;                           ''')
+			self.buttons[i].clicked.connect(partial(self.clicked,i))
+		if data['default_ankimon']:
 			self.selected = data['default_ankimon']
 			self.update_ui()
 		# show all the widgets
