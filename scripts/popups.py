@@ -138,14 +138,12 @@ class attribute_popup:
 		self.counter = 0
 		# set the title
 		self.selected = [None for i in range(3)]
-		self.things = []
 		win.setWindowTitle("Anki Habitica")        
 		# setting the geometry of window
 		win.setFixedSize(700,400)
 		center_widget(win)
 		data = get_data()
 		self.Ankimons = list(range(14))
-		print(self.Ankimons)
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
 		if not data['default_ankimon']:
@@ -162,6 +160,9 @@ class attribute_popup:
 				background-position: center;
 				background-repeat: no-repeat;                           ''')
 				self.buttons[i].clicked.connect(partial(self.clicked,i))
+		else:
+			self.selected = data['default_ankimon']
+			self.update_ui()
 		# show all the widgets
 
 		win.show()
@@ -179,7 +180,7 @@ class attribute_popup:
 
 				int(self.Ankimons[self.selected[i]])
 				button.setStyleSheet(f'''border-image : url(assets/heads/{self.Ankimons[self.selected[i]]}.png);''')
-				
+				change_data("default_ankimon", self.selected)
 			except TypeError:
 				pass
 
