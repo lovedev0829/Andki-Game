@@ -5,6 +5,7 @@ import aqt
 from aqt import mw
 from scripts.constants import anki_data_path
 
+
 # requires arguments a, b, c because of how Anki calls the hook
 def process_file(a, b, c):
     # get today's ordinal date
@@ -22,6 +23,12 @@ def process_file(a, b, c):
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
     if data in anki_data:
+        anki_data[data] = value
+    json.dump(data, open(anki_data_path,'w'))
+
+def change_data(data, value):
+    anki_data = json.load(open(anki_data_path))
+    if data not in anki_data:
         anki_data[data] = value
     json.dump(data, open(anki_data_path,'w'))
 def get_data() -> dict:

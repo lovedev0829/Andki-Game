@@ -54,7 +54,7 @@ def start_rpg():
 def on_profile_open():
     
     mw.win = win = QMainWindow()
-    # attribute_popup(win)
+    attribute_popup(win)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
