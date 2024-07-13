@@ -1,10 +1,10 @@
-from scripts.utils import center_widget, get_data
+from scripts.utils import center_widget, get_data, change_data
 from aqt.qt import *
 from aqt import mw
 from functools import partial
 import random
 from scripts.constants import *
-class rpg_popup():
+class rpg_popup:
     def setupUi(self, choose_option):
         choose_option.setObjectName("choose_option")
         choose_option.resize(598, 347)
@@ -40,7 +40,7 @@ class rpg_popup():
         self.pushButton.setText(_translate("choose_option", "solo Adventure"))
         self.pushButton_2.setText(_translate("choose_option", "challenge a friend"))
         self.okbutton.setText(_translate("choose_option", "ok"))
-class trainer_challenge():
+class trainer_challenge:
     def setupUi(self, choose_option):
         choose_option.setObjectName("choose_option")
         screen_size = mw.app.primaryScreen().size()
@@ -85,7 +85,7 @@ class trainer_challenge():
 def delete_win():
     mw.win = None
 
-class trainer_popup():
+class trainer_popup:
 	def __init__(self, win):
 		
         
@@ -133,37 +133,122 @@ AnkiMon trainer here, not you!""", win)
 		# show all the widgets
 		win.show()
 
-class attribute_popup():
+class attribute_popup:
 	def __init__(self, win):
+		self.counter = 0
 		# set the title
+		self.selected = [None for i in range(3)]
+		self.things = []
 		win.setWindowTitle("Anki Habitica")        
 		# setting the geometry of window
 		win.setFixedSize(700,400)
 		center_widget(win)
 		data = get_data()
-        
-		buttons : list[QPushButton] = []
+		self.Ankimons = list(range(14))
+		print(self.Ankimons)
+		self.tempwin = None
+		self.buttons : list[QPushButton] = []
 		if not data['default_ankimon']:
 			for i in range(3):
-				buttons.append(QPushButton(win))
+				self.buttons.append(QPushButton(win))
 				
-				buttons[i].animateClick()
-				buttons[i].setGeometry(40+i*220,70,180,200)
+				self.buttons[i].animateClick()
+				self.buttons[i].setGeometry(70+i*200,90,150,150)
 				
-				buttons[i].setStyleSheet(f'''background-image : url(assets/ui/empty.PNG);
+				self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
 				
 				height: 100%;
 				width: 100%;                             
 				background-position: center;
 				background-repeat: no-repeat;                           ''')
-				buttons[i].clicked.connect(partial(self.clicked,i))
+				self.buttons[i].clicked.connect(partial(self.clicked,i))
 		# show all the widgets
+
 		win.show()
-	
 
 	def clicked(self, index):
-            print(index)
+		self.counter += 1
+		if self.counter > 3:	
+			self.tempwin = QMainWindow()		
+			self.things.append(ankimon_selector(self.tempwin, self, index))
 
+	def update_ui(self):
+		print(self.Ankimons)
+		for i, button in enumerate(self.buttons):
+			try:
+
+				int(self.Ankimons[self.selected[i]])
+				button.setStyleSheet(f'''border-image : url(assets/heads/{self.Ankimons[self.selected[i]]}.png);''')
+				
+			except TypeError:
+				pass
+
+class ankimon_selector:
+	def __init__(self, win:QMainWindow, attribute: attribute_popup, index):
+		self.ankimon_index = index
+		# set the title
+		self.attribute = attribute
+		self.win = win
+		win.setWindowTitle("Anki Habitica")        
+		# setting the geometry of window
+		win.setFixedSize(840,580)
+		center_widget(win)
+		central_widget = win
+		data = get_data()
+		self.Ankimons = attribute.Ankimons
+		self.buttons : list[QPushButton] = []
+		labels : list[QLabel] = []
+        # Create a scroll area
+		scroll_area = QScrollArea(win)
+		scroll_area.setWidgetResizable(True)
+
+		# Adjust scroll bar value to move elements
+		bar = scroll_area.verticalScrollBar()
+		bar.valueChanged.connect(self.on_scroll)		
+		bar.move(20,20)
+		self.counter = 0
+		index = 0
+		for i in range(len(self.Ankimons)):
+			if self.Ankimons[i] not in self.attribute.selected:
+				self.buttons.append(QPushButton(central_widget))
+				labels.append(QLabel(parent=central_widget,text=str(index)))
+				labels[index].adjustSize()
+				labels[index].setGeometry(110+(index%4)*200,110+180*(index//4),150,150)
+				self.buttons[index].animateClick()
+				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
+				
+				self.buttons[index].setStyleSheet(f'''border-image : url(assets/heads/{i}.png);
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-repeat: no-repeat;                           ''')
+				self.buttons[index].clicked.connect(partial(self.clicked,i))
+				index += 1
+			else:
+				print(-9)
+		# show all the widgets
+		self.completed = False
+		win.show()
+		if self.completed:
+			return
+
+	def clicked(self, i):
+		if self.counter > len(self.buttons)-1:
+			print(i)
+			try:
+				print(self.ankimon_index)
+				self.attribute.selected[self.ankimon_index] = self.Ankimons[i]
+			except IndexError:
+				self.attribute.selected.append(self.Ankimons[i])
+			self.completed = True
+			self.attribute.tempwin = None
+			self.win = None
+			self.attribute.update_ui()
+		self.counter += 1
+	def on_scroll(self, value):
+		for element in self.win.children():
+			element.move(element.x(), element.y()-value)
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
