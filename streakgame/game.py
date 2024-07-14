@@ -515,7 +515,7 @@ class GameNoWindow(Game):
                 self.late_update()
             self.draw(self.win)
             buf = 10
-            if not self.frame % 10:
+            if not self.frame % buf:
                 try:
                     os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.frame-buf*2}.png"))
                 except Exception:

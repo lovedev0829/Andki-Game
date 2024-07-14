@@ -132,6 +132,17 @@ AnkiMon trainer here, not you!""", win)
         
 		# show all the widgets
 		win.show()
+Ankimons = ["AnkiNick","Beekeeper Alder King","Primus Nephritico","Silver Globe Knight","Chrome-coated info soap","Immune Shield Globe Knight","Icy Gold Pastor","Illuminated goblin","Ancient evergreen reactor","Tent landlord Hedgehog Moon","Plump Bell Ogre","Clever Maasai Gold Net Warrior","Diamond Ninja Messenger","Glowing Net Knight"]
+def load_sheet(i):
+	cwd = os.getcwd()+os.sep[0]
+	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//heads//{Ankimons[i]}.png").replace(cwd, '').replace(os.sep[0],'/')
+	print(path)
+	return	f'''border-image : url({path});
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-repeat: no-repeat;                           '''
 
 class attribute_popup:
 	def __init__(self, win):
@@ -179,7 +190,7 @@ class attribute_popup:
 		
 		for i, button in enumerate(self.buttons):
 			try:
-				button.setStyleSheet(f'''border-image : url(assets/heads/{self.selected[i]}.png);''')
+				button.setStyleSheet(load_sheet(self.Ankimons.index(self.selected[i])))
 				QPixmap(f"assets/heads/{self.selected[i]}.png")
 				change_data("default_ankimon", self.selected)
 			except TypeError as e:
@@ -219,13 +230,8 @@ class ankimon_selector:
 				self.buttons[index].animateClick()
 				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
 				
-				labels[index].setPixmap(QPixmap(f"assets/heads/{attribute.Ankimons[i]}.png"))
-				self.buttons[index].setStyleSheet(f'''border-image : url(assets/heads/{attribute.Ankimons[i]}.png);
-				
-				height: 100%;
-				width: 100%;                             
-				background-position: center;
-				background-repeat: no-repeat;                           ''')
+				print(os.getcwd())
+				self.buttons[index].setStyleSheet(load_sheet(i))
 				self.buttons[index].clicked.connect(partial(self.clicked,i))
 				index += 1
 
