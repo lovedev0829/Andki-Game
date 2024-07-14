@@ -28,7 +28,7 @@ from streakgame.boring.imgs import load_font
 from streakgame.frontend.npc import NPC
 from streakgame.frontend.screens.UiShop import ShopUI
 import datetime
-
+Frame = 0
 if not DEBUG:
     import aqt.utils
     from aqt import gui_hooks, mw
@@ -227,12 +227,12 @@ class Game:
                 # We water all the plants based on the percentage of cards learned
                 max_watering = config.MAX_WATERING
                 learned_today = data["nb_cards_learned_today"]
-                print(f"learned {learned_today} cards today")
+                # print(f"learned {learned_today} cards today")
                 learned_since_last_connection = learned_today - prev
                 percentage = (learned_since_last_connection / self.learning_indicator.nb_cards_total)
                 nb_watering = int(percentage * max_watering) + 1
-                print(f"learned {learned_today} cards today, {learned_since_last_connection} since last connection, "
-                      f"percentage: {percentage}, nb_watering: {nb_watering}")
+                # print(f"learned {learned_today} cards today, {learned_since_last_connection} since last connection, "
+                    #   f"percentage: {percentage}, nb_watering: {nb_watering}")
                 for farm in self.ptmx.farms:
                     farm.water_all(nb_watering)
 
@@ -248,6 +248,7 @@ class Game:
         self.win.fill(Color("black"))
         self.ptmx.draw(win)
         self.draw_ui(win)
+
 
     def draw_ui(self, win):
         W = win.get_width()
@@ -500,6 +501,7 @@ class GameNoWindow(Game):
         self.frame = 1
 
     def run(self):
+        global Frame
         clock = pygame.time.Clock()
         while self.running:
             self.frame += 1
@@ -512,8 +514,10 @@ class GameNoWindow(Game):
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
-            if not self.frame % 30:
-                pygame.image.save(self.win,'image.png')
+            buf = 10
+            if not self.frame % 10:
+                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.frame}.png")
+                pygame.image.save(self.win,path)
             
     def events(self):
         try:

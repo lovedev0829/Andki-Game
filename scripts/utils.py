@@ -32,8 +32,6 @@ def add_data(data, value):
         anki_data[data] = value
     json.dump(anki_data, open(anki_data_path,'w'))
 def get_data() -> dict:
-    print(os.getcwd())
-    print(anki_data_path)
     return json.load(open(os.path.join(os.getcwd(),anki_data_path), 'r'))
 
 def center_widget(widget):
@@ -62,8 +60,6 @@ def add_btn(
     soup = bs4.BeautifulSoup(content.table, "html.parser")
     # add a button called "Start learning with AnkiRPG"
     btn = soup.new_tag("button")
-    image = soup.new_tag('img', src='image.png')
-    soup.append(image)
     btn["class"] = "btn"
     btn.string = "Start learning with AnkiNick-Mon."
     # hook
