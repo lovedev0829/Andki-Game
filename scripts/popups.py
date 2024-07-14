@@ -144,7 +144,8 @@ class attribute_popup:
 		win.setFixedSize(700,400)
 		center_widget(win)
 		data = get_data()
-		self.Ankimons = list(range(14))
+		self.Ankimons = ["AnkiNick","Beekeeper Alder King","Primus Nephritico","Silver Globe Knight","Chrome-coated info soap","Immune Shield Globe Knight","Icy Gold Pastor","Illuminated goblin","Ancient evergreen reactor","Tent landlord Hedgehog Moon","Plump Bell Ogre","Clever Maasai Gold Net Warrior","Diamond Ninja Messenger","Glowing Net Knight"]
+
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
 	
@@ -175,15 +176,14 @@ class attribute_popup:
 			self.things.append(ankimon_selector(self.tempwin, self, index))
 
 	def update_ui(self):
-		print(self.Ankimons)
+		
 		for i, button in enumerate(self.buttons):
 			try:
-
-				int(self.Ankimons[self.selected[i]])
-				button.setStyleSheet(f'''border-image : url(assets/heads/{self.Ankimons[self.selected[i]]}.png);''')
+				button.setStyleSheet(f'''border-image : url(assets/heads/{self.selected[i]}.png);''')
+				QPixmap(f"assets/heads/{self.selected[i]}.png")
 				change_data("default_ankimon", self.selected)
-			except TypeError:
-				pass
+			except TypeError as e:
+				print(e)
 
 class ankimon_selector:
 	def __init__(self, win:QMainWindow, attribute: attribute_popup, index):
@@ -219,7 +219,8 @@ class ankimon_selector:
 				self.buttons[index].animateClick()
 				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
 				
-				self.buttons[index].setStyleSheet(f'''border-image : url(assets/heads/{i}.png);
+				labels[index].setPixmap(QPixmap(f"assets/heads/{attribute.Ankimons[i]}.png"))
+				self.buttons[index].setStyleSheet(f'''border-image : url(assets/heads/{attribute.Ankimons[i]}.png);
 				
 				height: 100%;
 				width: 100%;                             
@@ -227,8 +228,7 @@ class ankimon_selector:
 				background-repeat: no-repeat;                           ''')
 				self.buttons[index].clicked.connect(partial(self.clicked,i))
 				index += 1
-			else:
-				print(-9)
+
 		# show all the widgets
 		self.completed = False
 		win.show()
@@ -237,11 +237,10 @@ class ankimon_selector:
 
 	def clicked(self, i):
 		if self.counter > len(self.buttons)-1:
-			print(i)
 			try:
-				print(self.ankimon_index)
 				self.attribute.selected[self.ankimon_index] = self.Ankimons[i]
-			except IndexError:
+			except IndexError as e:
+				print(e)
 				self.attribute.selected.append(self.Ankimons[i])
 			self.completed = True
 			self.attribute.tempwin = None

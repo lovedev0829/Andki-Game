@@ -1,3 +1,4 @@
+from __future__ import annotations
 import datetime
 import json
 import os.path
@@ -13,6 +14,9 @@ from rpg.main import mainloop
 from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget
 import asyncio, time
 from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
+from aqt.deckbrowser import DeckBrowser
+from aqt.webview import WebContent
+
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
@@ -35,7 +39,7 @@ def bridge(handled, message: str, context):
 
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
-
+# aqt.gui_hooks.
 # Add a button to the main screen with title "start game" and that starts the game when clicked
 pygame_surf = None
 def start_game():
@@ -63,7 +67,7 @@ def on_profile_open():
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))
-    center_widget(mw.menuWidget())
+    # center_widget(mw.menuWidget())
     try:
         start_game()
     except pygame.error as e:
@@ -82,3 +86,19 @@ mw.form.menuTools.addAction(action)
 rpg = aqt.qt.QAction("Start rpg", mw)
 rpg.triggered.connect(start_rpg)
 mw.form.menuTools.addAction(rpg)
+def on_webview_will_set_content(
+    web_content: WebContent, context: object | None) -> None:
+    if not isinstance(context, DeckBrowser):
+        return
+    path = os.path.join(os.getcwd(),"assets/Dragonride_front_blue.png")
+    print(path)
+    web_content.body += '''
+<img img="image.png" id="counter";">
+<script>
+setInterval(() => {
+    document.getElementById("counter").src = "'''+path+'''";
+}, 1000);</script>
+'''
+print(os.getcwd())
+
+gui_hooks.webview_will_set_content.append(on_webview_will_set_content)
