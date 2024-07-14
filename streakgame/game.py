@@ -516,6 +516,10 @@ class GameNoWindow(Game):
             self.draw(self.win)
             buf = 10
             if not self.frame % 10:
+                try:
+                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.frame-buf*2}.png"))
+                except Exception:
+                    pass
                 path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.frame}.png")
                 pygame.image.save(self.win,path)
             
