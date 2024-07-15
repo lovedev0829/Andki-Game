@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(__file__))
 
 logging.basicConfig(level=logging.INFO, filename="game.log", filemode="w",
                     format="%(asctime)s - %(levelname)s - %(message)s")
-
+Frame = 10
 
 def main():
     pygame.init()

@@ -16,7 +16,7 @@ import asyncio, time
 from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
-
+from streakgame import main
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
@@ -56,9 +56,6 @@ def start_rpg():
 
     pygame_instace = mainloop()
 def on_profile_open():
-    
-    mw.win = win = QMainWindow()
-    attribute_popup(win)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
@@ -86,19 +83,37 @@ mw.form.menuTools.addAction(action)
 rpg = aqt.qt.QAction("Start rpg", mw)
 rpg.triggered.connect(start_rpg)
 mw.form.menuTools.addAction(rpg)
+
 def on_webview_will_set_content(
-    web_content: WebContent, context: object | None) -> None:
+    web_content: WebContent, context: object | None
+) -> None:
     if not isinstance(context, DeckBrowser):
         return
-    path = os.path.join(os.getcwd(),"assets/Dragonride_front_blue.png")
-    print(path)
-    web_content.body += '''
-<img img="image.png" id="counter";">
-<script>
-setInterval(() => {
-    document.getElementById("counter").src = "'''+path+'''";
-}, 1000);</script>
-'''
-print(os.getcwd())
 
-# gui_hooks.webview_will_set_content.append(on_webview_will_set_content)
+    addon_name = mw.addonManager.addonFromModule(__name__)
+    buf = 2
+    # path = f"/_addons/{addon_name}/assets/temp/{main.Frame}.png"
+    web_content.body += (
+        f'''
+    <style>
+        .container {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }}
+    </style>        
+<div class="container">
+<img src="image.png" margin id="foo";">
+</div>
+<script>
+let counter = {main.Frame};
+setInterval(() => {{
+    document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/'+Math.ceil(counter / {buf}) * {buf}+'.png';
+
+    counter += 1;
+}}, 1000/60*1.2);</script>''')
+
+
+gui_hooks.webview_will_set_content.append(on_webview_will_set_content)
+mw.addonManager.setWebExports(__name__, r"assets/.*.png")
+mw.addonManager.setWebExports(__name__, r"assets/temp/.*.png")
