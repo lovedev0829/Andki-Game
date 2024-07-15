@@ -229,8 +229,7 @@ class ankimon_selector:
 				labels[index].setGeometry(110+(index%4)*200,110+180*(index//4),150,150)
 				self.buttons[index].animateClick()
 				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
-				
-				print(os.getcwd())
+
 				self.buttons[index].setStyleSheet(load_sheet(i))
 				self.buttons[index].clicked.connect(partial(self.clicked,i))
 				index += 1

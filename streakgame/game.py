@@ -28,7 +28,7 @@ from streakgame.boring.imgs import load_font
 from streakgame.frontend.npc import NPC
 from streakgame.frontend.screens.UiShop import ShopUI
 import datetime
-Frame = 0
+import main
 if not DEBUG:
     import aqt.utils
     from aqt import gui_hooks, mw
@@ -501,10 +501,9 @@ class GameNoWindow(Game):
         self.frame = 1
 
     def run(self):
-        global Frame
         clock = pygame.time.Clock()
         while self.running:
-            self.frame += 1
+            main.Frame += 1
             dt = clock.tick(FPS) / 1000
             self.time_since_last_late_update += dt
             # print(f"\rFPS: {clock.get_fps()}", end="")
@@ -514,14 +513,16 @@ class GameNoWindow(Game):
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
-            buf = 10
-            if not self.frame % buf:
+            buf = 2
+            if not main.Frame % buf:
                 try:
-                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.frame-buf*2}.png"))
+                    # os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{main.Frame-buf*2}.png"))
+                    ...
                 except Exception:
                     pass
-                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.frame}.png")
-                pygame.image.save(self.win,path)
+                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{main.Frame}.png")
+                win = pygame.transform.scale(self.win,(500,200))
+                pygame.image.save(win,path)
             
     def events(self):
         try:
