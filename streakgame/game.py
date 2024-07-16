@@ -549,7 +549,6 @@ class GameNoWindow(Game):
         for gw in self.special_ui:
             if gw.isVisible():
                 gw.handle_events(events)
-
         # important events
         for event in events:
             self.ui_manager.handle_event(event)
