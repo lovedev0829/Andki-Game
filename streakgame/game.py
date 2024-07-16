@@ -28,10 +28,10 @@ from streakgame.boring.imgs import load_font
 from streakgame.frontend.npc import NPC
 from streakgame.frontend.screens.UiShop import ShopUI
 import datetime
-import main
 if not DEBUG:
     import aqt.utils
     from aqt import gui_hooks, mw
+
 
 cwd = os.path.dirname(__file__)
 logger = logging.getLogger(__name__)
@@ -71,9 +71,10 @@ def change_music_volume(value):
 
 
 class Game:
-    def __init__(self, win):
+    def __init__(self, win, stats):
         self.time_since_last_late_update = 1000  # 1000 for late update now
         self.win = win
+        self.stats = stats
         self.running = True
 
         # _____________________Back___________________________________#
@@ -179,7 +180,10 @@ class Game:
             self.draw(self.win)
 
     def events(self):
-        events = pygame.event.get()
+        try:
+            events = pygame.event.get()
+        except Exception:
+            events = []
 
             
             
@@ -496,14 +500,15 @@ class Pytmx:
 
 
 class GameNoWindow(Game):
-    def __init__(self, win):
-        super().__init__(win)
+    def __init__(self, win, stats):
+        super().__init__(win, stats)
         self.frame = 1
 
     def run(self):
         clock = pygame.time.Clock()
+        self.play_audio()
         while self.running:
-            main.Frame += 1
+            self.stats.Frame += 1
             dt = clock.tick(FPS) / 1000
             self.time_since_last_late_update += dt
             # print(f"\rFPS: {clock.get_fps()}", end="")
@@ -513,17 +518,19 @@ class GameNoWindow(Game):
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
-            buf = 2
-            if not main.Frame % buf:
+            buf = 5
+            buffer_size = 10
+            if not self.stats.Frame % buf:
                 try:
-                    # os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{main.Frame-buf*2}.png"))
+                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame-buf*buffer_size}.png"))
                     ...
                 except Exception:
                     pass
-                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{main.Frame}.png")
-                win = pygame.transform.scale(self.win,(500,200))
+                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame}.png")
+                win = pygame.transform.scale(self.win, self.stats.SIZE)
                 pygame.image.save(win,path)
             
+    
     def events(self):
         try:
             events = pygame.event.get()
