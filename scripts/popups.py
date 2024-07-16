@@ -36,7 +36,7 @@ class rpg_popup:
 
     def retranslateUi(self, choose_option):
         _translate = QCoreApplication.translate
-        choose_option.setWindowTitle(_translate("choose_option", "Anki Habitica"))
+        choose_option.setWindowTitle(_translate("choose_option", "AnkiNick-mon"))
         self.pushButton.setText(_translate("choose_option", "solo Adventure"))
         self.pushButton_2.setText(_translate("choose_option", "challenge a friend"))
         self.okbutton.setText(_translate("choose_option", "ok"))
@@ -76,7 +76,7 @@ class trainer_challenge:
 
     def retranslateUi(self, choose_option):
         _translate = QCoreApplication.translate
-        choose_option.setWindowTitle(_translate("choose_option", "Anki Habitica"))
+        choose_option.setWindowTitle(_translate("choose_option", "AnkiNick-mon"))
         self.pushButton.setText(_translate("choose_option", "solo Adventure"))
         self.pushButton_2.setText(_translate("choose_option", "challenge a friend"))
         self.okbutton.setText(_translate("choose_option", "ok"))
@@ -90,7 +90,7 @@ class trainer_popup:
 		
         
 		# set the title
-		win.setWindowTitle("Anki Habitica")
+		win.setWindowTitle("AnkiNick-mon")
         
 		# setting the geometry of window
 		win.setFixedSize(500,200)
@@ -150,7 +150,7 @@ class attribute_popup:
 		# set the title
 		self.things = []
 		self.selected = [None for i in range(3)]
-		win.setWindowTitle("Anki Habitica")        
+		win.setWindowTitle("AnkiNick-mon")        
 		# setting the geometry of window
 		win.setFixedSize(700,400)
 		center_widget(win)
@@ -202,7 +202,7 @@ class ankimon_selector:
 		# set the title
 		self.attribute = attribute
 		self.win = win
-		win.setWindowTitle("Anki Habitica")        
+		win.setWindowTitle("AnkiNick-mon")        
 		# setting the geometry of window
 		win.setFixedSize(840,580)
 		center_widget(win)
