@@ -27,7 +27,7 @@ def main(stats):
 
 def mainnowin(stats):
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-2000,-2000)
-    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
+    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.HIDDEN, vsync=True)
     from streakgame.game import GameNoWindow
     global game
     game = GameNoWindow(win,stats)

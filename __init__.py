@@ -53,6 +53,8 @@ def start_rpg():
     global pygame_instace
     mw.win = win = QMainWindow()
     ui = attribute_popup(win)
+    
+
 def on_profile_open():
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
@@ -109,9 +111,9 @@ setInterval(() => {{
     document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
     document.getElementById("anki").onerror = function(){{
         counter -= 2.3;
-        document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
+        document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor((counter-40)/{buf})*{buf}+'.png'; 
     }}
-    counter += 0.9;
+    counter += 0.88;
     counter = Math.max(counter, {stats.Frame +5})
 }}, 1100/60);
 </script>''')
