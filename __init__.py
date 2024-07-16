@@ -59,7 +59,7 @@ def on_profile_open():
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
-        aqt.utils.showInfo(f"You have {to_review} cards to learn today. Good luck !")
+        aqt.utils.show_info(f"You have {to_review} cards to learn today. Good luck !")
     
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
@@ -72,15 +72,6 @@ def on_profile_open():
 
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
-
-
-action = aqt.qt.QAction("Start game", mw)
-action.triggered.connect(start_game)
-mw.form.menuTools.addAction(action)
-
-rpg = aqt.qt.QAction("Start rpg", mw)
-rpg.triggered.connect(start_rpg)
-mw.form.menuTools.addAction(rpg)
 
 
 def on_webview_will_set_content(
