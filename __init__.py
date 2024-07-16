@@ -11,12 +11,13 @@ from aqt import gui_hooks, mw
 from aqt.qt import * 
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget
+from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, manager
 import asyncio, time
 from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
 from streakgame import main
+
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
@@ -24,7 +25,7 @@ size = [300,300]
 
 
 started = False
-
+stats = manager()
 
 def bridge(handled, message: str, context):
     global started
@@ -32,6 +33,8 @@ def bridge(handled, message: str, context):
         if not started:
             threading.Thread(target=start_rpg, daemon=True).start()
             started = True
+    if message == 'rerender':
+        rerender()
     if message in ["ease1", "ease2", "ease3", "ease4"]:
         add_msg_to_db(message)
     return handled
@@ -44,17 +47,14 @@ aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
 pygame_surf = None
 def start_game():
     global pygame_instace
-    pygame_instace = streakgame.main.mainnowin()
+    pygame_instace = streakgame.main.mainnowin(stats)
     
 
 def start_rpg():
     global pygame_instace
     mw.win = win = QMainWindow()
-    ui = trainer_popup(win)
-    
-    
-
-    pygame_instace = mainloop()
+    ui = attribute_popup(win)
+    main.game = None
 def on_profile_open():
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
@@ -70,6 +70,7 @@ def on_profile_open():
     except pygame.error as e:
         print(e)
 
+q = threading.Thread(start_rpg, daemon=True)
 
 pygame_instace = None
 gui_hooks.profile_did_open.append(on_profile_open)
@@ -83,36 +84,69 @@ mw.form.menuTools.addAction(action)
 rpg = aqt.qt.QAction("Start rpg", mw)
 rpg.triggered.connect(start_rpg)
 mw.form.menuTools.addAction(rpg)
+web = None
+def rerender():
+    addon_name = mw.addonManager.addonFromModule(__name__)
+    pos = mw.app.primaryScreen().size().width()/2 - stats.SIZE[0]/2
+    buf = 5
+    # path = f"/_addons/{addon_name}/assets/temp/{main.Frame}.png"
+    
+    css = f"""    <style>
+        .container {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }}
+    </style>        """
+    global web
+    web.body += (
+        f'''
+{css}
+<div class="container">
+<img src="image.png" margin id="foo";">
+</div>
+<script>
+document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/{stats.Frame}.png';
+pycmd('rerender');
+</script>''')
+    
 
 def on_webview_will_set_content(
     web_content: WebContent, context: object | None
 ) -> None:
     if not isinstance(context, DeckBrowser):
         return
-
+    global web
+    web = web_content
     addon_name = mw.addonManager.addonFromModule(__name__)
-    buf = 2
+    pos = mw.app.primaryScreen().size().width()/2 - stats.SIZE[0]/2
+    buf = 5
     # path = f"/_addons/{addon_name}/assets/temp/{main.Frame}.png"
-    web_content.body += (
-        f'''
-    <style>
+    css = f"""    <style>
         .container {{
             display: flex;
             justify-content: center;
             align-items: center;
         }}
-    </style>        
+    </style>        """
+    web_content.body += (
+        f'''
+{css}
 <div class="container">
 <img src="image.png" margin id="foo";">
 </div>
 <script>
-let counter = {main.Frame};
+let img = document.getElementById("foo");
+let counter = 0;
 setInterval(() => {{
-    document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/'+Math.ceil(counter / {buf}) * {buf}+'.png';
-
-    counter += 1;
-}}, 1000/60*1.2);</script>''')
-
+    document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
+    document.getElementById("foo").onerror = function(){{
+        counter -= 2.3;
+        document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
+    }}
+    counter += 0.9;
+}}, 1100/60);
+</script>''')
 
 gui_hooks.webview_will_set_content.append(on_webview_will_set_content)
 mw.addonManager.setWebExports(__name__, r"assets/.*.png")

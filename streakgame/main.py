@@ -10,14 +10,13 @@ sys.path.append(os.path.dirname(__file__))
 
 logging.basicConfig(level=logging.INFO, filename="game.log", filemode="w",
                     format="%(asctime)s - %(levelname)s - %(message)s")
-Frame = 10
-
-def main():
+game = None
+def main(stats):
     pygame.init()
     win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
     pygame.display.set_caption("AnkiStreak")
     from streakgame.game import Game
-    game = Game(win)
+    game = Game(win,stats)
     from streakgame.game import PlantSpot
     from streakgame.backend.tuxemons import Tuxemon
     PlantSpot.counter = 0  # reset class counter (used as id) there is probably a better way to do this
@@ -26,11 +25,12 @@ def main():
     game.run()
     pygame.quit()
 
-def mainnowin():
+def mainnowin(stats):
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-2000,-2000)
     win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
     from streakgame.game import GameNoWindow
-    game = GameNoWindow(win)
+    global game
+    game = GameNoWindow(win,stats)
     
 
     from streakgame.game import PlantSpot
