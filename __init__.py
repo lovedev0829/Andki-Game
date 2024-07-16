@@ -16,7 +16,6 @@ import asyncio, time
 from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
-from streakgame import main
 
 cwd = os.path.dirname(__file__)
 
@@ -92,28 +91,28 @@ def on_webview_will_set_content(
     buf = 5
     # path = f"/_addons/{addon_name}/assets/temp/{main.Frame}.png"
     css = f"""    <style>
-        .container {{
-            display: flex;
-            left: {pos};
+        .img {{
+            position: relative;
+            left: {pos}px;
         }}
     </style>        """
     web_content.body += (
         f'''
 {css}
-<div class="container">
-<img src="image.png" margin id="foo";">
+<div >
+<img class="img" src="image.png" margin id="anki";">
 </div>
 <script>
-let img = document.getElementById("foo");
+let img = document.getElementById("anki");
 let counter = 0;
 setInterval(() => {{
-    document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
-    document.getElementById("foo").onerror = function(){{
+    document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
+    document.getElementById("anki").onerror = function(){{
         counter -= 2.3;
-        document.getElementById("foo").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
+        document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
     }}
     counter += 0.9;
-    counter = Math.max(counter, {stats.Frame + 5});
+    counter = Math.max(counter, {stats.Frame +5})
 }}, 1100/60);
 </script>''')
 
