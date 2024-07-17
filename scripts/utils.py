@@ -70,3 +70,5 @@ class manager:
     def __init__(self) -> None:
         self.Frame = 50
         self.SIZE = [500,200]
+        self.buf = 5
+        self.buffer_size = 20        
