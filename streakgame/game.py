@@ -518,11 +518,10 @@ class GameNoWindow(Game):
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
-            buf = 5
-            buffer_size = 10
-            if not self.stats.Frame % buf:
+
+            if not self.stats.Frame % self.stats.buf:
                 try:
-                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame-buf*buffer_size}.png"))
+                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame-self.stats.buf*self.stats.buffer_size}.png"))
                     ...
                 except Exception:
                     pass

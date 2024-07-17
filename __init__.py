@@ -52,7 +52,9 @@ def start_game():
 def start_rpg():
     global pygame_instace
     mw.win = win = QMainWindow()
-    ui = attribute_popup(win)
+    rpg_popup(win)
+    
+    print(4)
     
 
 def on_profile_open():
@@ -101,12 +103,18 @@ let counter = 0;
 setInterval(() => {{
     document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor(counter/{buf})*{buf}+'.png'; 
     document.getElementById("anki").onerror = function(){{
-        counter -= 2.3;
-        document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor((counter-40)/{buf})*{buf}+'.png'; 
+        counter -= 2.7;
+        for (let i =0; i > 8; i=i){{
+            document.getElementById("anki").src = '/_addons/{addon_name}/assets/temp/'+Math.floor((counter-{buf*stats.buffer_size}/i)/{buf})*{buf}+'.png'; 
+            document.getElementById("anki").onerror = function(){{
+                i++;
+            }}
+        }}
+        
     }}
     counter += 0.88;
-    counter = Math.max(counter, {stats.Frame +5})
-}}, 1100/60);
+    counter = Math.max(counter, {stats.Frame-buf*stats.buffer_size/2}+60)
+}}, 1200/60);
 </script>''')
 
 gui_hooks.webview_will_set_content.append(on_webview_will_set_content)
