@@ -32,6 +32,9 @@ def bridge(handled, message: str, context):
         if not started:
             start_rpg()
             started = True
+    if message == "attribute":
+        mw.win = QMainWindow()
+        attribute_popup(mw.win)
     if message == 'rerender':
         pass
     if message in ["ease1", "ease2", "ease3", "ease4"]:
@@ -112,7 +115,7 @@ setInterval(() => {{
     }}
     counter += 0.88;
     counter = Math.max(counter, {stats.Frame-buf*stats.buffer_size/2}+60)
-}}, 1200/60);
+}}, 1100/60);
 </script>''')
 
 gui_hooks.webview_will_set_content.append(on_webview_will_set_content)

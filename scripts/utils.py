@@ -50,20 +50,27 @@ def add_msg_to_db(msg):
     data.append(msg)
     with open(anki_data_path, "w") as f:
         json.dump(data, f)
-
+started = False
 # Inject a button in the deck view
 def add_btn(
         deck_browser: "aqt.overview.Overview", 
         content: "aqt.overview.OverviewContent",
 ) -> None:
+    global started
     import bs4
     soup = bs4.BeautifulSoup(content.table, "html.parser")
     # add a button called "Start learning with AnkiRPG"
     btn = soup.new_tag("button")
     btn["class"] = "btn"
-    btn.string = "Start learning with AnkiNick-Mon."
-    # hook
-    btn["onclick"] = "pycmd('start_rpg');pycmd('study');"
+    if not started:
+        btn.string = "Start learning with AnkiNick-Mon."
+        # hook
+        btn["onclick"] = "pycmd('start_rpg');pycmd('study');"
+        started = True
+    else:
+        btn.string = "Continue learning with AnkiNick-Mon"
+        # hook
+        btn["onclick"] = "pycmd('attribute');"
     soup.append(btn)
     content.table = str(soup)
 class manager:

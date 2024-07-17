@@ -521,11 +521,11 @@ class GameNoWindow(Game):
 
             if not self.stats.Frame % self.stats.buf:
                 try:
-                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame-self.stats.buf*self.stats.buffer_size}.png"))
+                    os.remove(os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame-50-self.stats.buf*self.stats.buffer_size}.png"))
                     ...
                 except Exception:
                     pass
-                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame}.png")
+                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//temp//{self.stats.Frame-50}.png")
                 win = pygame.transform.scale(self.win, self.stats.SIZE)
                 pygame.image.save(win,path)
             
