@@ -54,8 +54,6 @@ def start_rpg():
     mw.win = win = QMainWindow()
     rpg_popup(win)
     
-    print(4)
-    
 
 def on_profile_open():
     due_tree = mw.col.sched.deck_due_tree()
