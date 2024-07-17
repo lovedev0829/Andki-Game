@@ -113,7 +113,7 @@ setInterval(() => {{
         }}
         
     }}
-    counter += 0.88;
+    counter += 1;
     counter = Math.max(counter, {stats.Frame-buf*stats.buffer_size/2}+60)
 }}, 1100/60);
 </script>''')
