@@ -37,7 +37,7 @@ def get_data() -> dict:
 def center_widget(widget):
     window_size = widget.geometry().size()
     window_size = [window_size.width(), window_size.height()]    
-    screen_size = mw.app.primaryScreen().size()
+    screen_size = mw.app.primaryScreen().size() 
     screen_size = [screen_size.width(), screen_size.height()]
     widget.setGeometry(screen_size[0]//2-window_size[0]//2, screen_size[1]//2-window_size[1]//2, *window_size)
 
@@ -62,15 +62,9 @@ def add_btn(
     # add a button called "Start learning with AnkiRPG"
     btn = soup.new_tag("button")
     btn["class"] = "btn"
-    if not started:
-        btn.string = "Start learning with AnkiNick-Mon."
-        # hook
-        btn["onclick"] = "pycmd('start_rpg');pycmd('study');"
-        started = True
-    else:
-        btn.string = "Continue learning with AnkiNick-Mon"
-        # hook
-        btn["onclick"] = "pycmd('attribute');"
+    btn.string = "Start learning with AnkiNick-Mon."
+    # hook
+    btn["onclick"] = "pycmd('start_rpg');pycmd('study');"
     soup.append(btn)
     content.table = str(soup)
 class manager:
@@ -78,4 +72,4 @@ class manager:
         self.Frame = 50
         self.SIZE = [500,200]
         self.buf = 5
-        self.buffer_size = 20        
+        self.buffer_size = 100        
