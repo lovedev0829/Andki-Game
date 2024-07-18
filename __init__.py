@@ -53,16 +53,12 @@ def start_game():
 def start_rpg():
     mw.win = win = QMainWindow()
     rpg_popup(win)
-    mainloop()
     
-
 def on_profile_open():
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     if to_review:
         aqt.utils.show_info(f"You have {to_review} cards to learn today. Good luck !")
-    mw.win = QMainWindow()
-    attribute_popup(mw.win)
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))
