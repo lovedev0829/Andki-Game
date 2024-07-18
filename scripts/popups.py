@@ -1,6 +1,9 @@
 from scripts.utils import center_widget, get_data, change_data
 from aqt.qt import *
+import threading
 from aqt import mw
+from aqt import utils
+from rpg.main import mainloop
 from functools import partial
 import random
 from scripts.constants import *
@@ -146,7 +149,6 @@ Ankimons = ["AnkiNick","Beekeeper Alder King","Primus Nephritico","Silver Globe 
 def load_sheet(i):
 	cwd = os.getcwd()+os.sep[0]
 	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//heads//{Ankimons[i]}.png").replace(cwd, '').replace(os.sep[0],'/')
-	print(path)
 	return	f'''border-image : url({path});
 				
 				height: 100%;
@@ -166,16 +168,21 @@ class attribute_popup:
 		center_widget(win)
 		data = get_data()
 		self.Ankimons = ["AnkiNick","Beekeeper Alder King","Primus Nephritico","Silver Globe Knight","Chrome-coated info soap","Immune Shield Globe Knight","Icy Gold Pastor","Illuminated goblin","Ancient evergreen reactor","Tent landlord Hedgehog Moon","Plump Bell Ogre","Clever Maasai Gold Net Warrior","Diamond Ninja Messenger","Glowing Net Knight"]
-
+		self.elements = ["Ice","Water","Fire"]
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
-	
+		self.dropdows : list[QComboBox] = []
+		self.indexes = [2,2,2]
+		self.selected_dropdows = [False for i in range(3)]
 		for i in range(3):
 			self.buttons.append(QPushButton(win))
-			
 			self.buttons[i].animateClick()
-			self.buttons[i].setGeometry(70+i*200,90,150,150)
-			
+			self.buttons[i].setGeometry(70+i*200,70,150,150)
+			self.dropdows.append(QComboBox(win))
+			self.dropdows[i].addItems(self.elements)
+			self.dropdows[i].setCurrentIndex(i)
+			self.dropdows[i].activated.connect(partial(self.update_dropdowns,i))
+			self.dropdows[i].move(95+i*200,250)
 			self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
 			
 			height: 100%;
@@ -187,8 +194,28 @@ class attribute_popup:
 			self.selected = data['default_ankimon']
 			self.update_ui()
 		# show all the widgets
-
+		self.okbutton = QPushButton(win,text="OK")
+		self.okbutton.setGeometry(QRect(240, 320, 141, 51))
+		self.okbutton.clicked.connect(self.ok)
+		for index, dropdown in enumerate(self.dropdows):
+			self.indexes[index] = dropdown.currentIndex()
+			
 		win.show()
+	
+
+	def update_dropdowns(self, index, i):
+		# index is the number of the monster going left to right "i" is the index of the element they chose in the elements array
+		self.indexes[index] = i
+
+
+	def ok(self):
+		for i in range(3):
+			if self.indexes.count(i) > 1:
+				utils.show_info('you can only choose each element once')
+				return
+		delete_win()
+		mainloop()
+
 
 	def clicked(self, index):
 		self.counter += 1
@@ -197,7 +224,6 @@ class attribute_popup:
 			self.things.append(ankimon_selector(self.tempwin, self, index))
 
 	def update_ui(self):
-		
 		for i, button in enumerate(self.buttons):
 			try:
 				button.setStyleSheet(load_sheet(self.Ankimons.index(self.selected[i])))
@@ -234,9 +260,11 @@ class ankimon_selector:
 		for i in range(len(self.Ankimons)):
 			if self.Ankimons[i] not in self.attribute.selected:
 				self.buttons.append(QPushButton(central_widget))
-				labels.append(QLabel(parent=central_widget,text=str(index)))
+				text=str(Ankimons[i])
+				labels.append(QLabel(parent=central_widget,text=text))
+				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
+				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
 				labels[index].adjustSize()
-				labels[index].setGeometry(110+(index%4)*200,110+180*(index//4),150,150)
 				self.buttons[index].animateClick()
 				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
 
