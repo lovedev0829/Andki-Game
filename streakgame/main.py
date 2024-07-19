@@ -16,7 +16,7 @@ def main(stats):
     rect = [geometry.x(),geometry.y(),geometry.width(), geometry.height()]
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (rect[0]+rect[2]/2,rect[1]+rect[3]/2)
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
+    win = pygame.display.set_mode((WIDTH, HEIGHT), vsync=True)
     pygame.display.set_caption("AnkiStreak")
     from streakgame.game import Game
     game = Game(win,stats)

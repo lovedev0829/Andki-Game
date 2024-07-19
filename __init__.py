@@ -57,6 +57,7 @@ def start_rpg():
 def on_profile_open():
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
+    center_widget(mw.window())
     if to_review:
         aqt.utils.show_info(f"You have {to_review} cards to learn today. Good luck !")
     data = json.load(open(anki_data_path, 'r'))

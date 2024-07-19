@@ -73,7 +73,8 @@ def change_music_volume(value):
 class Game:
     def __init__(self, win, stats):
         self.time_since_last_late_update = 1000  # 1000 for late update now
-        self.win = win
+        self.win = pygame.Surface((WIDTH,HEIGHT))
+        self.display = win
         self.stats = stats
         self.running = True
 
@@ -172,12 +173,13 @@ class Game:
             dt = clock.tick(FPS) / 1000
             self.time_since_last_late_update += dt
             # print(f"\rFPS: {clock.get_fps()}", end="")
-            self.events()
-            self.update(dt)
             if self.time_since_last_late_update >= 1000 / LATE_UPDATE_FPS:
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
+            self.update(dt)
+            self.events()
+
 
     def events(self):
         try:
@@ -208,6 +210,7 @@ class Game:
     def update(self, dt):
         self.ptmx.update(dt)
         self.ui_manager.update(dt)
+        self.display.blit(pygame.transform.scale(self.win,self.display.get_size()),(0,0))
         pygame.display.update()
 
     def late_update(self):

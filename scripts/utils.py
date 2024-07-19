@@ -47,7 +47,10 @@ def add_msg_to_db(msg):
             f.write("[]")
     with open(anki_data_path, "r") as f:
         data = json.load(f)
-    data.append(msg)
+    try:
+        data.append(msg)
+    except Exception:
+        print('couldnt add message to database')
     with open(anki_data_path, "w") as f:
         json.dump(data, f)
 started = False
