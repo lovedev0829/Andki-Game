@@ -73,8 +73,7 @@ def change_music_volume(value):
 class Game:
     def __init__(self, win, stats):
         self.time_since_last_late_update = 1000  # 1000 for late update now
-        self.win = pygame.Surface((WIDTH,HEIGHT))
-        self.display = win
+        self.win = win
         self.stats = stats
         self.running = True
 
@@ -129,6 +128,10 @@ class Game:
         self.anki_data_json = None
         self.load_save()
         self.load_anki_data()
+        due_tree = mw.col.sched.deck_due_tree()
+        to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
+        if to_review:
+            self.create_popup("",f"You have {to_review} cards to learn today. Good luck !")
 
         # Music
     def play_audio(self):
@@ -210,7 +213,6 @@ class Game:
     def update(self, dt):
         self.ptmx.update(dt)
         self.ui_manager.update(dt)
-        self.display.blit(pygame.transform.scale(self.win,self.display.get_size()),(0,0))
         pygame.display.update()
 
     def late_update(self):

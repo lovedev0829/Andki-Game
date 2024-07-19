@@ -5,7 +5,7 @@ DEBUG = False
 
 TILE_SIZE = 32
 
-WIDTH, HEIGHT = TILE_SIZE * 45, TILE_SIZE * 22
+WIDTH, HEIGHT = TILE_SIZE * 45, TILE_SIZE * 30
 # dpi awareness
 ctypes.windll.user32.SetProcessDPIAware()
 

@@ -55,11 +55,12 @@ def start_rpg():
     rpg_popup(win)
     
 def on_profile_open():
+    pygame.init()
+    info = pygame.display.Info()    
+    mw.window().setGeometry(10,60,info.current_w-70,info.current_h-70)
+    center_widget(mw.window())
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
-    center_widget(mw.window())
-    if to_review:
-        aqt.utils.show_info(f"You have {to_review} cards to learn today. Good luck !")
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))

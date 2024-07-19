@@ -15,7 +15,8 @@ import PygameUIKit
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode
 from pathlib import Path
-
+from aqt import mw
+from scripts.utils import center_widget
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
@@ -98,6 +99,9 @@ class AnkiRPG:
             self.bot_event()
             self.update()
             self.draw()
+        info = pygame.display.Info()
+        mw.window().setGeometry(0,60,info.current_w,info.current_w-70)
+        center_widget(mw.window())
         pygame.quit()
         
 
