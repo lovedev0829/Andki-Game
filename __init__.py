@@ -46,18 +46,18 @@ def start_game():
 def start_rpg():
     mw.win = win = QMainWindow()
     rpg_popup(win)
-label = None
+button = None
 def on_profile_open():
     pygame.init()
     info = pygame.display.Info()    
     mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
     center_widget(mw.window())
-    global label
-    label = QPushButton(mw)
+    global button
+    button = QPushButton(mw)
     cwd = os.getcwd()+os.sep[0]
     addon_name = mw.addonManager.addonFromModule(__name__)
     path = os.path.join(os.path.dirname(os.path.dirname(__file__)),addon_name ,f"assets/ui/sunset.gif").replace(cwd, '').replace(os.sep[0],'/')
-    label.setStyleSheet(f'''border-image : url({path});
+    button.setStyleSheet(f'''border-image : url({path});
                 
                 height: 100%;
                 width: 100%;                             
@@ -65,9 +65,9 @@ def on_profile_open():
                 background-repeat: no-repeat;                           ''')
     size = mw.window().geometry()
     size = [size.width(),size.height()]
-    label.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
-    label.show()
-    
+    button.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
+    button.show()
+    button.clicked.connect(start_game)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     data = json.load(open(anki_data_path, 'r'))
@@ -83,12 +83,12 @@ def on_profile_open():
         print(e)
 
 def update_streak_btn():
-    global label
+    global button
     print(2)
     size = mw.window().geometry()
     size = [size.width(),size.height()]
 
-    label.setGeometry(size[0]*0.4, size[1]*0.6, size[0]*0.4, size[1]*0.4)
+    button.setGeometry(size[0]*0.4, size[1]*0.6, size[0]*0.4, size[1]*0.4)
 
 # Inject a button in the deck view
 def add_streak_btn(
@@ -98,7 +98,7 @@ def add_streak_btn(
         return
     addon_name = mw.addonManager.addonFromModule(__name__)
     try:
-        label.show()
+        button.show()
     except AttributeError:
         pass
     
@@ -111,6 +111,6 @@ def add_streak_btn(
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
-aqt.gui_hooks.overview_will_render_content.append(lambda x,y: label.hide())
+aqt.gui_hooks.overview_will_render_content.append(lambda x,y: button.hide())
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
 gui_hooks.webview_will_set_content.append(add_streak_btn)
