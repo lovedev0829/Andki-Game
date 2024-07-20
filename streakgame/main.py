@@ -14,12 +14,13 @@ def main(stats):
     geometry = mw.app.primaryScreen().geometry()
 
     rect = [geometry.x(),geometry.y(),geometry.width(), geometry.height()]
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (rect[0]+rect[2]/2,rect[1]+rect[3]/2)
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (rect[0]+rect[2]/2,60)
     pygame.init()
-    win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
+    ratio = 2
+    win = pygame.display.set_mode((WIDTH/ratio, HEIGHT/ratio), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
     pygame.display.set_caption("AnkiStreak")
     from streakgame.game import Game
-    game = Game(win,stats)
+    game = Game(win,ratio)
     from streakgame.game import PlantSpot
     from streakgame.backend.tuxemons import Tuxemon
     PlantSpot.counter = 0  # reset class counter (used as id) there is probably a better way to do this

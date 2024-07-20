@@ -4,12 +4,12 @@ import os
 DEBUG = False
 
 TILE_SIZE = 32
-
+ratio = 2
 WIDTH, HEIGHT = TILE_SIZE * 45, TILE_SIZE * 30
 # dpi awareness
 ctypes.windll.user32.SetProcessDPIAware()
 
-FPS = 30
+FPS = 60
 LATE_UPDATE_FPS = 1
 
 MAX_ZOOM = 2

@@ -70,6 +70,7 @@ def add_btn(
     btn["onclick"] = "pycmd('start_rpg');pycmd('study');"
     soup.append(btn)
     content.table = str(soup)
+
 class manager:
     def __init__(self) -> None:
         self.Frame = 50

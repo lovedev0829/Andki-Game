@@ -30,8 +30,8 @@ from streakgame.frontend.screens.UiShop import ShopUI
 import datetime
 if not DEBUG:
     import aqt.utils
-    from aqt import gui_hooks, mw
-
+from aqt import gui_hooks, mw
+from streakgame.boring.config import ratio
 
 cwd = os.path.dirname(__file__)
 logger = logging.getLogger(__name__)
@@ -71,10 +71,11 @@ def change_music_volume(value):
 
 
 class Game:
-    def __init__(self, win, stats):
+    def __init__(self, win, ratio):
         self.time_since_last_late_update = 1000  # 1000 for late update now
-        self.win = win
-        self.stats = stats
+        self.win = pygame.Surface((WIDTH,HEIGHT))
+        self.display = win
+        self.ratio = ratio
         self.running = True
 
         # _____________________Back___________________________________#
@@ -180,6 +181,7 @@ class Game:
                 self.time_since_last_late_update = 0
                 self.late_update()
             self.draw(self.win)
+            self.display.blit(pygame.transform.scale(self.win,self.display.get_size()),(0,0))
             self.update(dt)
             self.events()
 

@@ -7,7 +7,7 @@ from streakgame.backend.items import Item
 from streakgame.boring import config
 from streakgame.boring import imgs, utils, colors
 from typing import Optional
-
+from streakgame.boring.config import ratio
 
 class FarmMenuItem(Item):
     seed = 0
@@ -174,6 +174,8 @@ class Farm(objects.GameObject, objects.Clickable):
             if pygame.mouse.get_pressed(3)[0]:
                 if selected_tool is not None:
                     pos = pygame.mouse.get_pos()
+                    pos[0] *= ratio
+                    pos[1] *= ratio
                     if selected_tool.type == FarmMenuItem.seed:
                         self.on_seed_planting(pos)
                     elif selected_tool.type == FarmMenuItem.recolter:
@@ -203,7 +205,7 @@ class Farm(objects.GameObject, objects.Clickable):
         # draw cursor tool
         if selected_tool is not None:
             img = selected_tool.zoom_buffer
-            win.blit(img, img.get_rect(center=pygame.mouse.get_pos()))
+            win.blit(img, img.get_rect(center=[pos*ratio for pos in pygame.mouse.get_pos()[0]]))
 
         points = [p.coords for p in self.farm_zone]
         if config.DEBUG:

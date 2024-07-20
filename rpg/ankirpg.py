@@ -99,9 +99,7 @@ class AnkiRPG:
             self.bot_event()
             self.update()
             self.draw()
-        info = pygame.display.Info()
-        mw.window().setGeometry(0,60,info.current_w,info.current_w-70)
-        center_widget(mw.window())
+
         pygame.quit()
         
 
@@ -117,6 +115,7 @@ class AnkiRPG:
 
     def events(self):
         events = pygame.event.get()
+        print(mw.window().geometry())
         for event in events:
             self.group.handle_event(event)
             if event.type == pygame.QUIT:

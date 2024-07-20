@@ -7,9 +7,19 @@ from rpg.main import mainloop
 from functools import partial
 import random
 from scripts.constants import *
+
+
+def delete_win():
+    mw.win = None
+
+def start_chess():
+	delete_win()
+	mainloop()	
+started = False
 class rpg_popup:
 	def __init__(self, choose_option) -> None:
 		self.setupUi(choose_option)
+
 	def setupUi(self, choose_option):
 		choose_option.setObjectName("choose_option")
 		choose_option.resize(598, 347)
@@ -28,6 +38,15 @@ class rpg_popup:
 		self.okbutton.setBaseSize(QSize(0, 0))
 		self.okbutton.setObjectName("okbutton")
 		self.okbutton.clicked.connect(delete_win)
+		if started:
+			self.pushButton.setGeometry(QRect(50, 100, 161, 51))
+			self.pushButton_2.setGeometry(QRect(390, 100, 161, 51))
+			self.continuebutton = QPushButton(choose_option,text="continue")
+			self.continuebutton.setGeometry(QRect(225, 100, 161, 51))
+			self.continuebutton.setSizeIncrement(QSize(0, 0))
+			self.continuebutton.setBaseSize(QSize(0, 0))
+			self.continuebutton.setObjectName("continuebutton")
+			self.continuebutton.clicked.connect(start_chess)
 
 		self.menubar = QMenuBar(choose_option)
 		self.menubar.setGeometry(QRect(0, 0, 598, 21))
@@ -94,9 +113,6 @@ class trainer_challenge:
         self.pushButton_2.setText(_translate("choose_option", "challenge a friend"))
         self.okbutton.setText(_translate("choose_option", "ok"))
 
-
-def delete_win():
-    mw.win = None
 
 class trainer_popup:
 	def __init__(self, win):
@@ -195,7 +211,7 @@ class attribute_popup:
 			self.update_ui()
 		# show all the widgets
 		self.okbutton = QPushButton(win,text="OK")
-		self.okbutton.setGeometry(QRect(240, 320, 141, 51))
+		self.okbutton.setGeometry(QRect(255, 320, 141, 51))
 		self.okbutton.clicked.connect(self.ok)
 		for index, dropdown in enumerate(self.dropdows):
 			self.indexes[index] = dropdown.currentIndex()
@@ -213,8 +229,9 @@ class attribute_popup:
 			if self.indexes.count(i) > 1:
 				utils.show_info('you can only choose each element once')
 				return
-		delete_win()
-		mainloop()
+		global started
+		started = True
+		start_chess()
 
 
 	def clicked(self, index):
