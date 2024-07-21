@@ -17,12 +17,13 @@ from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribut
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
 
+
+#global vars
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
 size = [300,300]
-
-
+button = None
 started = False
 stats = manager()
 
@@ -34,19 +35,24 @@ def bridge(handled, message: str, context):
         mw.win = QMainWindow()
         from scripts import utils
         attribute_popup(mw.win, True if utils.started else False)
-    if message == 'rerender':
-        pass
+
     if message in ["ease1", "ease2", "ease3", "ease4"]:
         add_msg_to_db(message)
     return handled
 
 
 def start_game():
-    streakgame.main.main(stats)
+    try:
+        streakgame.main.main()
+    except pygame.error as e:
+        print(e)
+
+
 def start_rpg():
     mw.win = win = QMainWindow()
     rpg_popup(win)
-button = None
+
+
 def on_profile_open():
     pygame.init()
     info = pygame.display.Info()    
@@ -63,24 +69,20 @@ def on_profile_open():
                 width: 100%;                             
                 background-position: center;
                 background-repeat: no-repeat;                           ''')
+    
     size = mw.window().geometry()
     size = [size.width(),size.height()]
     button.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
     button.show()
+    mw.app.primaryScreenChanged.connect(update_streak_btn)
+    button.clicked.connect(update_streak_btn)
     button.clicked.connect(start_game)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))
-    # center_widget(mw.menuWidget())
-    try:
-        1
-        # from test_game.main import main
-        # main()
-        # start_game()
-    except pygame.error as e:
-        print(e)
+
 
 def update_streak_btn():
     global button
@@ -88,7 +90,8 @@ def update_streak_btn():
     size = mw.window().geometry()
     size = [size.width(),size.height()]
 
-    button.setGeometry(size[0]*0.4, size[1]*0.6, size[0]*0.4, size[1]*0.4)
+    button.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
+
 
 # Inject a button in the deck view
 def add_streak_btn(

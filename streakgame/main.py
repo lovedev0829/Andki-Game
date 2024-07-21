@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(__file__))
 logging.basicConfig(level=logging.INFO, filename="game.log", filemode="w",
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
-def main(stats):
+def main():
     geometry = mw.app.primaryScreen().geometry()
 
     rect = [geometry.x(),geometry.y(),geometry.width(), geometry.height()]
