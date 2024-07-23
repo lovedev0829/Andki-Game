@@ -35,6 +35,9 @@ def bridge(handled, message: str, context):
         mw.win = QMainWindow()
         from scripts import utils
         attribute_popup(mw.win, True if utils.started else False)
+    if message == "update_streak_btn":
+        if button.width() != mw.window().width()*0.3:
+            update_streak_btn()
 
     if message in ["ease1", "ease2", "ease3", "ease4"]:
         add_msg_to_db(message)
@@ -69,13 +72,8 @@ def on_profile_open():
                 width: 100%;                             
                 background-position: center;
                 background-repeat: no-repeat;                           ''')
-    
-    size = mw.window().geometry()
-    size = [size.width(),size.height()]
-    button.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
+    update_streak_btn()    
     button.show()
-    mw.app.primaryScreenChanged.connect(update_streak_btn)
-    button.clicked.connect(update_streak_btn)
     button.clicked.connect(start_game)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
@@ -86,34 +84,35 @@ def on_profile_open():
 
 def update_streak_btn():
     global button
-    print(2)
     size = mw.window().geometry()
+    print(size)
+    if not button: return
     size = [size.width(),size.height()]
-
+    if size[1] < 630 or size[0] < 750:
+        button.hide()
+    else:
+        button.show()  
     button.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
 
 
 # Inject a button in the deck view
-def add_streak_btn(
+def update_streak_btn_js(
     web_content: WebContent, context: object | None
 ) -> None:
     if not isinstance(context, DeckBrowser):
         return
-    addon_name = mw.addonManager.addonFromModule(__name__)
-    try:
-        button.show()
-    except AttributeError:
-        pass
-    
+    web_content.body += f"""
+<script>
+setInterval(() => {{
+pycmd("update_streak_btn");
+}}, 100);    
+</script>
+    """
 
-# mw.addonManager.setWebExports(__name__, r"assets/.*.png")
-# mw.addonManager.setWebExports(__name__, r"assets/ui/.*.png")
-# mw.addonManager.setWebExports(__name__, r"assets/ui/.*.PNG")
-# mw.addonManager.setWebExports(__name__, r"assets/ui/.*.gif")
 
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
 aqt.gui_hooks.overview_will_render_content.append(lambda x,y: button.hide())
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
-gui_hooks.webview_will_set_content.append(add_streak_btn)
+gui_hooks.webview_will_set_content.append(update_streak_btn_js)
