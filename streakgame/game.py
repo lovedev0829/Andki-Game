@@ -31,7 +31,6 @@ import datetime
 if not DEBUG:
     import aqt.utils
 from aqt import gui_hooks, mw
-from streakgame.boring.config import ratio
 
 cwd = os.path.dirname(__file__)
 logger = logging.getLogger(__name__)
@@ -71,11 +70,10 @@ def change_music_volume(value):
 
 
 class Game:
-    def __init__(self, win, ratio):
+    def __init__(self, win):
         self.time_since_last_late_update = 1000  # 1000 for late update now
         self.win = pygame.Surface((WIDTH,HEIGHT))
         self.display = win
-        self.ratio = ratio
         self.running = True
 
         # _____________________Back___________________________________#
