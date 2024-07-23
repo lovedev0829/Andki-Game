@@ -55,10 +55,12 @@ def start_rpg():
     mw.win = win = QMainWindow()
     rpg_popup(win)
 
-
+screen_size = []
 def on_profile_open():
     pygame.init()
     info = pygame.display.Info()    
+    global screen_size
+    screen_size = [info.current_w, info.current_h]
     mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
     center_widget(mw.window())
     global button
@@ -88,11 +90,11 @@ def update_streak_btn():
     print(size)
     if not button: return
     size = [size.width(),size.height()]
-    if size[1] < 630 or size[0] < 750:
+    if size[1] < 630:
         button.hide()
     else:
         button.show()  
-    button.setGeometry(size[0]*0.35, size[1]*0.6, size[0]*0.3, size[1]*0.3)
+    button.setGeometry(size[0]*0.35+(size[0] - screen_size[0] if screen_size else 0)*0.14, size[1]*0.6, max(size[0]*0.3,400), size[1]*0.27)
 
 
 # Inject a button in the deck view
