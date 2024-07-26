@@ -24,21 +24,21 @@ cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
 size = [300,300]
-button = None
+
 started = False
 stats = manager()
 
 def bridge(handled, message: str, context):
     global started
+    print(message)
     if message == "start_rpg":
-            start_rpg()
+        start_rpg()
+    if message == "start_streak":
+        start_game()
     if message == "attribute":
         mw.win = QMainWindow()
         from scripts import utils
         attribute_popup(mw.win, True if utils.started else False)
-    if message == "update_streak_btn":
-        if button.width() != mw.window().width()*0.3:
-            update_streak_btn()
 
     if message in ["ease1", "ease2", "ease3", "ease4"]:
         add_msg_to_db(message)
@@ -64,20 +64,6 @@ def on_profile_open():
     screen_size = [info.current_w, info.current_h]
     mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
     center_widget(mw.window())
-    global button
-    button = QPushButton(mw)
-    cwd = os.getcwd()+os.sep[0]
-    addon_name = mw.addonManager.addonFromModule(__name__)
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)),addon_name ,f"assets/ui/sunset.gif").replace(cwd, '').replace(os.sep[0],'/')
-    button.setStyleSheet(f'''border-image : url({path});
-                
-                height: 100%;
-                width: 100%;                             
-                background-position: center;
-                background-repeat: no-repeat;                           ''')
-    update_streak_btn()    
-    button.show()
-    button.clicked.connect(start_game)
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     data = json.load(open(anki_data_path, 'r'))
@@ -85,16 +71,6 @@ def on_profile_open():
     json.dump(data, open(anki_data_path, "w"))
 
 
-def update_streak_btn():
-    global button
-    size = mw.window().geometry()
-    if not button: return
-    size = [size.width(),size.height()]
-    if size[1] < 630:
-        button.hide()
-    else:
-        button.show()  
-    button.setGeometry(size[0]*0.35+(size[0] - screen_size[0] if screen_size else 0)*0.14, size[1]*0.6, max(size[0]*0.3,400), size[1]*0.27)
 
 cwd = os.path.dirname(__file__)
 path = os.path.join(cwd, f"assets","image.png"    )
@@ -106,23 +82,33 @@ def update_streak_btn_js(
         return
     addon_name = mw.addonManager.addonFromModule(__name__)
     cwd = os.path.dirname(__file__)
-    path = os.path.join(cwd, f"assets","sunset.gif")
+    path = os.path.join(cwd, f"assets", "ui","sunset.gif")
     base64_image = image_to_base64(path)
+    print(len(base64_image))
     web_content.body += f"""
-<img src="{path}" id="foo">
-<script>
-setInterval(() => {{
-    pycmd("update_streak_btn");
-    document.getElementById("foo").src = "{base64_image}";
+    <style>
+        body {{
+            text-align: center;
+        }}    
+        .image-button {{
+            background-color: transparent;
+            cursor: pointer;
+        }}
 
-}}, 100);    
-</script>
+        .image-button img {{
+            align-content: center;
+            width: 504px;  /* Adjust the size as needed */
+            height: 250px; /* Adjust the size as needed */
+        }}    
+    </style>
+    <button class="image-button" onclick="pycmd('start_streak')">
+        <img src="{base64_image}" alt="gif">
+    </button>
     """
 mw.addonManager.setWebExports(__name__, path)
 
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
-aqt.gui_hooks.overview_will_render_content.append(lambda x,y: button.hide())
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
 gui_hooks.webview_will_set_content.append(update_streak_btn_js)
