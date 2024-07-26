@@ -3,6 +3,7 @@ import json
 import os
 import aqt
 from aqt import mw
+import base64
 from scripts.constants import anki_data_path
 
 
@@ -54,6 +55,10 @@ def add_msg_to_db(msg):
     with open(anki_data_path, "w") as f:
         json.dump(data, f)
 started = False
+def image_to_base64(image_path):
+    with open(image_path, 'rb') as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+    return f"data:image/gif;base64,{encoded_string}"
 # Inject a button in the deck view
 def add_btn(
         deck_browser: "aqt.overview.Overview", 

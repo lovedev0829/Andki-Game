@@ -5,13 +5,14 @@ import os.path
 import sys
 sys.path.append(os.path.dirname(__file__))
 import threading
+import base64
 import aqt.utils
 import pygame
 from aqt import gui_hooks, mw
 from aqt.qt import * 
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, manager
+from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, image_to_base64, manager
 import asyncio, time
 from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
 from aqt.deckbrowser import DeckBrowser
@@ -87,7 +88,6 @@ def on_profile_open():
 def update_streak_btn():
     global button
     size = mw.window().geometry()
-    print(size)
     if not button: return
     size = [size.width(),size.height()]
     if size[1] < 630:
@@ -96,21 +96,29 @@ def update_streak_btn():
         button.show()  
     button.setGeometry(size[0]*0.35+(size[0] - screen_size[0] if screen_size else 0)*0.14, size[1]*0.6, max(size[0]*0.3,400), size[1]*0.27)
 
-
+cwd = os.path.dirname(__file__)
+path = os.path.join(cwd, f"assets","image.png"    )
 # Inject a button in the deck view
 def update_streak_btn_js(
     web_content: WebContent, context: object | None
 ) -> None:
     if not isinstance(context, DeckBrowser):
         return
+    addon_name = mw.addonManager.addonFromModule(__name__)
+    cwd = os.path.dirname(__file__)
+    path = os.path.join(cwd, f"assets","sunset.gif")
+    base64_image = image_to_base64(path)
     web_content.body += f"""
+<img src="{path}" id="foo">
 <script>
 setInterval(() => {{
-pycmd("update_streak_btn");
+    pycmd("update_streak_btn");
+    document.getElementById("foo").src = "{base64_image}";
+
 }}, 100);    
 </script>
     """
-
+mw.addonManager.setWebExports(__name__, path)
 
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
