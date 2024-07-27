@@ -4,9 +4,10 @@ import os
 import aqt
 from aqt import mw
 import base64
+import aqt.overview
 from scripts.constants import anki_data_path
 
-
+cwd = os.path.dirname(os.path.dirname(__file__))
 # requires arguments a, b, c because of how Anki calls the hook
 def process_file(a, b, c):
     # get today's ordinal date
@@ -34,6 +35,28 @@ def add_data(data, value):
     json.dump(anki_data, open(anki_data_path,'w'))
 def get_data() -> dict:
     return json.load(open(os.path.join(os.getcwd(),anki_data_path), 'r'))
+
+def get_html(image):
+    return f"""
+    <style>
+        body {{
+            text-align: center;
+        }}    
+        .image-button {{
+            background-color: transparent;
+            cursor: pointer;
+        }}
+
+        .image-button img {{
+            align-content: center;
+            width: 504px;  /* Adjust the size as needed */
+            height: 250px; /* Adjust the size as needed */
+        }}    
+    </style>
+    <button class="image-button" onclick="pycmd('start_streak')">
+        <img src="{image}" alt="gif">
+    </button>
+    """
 
 def center_widget(widget):
     window_size = widget.geometry().size()
@@ -64,17 +87,8 @@ def add_btn(
         deck_browser: "aqt.overview.Overview", 
         content: "aqt.overview.OverviewContent",
 ) -> None:
-    global started
-    import bs4
-    soup = bs4.BeautifulSoup(content.table, "html.parser")
-    # add a button called "Start learning with AnkiRPG"
-    btn = soup.new_tag("button")
-    btn["class"] = "btn"
-    btn.string = "Start learning with AnkiNick-Mon."
-    # hook
-    btn["onclick"] = "pycmd('start_rpg');pycmd('study');"
-    soup.append(btn)
-    content.table = str(soup)
+    path = os.path.join(cwd, f"assets", "ui","sunset.gif")   
+    content.table += get_html(image_to_base64(path))
 
 class manager:
     def __init__(self) -> None:

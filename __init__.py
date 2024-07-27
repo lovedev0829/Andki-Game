@@ -12,7 +12,7 @@ from aqt import gui_hooks, mw
 from aqt.qt import * 
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, image_to_base64, manager
+from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, manager
 import asyncio, time
 from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
 from aqt.deckbrowser import DeckBrowser
@@ -85,26 +85,7 @@ def update_streak_btn_js(
     path = os.path.join(cwd, f"assets", "ui","sunset.gif")
     base64_image = image_to_base64(path)
     print(len(base64_image))
-    web_content.body += f"""
-    <style>
-        body {{
-            text-align: center;
-        }}    
-        .image-button {{
-            background-color: transparent;
-            cursor: pointer;
-        }}
-
-        .image-button img {{
-            align-content: center;
-            width: 504px;  /* Adjust the size as needed */
-            height: 250px; /* Adjust the size as needed */
-        }}    
-    </style>
-    <button class="image-button" onclick="pycmd('start_streak')">
-        <img src="{base64_image}" alt="gif">
-    </button>
-    """
+    web_content.body += get_html(base64_image)
 mw.addonManager.setWebExports(__name__, path)
 
 gui_hooks.profile_did_open.append(on_profile_open)
