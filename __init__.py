@@ -84,8 +84,7 @@ def update_streak_btn_js(
     cwd = os.path.dirname(__file__)
     path = os.path.join(cwd, f"assets", "ui","sunset.gif")
     base64_image = image_to_base64(path)
-    print(len(base64_image))
-    web_content.body += get_html(base64_image)
+    web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, path)
 
 gui_hooks.profile_did_open.append(on_profile_open)

@@ -36,7 +36,7 @@ def add_data(data, value):
 def get_data() -> dict:
     return json.load(open(os.path.join(os.getcwd(),anki_data_path), 'r'))
 
-def get_html(image):
+def get_html(image, message):
     return f"""
     <style>
         body {{
@@ -53,7 +53,7 @@ def get_html(image):
             height: 250px; /* Adjust the size as needed */
         }}    
     </style>
-    <button class="image-button" onclick="pycmd('start_streak')">
+    <button class="image-button" onclick="pycmd('{message}')">
         <img src="{image}" alt="gif">
     </button>
     """
@@ -88,7 +88,7 @@ def add_btn(
         content: "aqt.overview.OverviewContent",
 ) -> None:
     path = os.path.join(cwd, f"assets", "ui","sunset.gif")   
-    content.table += get_html(image_to_base64(path))
+    content.table += get_html(image_to_base64(path), "start_rpg")
 
 class manager:
     def __init__(self) -> None:
