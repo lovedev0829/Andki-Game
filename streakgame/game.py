@@ -223,7 +223,8 @@ class Game:
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
-        if streak:
+        print(previous_streak, streak)
+        if streak > previous_streak:
             # We water all the plants based on the percentage of cards learned
             max_watering = config.MAX_WATERING
             # print(f"learned {learned_today} cards today")
