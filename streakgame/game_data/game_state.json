@@ -3,71 +3,122 @@
         "plants": [
             {
                 "id": 0,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 1,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 2,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 3,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 4,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 5,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 6,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 7,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 8,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 9,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 10,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 11,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 12,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 13,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 14,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 15,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 16,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 17,
@@ -83,19 +134,31 @@
             },
             {
                 "id": 20,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 21,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 22,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 23,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 24,
@@ -115,15 +178,24 @@
             },
             {
                 "id": 28,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 29,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 30,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 31,
@@ -143,51 +215,87 @@
             },
             {
                 "id": 35,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 36,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 37,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 38,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 39,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 40,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 41,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 42,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 43,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 44,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 45,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 46,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             }
         ]
     },
@@ -216,31 +324,19 @@
             },
             {
                 "id": 50,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 51,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 52,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 53,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 54,
@@ -252,76 +348,58 @@
             {
                 "id": 55,
                 "plant": {
-                    "type": "fire",
+                    "type": "water",
                     "development_index": 0
                 }
             },
             {
                 "id": 56,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 57,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 58,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 59,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 60,
+                "plant": null
+            },
+            {
+                "id": 61,
                 "plant": {
                     "type": "fire",
                     "development_index": 0
                 }
             },
             {
-                "id": 61,
+                "id": 62,
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
+            },
+            {
+                "id": 63,
                 "plant": {
                     "type": "water",
                     "development_index": 0
                 }
             },
             {
-                "id": 62,
+                "id": 64,
                 "plant": null
             },
             {
-                "id": 63,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
-            },
-            {
-                "id": 64,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
-            },
-            {
                 "id": 65,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 66,
@@ -333,32 +411,38 @@
             },
             {
                 "id": 68,
-                "plant": null
-            },
-            {
-                "id": 69,
-                "plant": {
-                    "type": "water",
-                    "development_index": 0
-                }
-            },
-            {
-                "id": 70,
-                "plant": {
-                    "type": "water",
-                    "development_index": 0
-                }
-            },
-            {
-                "id": 71,
                 "plant": {
                     "type": "fire",
                     "development_index": 0
                 }
             },
             {
+                "id": 69,
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
+            },
+            {
+                "id": 70,
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
+            },
+            {
+                "id": 71,
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
+            },
+            {
                 "id": 72,
-                "plant": null
+                "plant": {
+                    "type": "water",
+                    "development_index": 0
+                }
             },
             {
                 "id": 73,
@@ -370,23 +454,29 @@
             },
             {
                 "id": 75,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 76,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 77,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 78,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -413,21 +503,21 @@
             {
                 "id": 84,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 85,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 86,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -438,7 +528,7 @@
             {
                 "id": 88,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -452,14 +542,14 @@
             {
                 "id": 90,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 91,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -473,7 +563,7 @@
             {
                 "id": 93,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -484,7 +574,7 @@
             {
                 "id": 95,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -498,7 +588,7 @@
             {
                 "id": 97,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -512,14 +602,14 @@
             {
                 "id": 99,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 100,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -533,7 +623,7 @@
             {
                 "id": 102,
                 "plant": {
-                    "type": "water",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
@@ -561,120 +651,132 @@
             {
                 "id": 106,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 107,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 108,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 109,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 110,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 111,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 112,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 113,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 114,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 115,
-                "plant": {
-                    "type": "ice",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 116,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 117,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 118,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 119,
                 "plant": {
-                    "type": "ice",
+                    "type": "fire",
                     "development_index": 0
                 }
             },
             {
                 "id": 120,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 121,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 122,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 123,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 124,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 125,
@@ -699,23 +801,38 @@
             },
             {
                 "id": 128,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 129,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 130,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 131,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 132,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 133,
@@ -740,15 +857,24 @@
             },
             {
                 "id": 136,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 137,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 138,
-                "plant": null
+                "plant": {
+                    "type": "fire",
+                    "development_index": 0
+                }
             },
             {
                 "id": 139,
@@ -764,10 +890,7 @@
             },
             {
                 "id": 142,
-                "plant": {
-                    "type": "fire",
-                    "development_index": 0
-                }
+                "plant": null
             },
             {
                 "id": 143,
@@ -778,8 +901,14 @@
             }
         ]
     },
-    "inventory": {},
+    "inventory": {
+        "fire fruit": 41,
+        "water fruit": 25,
+        "ice fruit": 14,
+        "water seeds": 27,
+        "ice seeds": 75
+    },
     "cards_learned_today": 0,
     "time": 739096,
-    "wallet": 7110
+    "wallet": 4880
 }

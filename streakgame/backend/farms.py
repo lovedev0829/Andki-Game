@@ -224,11 +224,10 @@ class Farm(objects.GameObject, objects.Clickable):
             return None
         return self.plants_location[plant_id]
 
-    def water_all(self, n):
+    def water_all(self, n=1):
         for plant_loc in self.plants_location.values():
             if plant_loc.plant is not None:
-                for _ in range(n):
-                    plant_loc.plant.water()
+                plant_loc.plant.water(n)
 
     def consume_seed(self, seed_type):
         if self.farm_inventory is None:
@@ -397,9 +396,9 @@ class Plant:
     def is_ready_to_harvest(self):
         return self.development_index == self.max_development_index
 
-    def water(self):
-        if self.development_index < len(self.imgs) - 1:
-            self.development_index += 1
+    def water(self, n):
+        if self.development_index + n < len(self.imgs) - 1:
+            self.development_index += n
             self.requires_update = True
 
     def update_camera(self, camera_rect):

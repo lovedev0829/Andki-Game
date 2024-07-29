@@ -148,13 +148,13 @@ class Game:
         self.anki_data_json = json.load(open(anki_data_path, "r"))
         self.learning_indicator.set_nb_cards_total(self.anki_data_json["nb_cards_to_review_today"])
 
+    
+        due_tree = mw.col.sched.deck_due_tree()
+        to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
+        if to_review:
+            self.create_popup("",f"You have {to_review} cards to learn today. Good luck !")
         self.update_learned_cards()
-        if not config.DEBUG:
-            due_tree = mw.col.sched.deck_due_tree()
-            to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
-            if to_review:
-                self.create_popup("",f"You have {to_review} cards to learn today. Good luck !")
-            self.check_for_streak_earnings()
+        self.check_for_streak_earnings()
             
     def check_for_streak_earnings(self):
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
@@ -220,34 +220,21 @@ class Game:
         pass
 
     def update_learned_cards(self):
-        self.anki_data_json = json.load(open(anki_data_path, "r"))
-        data = self.anki_data_json
-        if "time_ordinal" not in data:
-            return
-        if data["time_ordinal"] != datetime.datetime.today().toordinal():
-            self.learning_indicator.set_nb_cards_learned(0)
-            return
-        else:
-            prev = self.learning_indicator.nb_cards_learned
-            self.learning_indicator.set_nb_cards_learned(data["nb_cards_learned_today"])
-
-            # If we learned cards
-            if data["nb_cards_learned_today"] > prev:
-                # We water all the plants based on the percentage of cards learned
-                max_watering = config.MAX_WATERING
-                learned_today = data["nb_cards_learned_today"]
-                # print(f"learned {learned_today} cards today")
-                learned_since_last_connection = learned_today - prev
-                percentage = (learned_since_last_connection / self.learning_indicator.nb_cards_total)
-                nb_watering = int(percentage * max_watering) + 1
-                # print(f"learned {learned_today} cards today, {learned_since_last_connection} since last connection, "
-                    #   f"percentage: {percentage}, nb_watering: {nb_watering}")
-                for farm in self.ptmx.farms:
-                    farm.water_all(nb_watering)
-
-                self.create_popup("Good Job !",
-                                  f"You learned {learned_since_last_connection} since last time !\n"
-                                  f"Your plants have been watered accordingly !")
+        previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
+        streak, ordinal = get_new_streak()
+        mw.col.conf["streak"] = streak, ordinal
+        if streak:
+            # We water all the plants based on the percentage of cards learned
+            max_watering = config.MAX_WATERING
+            # print(f"learned {learned_today} cards today")
+            
+            # print(f"learned {learned_today} cards today, {learned_since_last_connection} since last connection, "
+                #   f"percentage: {percentage}, nb_watering: {nb_watering}")
+            for farm in self.ptmx.farms:
+                farm.water_all()
+            self.create_popup("Good Job !",
+                                f"You have a {streak} day(s) streak !\n"
+                                f"Your plants have been watered accordingly !")
 
     def create_popup(self, title, text):
         popup = Popup(title=title, text=text, manager=self.ui_manager)
@@ -370,7 +357,7 @@ class Pytmx:
         self.data_tmx = pytmx.load_pygame(os.path.join(cwd, "assets", "map", "map_with_objects.tmx"))
         pyscroll_data = pyscroll.data.TiledMapData(self.data_tmx)
         self.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.win.get_size(), clamp_camera=True)
-        self.farms = []
+        self.farms: list[Farm] = []
         self.interactable_objects = []
         self.objects = SortedGroup()
         self.objects_under_npc = SortedGroup()
