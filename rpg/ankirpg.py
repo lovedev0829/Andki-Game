@@ -115,7 +115,6 @@ class AnkiRPG:
 
     def events(self):
         events = pygame.event.get()
-        print(mw.window().geometry())
         for event in events:
             self.group.handle_event(event)
             if event.type == pygame.QUIT:

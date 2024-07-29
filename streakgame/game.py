@@ -127,10 +127,6 @@ class Game:
         self.anki_data_json = None
         self.load_save()
         self.load_anki_data()
-        due_tree = mw.col.sched.deck_due_tree()
-        to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
-        if to_review:
-            self.create_popup("",f"You have {to_review} cards to learn today. Good luck !")
 
         # Music
     def play_audio(self):
@@ -154,16 +150,20 @@ class Game:
 
         self.update_learned_cards()
         if not config.DEBUG:
+            due_tree = mw.col.sched.deck_due_tree()
+            to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
+            if to_review:
+                self.create_popup("",f"You have {to_review} cards to learn today. Good luck !")
             self.check_for_streak_earnings()
-
+            
     def check_for_streak_earnings(self):
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
-
+        print(streak)
         if streak > previous_streak:
             # Give the player some money depending on the streak
-            money = 100 * streak
+            money = min(70, 10 * streak)
             self.wallet.add_money(money)
             self.create_popup("Good Job !",
                               f"You have a {streak} day(s) streak !\n Here is a little reward !\n +{money} coins !")

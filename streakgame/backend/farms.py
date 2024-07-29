@@ -173,7 +173,7 @@ class Farm(objects.GameObject, objects.Clickable):
         elif not self.menu.is_open and not was_open:
             if pygame.mouse.get_pressed(3)[0]:
                 if selected_tool is not None:
-                    pos = pygame.mouse.get_pos()
+                    pos = list(pygame.mouse.get_pos())
                     pos[0] *= ratio
                     pos[1] *= ratio
                     if selected_tool.type == FarmMenuItem.seed:
@@ -205,7 +205,7 @@ class Farm(objects.GameObject, objects.Clickable):
         # draw cursor tool
         if selected_tool is not None:
             img = selected_tool.zoom_buffer
-            win.blit(img, img.get_rect(center=[pos*ratio for pos in pygame.mouse.get_pos()[0]]))
+            win.blit(img, img.get_rect(center=[pos*ratio for pos in pygame.mouse.get_pos()]))
 
         points = [p.coords for p in self.farm_zone]
         if config.DEBUG:
