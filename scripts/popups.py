@@ -1,5 +1,6 @@
 from scripts.utils import center_widget, get_data, change_data
 from aqt.qt import *
+
 import threading
 from aqt import mw
 from aqt import utils
@@ -308,8 +309,69 @@ class ankimon_selector:
 			self.attribute.update_ui()
 		self.counter += 1
 	def on_scroll(self, value):
+
 		for element in self.win.children():
 			element.move(element.x(), element.y()-value)
+
+
+class LoginHandler:
+	def __init__(self, main_window:QMainWindow):
+		self.main_window = main_window
+		self.initUI()
+
+	def initUI(self):
+		# Set the main window properties
+		self.main_window.setWindowTitle('Login')
+		self.main_window.setGeometry(100, 100, 280, 150)
+		center_widget(self.main_window)
+		# Create central widget
+		self.central_widget = QWidget(self.main_window)
+		self.main_window.setCentralWidget(self.central_widget)
+		
+		# Create layout
+		layout = QVBoxLayout()
+		
+		# Create and add widgets to the layout
+		self.label_username = QLabel('Username:', self.central_widget)
+		layout.addWidget(self.label_username)
+		
+		self.textbox_username = QLineEdit(self.central_widget)
+		layout.addWidget(self.textbox_username)
+		
+		self.label_password = QLabel('Password:', self.central_widget)
+		layout.addWidget(self.label_password)
+		
+		self.textbox_password = QLineEdit(self.central_widget)
+		layout.addWidget(self.textbox_password)
+		
+		self.button_login = QPushButton('Login', self.central_widget)
+		self.button_login.clicked.connect(lambda :self.handle_login())
+		layout.addWidget(self.button_login)
+		
+		# Set the layout on the central widget
+		self.central_widget.setLayout(layout)
+		self.main_window.show()
+        
+	def handle_login(self):
+		username = self.textbox_username.text()
+		password = self.textbox_password.text()
+		print(username, password)
+		# Perform your login logic here (this is a simple example)
+		if username == "user" and password == "pass":
+			QMessageBox.information(self.main_window, 'Login', 'Login successful!')
+			self.textbox_username.clear()
+			self.textbox_password.clear()
+			delete_win()
+			self.main_window = None
+			from streakgame.main import main
+			main()
+			# Proceed to the next window or action
+		else:
+			QMessageBox.warning(self.main_window, 'Login', 'Incorrect username or password.')
+			self.textbox_password.clear()
+
+
+
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)

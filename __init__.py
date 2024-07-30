@@ -14,7 +14,7 @@ import streakgame.main
 from rpg.main import mainloop
 from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, manager
 import asyncio, time
-from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup
+from scripts.popups import rpg_popup, trainer_challenge, trainer_popup, attribute_popup, LoginHandler
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
 
@@ -46,10 +46,8 @@ def bridge(handled, message: str, context):
 
 
 def start_game():
-    try:
-        streakgame.main.main()
-    except pygame.error as e:
-        print(e)
+    mw.win = win = QMainWindow() 
+    LoginHandler(win)
 
 
 def start_rpg():

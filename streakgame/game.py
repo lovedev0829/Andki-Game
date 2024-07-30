@@ -224,15 +224,11 @@ class Game:
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
         print(previous_streak, streak)
-        if streak > previous_streak:
-            # We water all the plants based on the percentage of cards learned
-            max_watering = config.MAX_WATERING
-            # print(f"learned {learned_today} cards today")
-            
-            # print(f"learned {learned_today} cards today, {learned_since_last_connection} since last connection, "
-                #   f"percentage: {percentage}, nb_watering: {nb_watering}")
-            for farm in self.ptmx.farms:
-                farm.water_all()
+        
+    
+        for farm in self.ptmx.farms:
+            farm.water_all( streak - previous_streak)
+        if  streak > previous_streak:
             self.create_popup("Good Job !",
                                 f"You have a {streak} day(s) streak !\n"
                                 f"Your plants have been watered accordingly !")
