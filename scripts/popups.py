@@ -322,7 +322,7 @@ class LoginHandler:
 	def initUI(self):
 		# Set the main window properties
 		self.main_window.setWindowTitle('Login')
-		self.main_window.setGeometry(100, 100, 280, 150)
+		self.main_window.setFixedSize(280, 150)
 		center_widget(self.main_window)
 		# Create central widget
 		self.central_widget = QWidget(self.main_window)
