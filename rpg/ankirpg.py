@@ -25,9 +25,9 @@ logger = logging.getLogger(__name__)
 cwd = os.path.dirname(__file__)
 parent = os.path.dirname(cwd)
 data_path = Path(parent) / "data.json"
-
-BOUNDING_RECT = pygame.Rect(300, -700, 600, 200)
-
+info = pygame.display.Info()
+size = info.current_w,info.current_h
+BOUNDING_RECT = pygame.Rect(-600+info.current_w/3, -700, 1000, 200)
 
 class PlayerType(Enum):
     Human = 1
@@ -164,11 +164,8 @@ class AnkiRPG:
             if self.engine.perform_move((self.selected_mon.i, self.selected_mon.j), (i, j)):
                 self.selected_mon = None
                 self.selected_tile = None
-                self.change_mode(Mode.Idle)
-                
-                
+                self.change_mode(Mode.Idle)                
 
-            
             elif self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (i, j)):
                 
                 self.selected_mon = None
@@ -203,13 +200,6 @@ class AnkiRPG:
                                     self.map.ortho_to_iso(j + 1, i + 1),
                                     self.map.ortho_to_iso(j, i + 1)
                                 ], 2)
-
-        # draw buttons bottom right
-        # if self.selected_mon:
-        #     self.btn_attack.draw(self.win, self.win.get_width() - self.btn_attack.rect.width - 10,
-        #                          self.win.get_height() - self.btn_attack.rect.height - 10)
-        #     self.btn_move.draw(self.win, self.win.get_width() - self.btn_move.rect.width - 10,
-        #                        self.win.get_height() - self.btn_move.rect.height - self.btn_attack.rect.height - 20)
 
         # show whose turn it is
         text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"

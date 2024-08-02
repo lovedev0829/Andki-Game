@@ -134,7 +134,10 @@ class Engine:
             return False
         attacker.attack(defender)
         if defender.health <= 0:
-            defender = None
+            if defender in self.player1_mobs:
+                self.player1_mobs.remove(defender)
+            else:
+                self.player2_mobs.remove(defender)
         self.switch_turn()
         return True
 
