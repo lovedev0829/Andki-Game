@@ -17,7 +17,7 @@ from rpg.engine import Player, Engine, Mob, Mode
 from pathlib import Path
 from aqt import mw
 from scripts.utils import center_widget
-
+import pickle
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
@@ -36,16 +36,16 @@ class PlayerType(Enum):
 
 
 class AnkiRPG:
-    def __init__(self, win:pygame.Surface, ankimons:dict):
+    def __init__(self, win:pygame.Surface, ankimons:dict, load_save:bool=False):
         self.win = win
         self.clock = pygame.time.Clock()
         self.running = False
         self.map = Pytmx(self.win)
         self.highlighted_tile = None
         self.ankimons = ankimons
-
+        
         self.engine = Engine(self.map.free_places, ankimons)
-
+        
         self.players = {
             Player.Player1: PlayerType.Human,
             Player.Player2: PlayerType.Bot
@@ -68,6 +68,9 @@ class AnkiRPG:
         self.counter = 0
         self.learned_cards = 0
         self.learned_card_checker()
+        if load_save:
+            self.load()
+
 
     def learned_card_checker(self):
         with open(data_path, "r") as f:
@@ -82,6 +85,7 @@ class AnkiRPG:
     def run(self):
         self.running = True
         frame = 0 
+        
         while self.running:
             self.clock.tick(60)
             frame = (frame+1) % 60
@@ -92,11 +96,31 @@ class AnkiRPG:
             self.bot_event()
             self.update()
             self.draw()
-
+        self.save()
         pygame.quit()
+    
+    def save(self):
+        path = os.path.join(cwd, 'game.save')
+        for mob in self.engine.player1_mobs+self.engine.player2_mobs:
+            mob.img = None
+        data = {
+            "turn": self.engine.turn,
+            'player1_mobs' : self.engine.player1_mobs,
+            'player2_mobs' : self.engine.player2_mobs,
+        }
+        print(self.engine.player1_mobs)
+        pickle.dump(data, open(path, 'wb'))
         
+    def load(self):
+        data = pickle.load(open(os.path.join(cwd, 'game.save'), 'rb'))
+        self.engine.turn = data['turn']
+        self.engine.player1_mobs = data['player1_mobs']
+        self.engine.player2_mobs = data['player2_mobs']
+        for mob in self.engine.player1_mobs + self.engine.player2_mobs:
+            mob.img = mob.load_image()
 
-    def bot_event(self):
+    def bot_event(self):    
+        print(self.engine.turn)
         if self.players.get(self.engine.turn) != PlayerType.Bot:
             return
         # randomly move a mob

@@ -13,9 +13,9 @@ from scripts.constants import *
 def delete_win():
     mw.win = None
 
-def start_chess(ankimons:dict):
+def start_chess(ankimons:dict, load_save=False):
 	delete_win()
-	mainloop(ankimons)	
+	mainloop(ankimons, load_save)
 started = False
 class rpg_popup:
 	def __init__(self, choose_option) -> None:
@@ -47,7 +47,7 @@ class rpg_popup:
 			self.continuebutton.setSizeIncrement(QSize(0, 0))
 			self.continuebutton.setBaseSize(QSize(0, 0))
 			self.continuebutton.setObjectName("continuebutton")
-			self.continuebutton.clicked.connect(start_chess)
+			self.continuebutton.clicked.connect(lambda :start_chess({}, True))
 
 		self.menubar = QMenuBar(choose_option)
 		self.menubar.setGeometry(QRect(0, 0, 598, 21))

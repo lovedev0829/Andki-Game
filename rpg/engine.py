@@ -29,10 +29,13 @@ class Mob:
         self.j = j
         self.name = name
         self.element = element
-        self.img = images.load_mob_img(name)
+        self.img = self.load_image()
         self.health = 100
         self.dmg = 10
         self.owner = owner
+    
+    def load_image(self):
+        return images.load_mob_img(self.name)
 
     def move(self, i, j):
         self.i = i
@@ -75,13 +78,14 @@ class Engine:
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
         names = list(ankimons.keys())
-        self.add_mob(Mob(17, 21, names[0], ankimons[names[0]], Player.Player1))
-        self.add_mob(Mob(18, 21, names[1], ankimons[names[1]], Player.Player1))
-        self.add_mob(Mob(19, 21, names[2], ankimons[names[2]], Player.Player1))
+        if ankimons:
+            self.add_mob(Mob(17, 21, names[0], ankimons[names[0]], Player.Player1))
+            self.add_mob(Mob(18, 21, names[1], ankimons[names[1]], Player.Player1))
+            self.add_mob(Mob(19, 21, names[2], ankimons[names[2]], Player.Player1))
 
-        self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2))
-        self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2))
-        self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2))
+            self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2))
 
         self.mode: Mode = Mode.Idle
         
