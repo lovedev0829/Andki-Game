@@ -153,6 +153,15 @@ class Engine:
                     print(pos[0], i+pos[1])
                     moves.add((pos[0], i+pos[1]))                    
             return list(moves)
+        if element == 'ice':
+            for i in range(-max_dist, max_dist+1):
+                pos1 = i+pos[0], i+pos[1]
+                if self.is_place_empty(*pos1):
+                    moves.add(pos1)
+                pos1 = i+pos[0], pos[1]-i
+                if self.is_place_empty(*pos1):
+                    moves.add(pos1)
+            return list(moves)        
         to_see = [start, None]
         current_distance = 0
         seen = set()
