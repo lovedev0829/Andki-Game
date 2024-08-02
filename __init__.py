@@ -93,7 +93,6 @@ def update_moves(card, ease):
         data['moves'] += 1
     json.dump(data, open(anki_data_path, "w"))
 
-# gui_hooks.reviewer_did_answer_card(update_moves)
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)

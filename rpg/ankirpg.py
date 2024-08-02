@@ -113,7 +113,7 @@ class AnkiRPG:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.players.get(self.engine.turn) == PlayerType.Human and self.learned_cards > 0:
+            if self.players.get(self.engine.turn) == PlayerType.Human:
                 if event.type == pygame.MOUSEMOTION:
                     x, y = pygame.mouse.get_pos()
                     self.highlighted_tile = x, y
@@ -133,7 +133,7 @@ class AnkiRPG:
                                 self.attackable_tiles = self.engine.get_attackable_cases((arena_i, arena_j))
 
 
-                elif self.engine.mode == Mode.active:
+                elif self.engine.mode == Mode.active and self.learned_cards > 0:
                     self.handle_event(event)
 
         move = pygame.mouse.get_rel()
@@ -166,6 +166,11 @@ class AnkiRPG:
                 self.selected_mon = None
                 self.selected_tile = None
                 self.change_mode(Mode.Idle)
+                self.learned_cards -= 1
+                data = json.load(open(data_path, 'r'))
+                data['moves'] = self.learned_cards
+                json.dump(data, open(data_path, 'w'))
+
 
     def update(self):
         pass
