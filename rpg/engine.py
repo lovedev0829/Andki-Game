@@ -5,8 +5,20 @@ import images
 import pygame
 from pygame import Color
 import logging
+# This sets the root logger to write to stdout (your console).
+# Your script/app needs to call this somewhere at least once.
+logging.basicConfig()
 
-logger = logging.getLogger(__name__)
+# By default the root logger is set to WARNING and all loggers you define
+# inherit that value. Here we set the root logger to NOTSET. This logging
+# level is automatically inherited by all existing and new sub-loggers
+# that do not set a less verbose level.
+logging.root.setLevel(logging.NOTSET)
+
+# The following line sets the root logger level as well.
+# It's equivalent to both previous statements combined:
+logging.basicConfig(level=logging.NOTSET)
+logger = logging.getLogger('game')
 
 MAX_MOVE_DISTANCE = 3
 
@@ -45,7 +57,6 @@ class Mob:
             pygame.draw.rect(win, Color("black"), (x - 16, y - 16, 32, 4))
             pygame.draw.rect(win, Color("red"), (x - 16, y - 16, 32 * self.health / 100, 4))
 
-
 class Player(Enum):
     Player1 = 1
     Player2 = 2
@@ -53,8 +64,8 @@ class Player(Enum):
 
 class Mode(Enum):
     Idle = 0
-    Move = 1
-    Attack = 2
+    active = 1
+
 
 
 class Engine:
@@ -86,7 +97,7 @@ class Engine:
 
     def is_place_empty(self, i: int, j: int) -> bool:
         """Returns True if the place is not a terrain and no mob is on it"""
-        return (j, i) in self.free_places and not self.contains_mob(i, j)
+        return (j, i) in self.free_places
 
     def get_mob(self, i: int, j: int) -> Optional[Mob]:
         for mob in self.player1_mobs + self.player2_mobs:
@@ -97,11 +108,11 @@ class Engine:
     def perform_move(self, start: tuple[int, int], end: tuple[int, int]) -> bool:
         logger.debug(f"Trying to move from {start} to {end}")
         mob = self.get_mob(*start)
-
+        if start == end: return False
         if not self.is_place_empty(*end):
             logger.debug("End place is not empty")
             return False
-        if (end[0], end[1]) not in self.get_accessible_cases((start[0], start[1]), mob.element):
+        if (end[0], end[1]) not in self.get_moves((start[0], start[1])):
             logger.debug("End place is not accessible")
             return False
         mob.move(*end)
@@ -112,7 +123,9 @@ class Engine:
         logger.debug(f"Trying to attack from {start} to {end}")
         attacker = self.get_mob(*start)
         defender = self.get_mob(*end)
-
+        
+        if start == end: return False
+        if not defender: return False
         if attacker.owner == defender.owner:
             logger.debug("Can't attack an ally")
             return False
@@ -129,19 +142,14 @@ class Engine:
     def get_all_mobs(self):
         return self.player1_mobs + self.player2_mobs
 
-    def get_accessible_cases(self, start: tuple[int, int], element:str) -> list[tuple[int, int]]:
+    def get_accessible_cases(self, start: tuple[int, int], element=None) -> list[tuple[int, int]]:
+        if not element:
+            element = self.get_mob(*start).element.lower()
         element = element.lower()
         if element == 'fire':
             max_dist = 2
         else:
             max_dist = 3
-        def get_neighbors(i, j):
-            neighbors = []
-            for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
-                ni, nj = i + di, j + dj
-                if self.is_place_empty(ni, nj):
-                    neighbors.append((ni, nj))
-            return neighbors
 
         moves = set()
         pos = start
@@ -150,7 +158,6 @@ class Engine:
                 if self.is_place_empty(i+pos[0], pos[1]):
                     moves.add((i+pos[0],pos[1]))
                 if self.is_place_empty(pos[0], i+pos[1]):
-                    print(pos[0], i+pos[1])
                     moves.add((pos[0], i+pos[1]))                    
             return list(moves)
         if element == 'ice':
@@ -162,7 +169,7 @@ class Engine:
                 if self.is_place_empty(*pos1):
                     moves.add(pos1)
             return list(moves)     
-           
+            
         to_see = [start, None]
         current_distance = 0
         seen = set()
@@ -177,18 +184,22 @@ class Engine:
             if current in seen:
                 continue
             seen.add(current)
-            for neighbor in get_neighbors(*current):
+            for neighbor in self.get_neighbors(*current):
                 if neighbor not in seen:
                     to_see.append(neighbor)
         return list(seen)
 
-    def get_attackable_cases(self, start: tuple[int, int]) -> list[tuple[int, int]]:
-        def get_neighbors(i, j):
-            neighbors = []
-            for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
-                ni, nj = i + di, j + dj
-                if self.contains_mob(ni, nj):
-                    neighbors.append((ni, nj))
-            return neighbors
+    def get_moves(self, start):
+        return list(filter(lambda x: not self.contains_mob(*x), self.get_accessible_cases(start)))
 
-        return get_neighbors(*start)
+    def get_attackable_cases(self, start: tuple[int, int]) -> list[tuple[int, int]]:
+        # return self.get_accessible_cases(start, self.get_mob(*start).element)
+        return list(filter(lambda x: not self.contains_mob(*x) or self.get_mob(*x).owner != self.turn ,self.get_accessible_cases(start)))
+
+    def get_neighbors(self, i, j):
+        neighbors = []
+        for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+            ni, nj = i + di, j + dj
+            if self.is_place_empty(ni, nj):
+                neighbors.append((ni, nj))
+        return neighbors

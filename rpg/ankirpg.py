@@ -63,16 +63,16 @@ class AnkiRPG:
             "fixed_width": 300,
         }
         
-        self.btn_attack = PygameUIKit.button.ButtonText(text="Attack",
-                                                        rect_color=Colors.BTN_ATTACK_BG,
-                                                        font=self.font,
-                                                        outline_color=Colors.BTN_ATTACK_OUTLINE,
-                                                        **common, onclick_f=lambda: self.change_mode(Mode.Attack))
-        self.btn_move = PygameUIKit.button.ButtonText("Move",
-                                                      rect_color=Colors.BTN_MOVE_BG,
-                                                      outline_color=Colors.BTN_MOVE_OUTLINE,
-                                                      font=self.font,
-                                                      **common, onclick_f=lambda: self.change_mode(Mode.Move))
+        # self.btn_attack = PygameUIKit.button.ButtonText(text="Attack",
+        #                                                 rect_color=Colors.BTN_ATTACK_BG,
+        #                                                 font=self.font,
+        #                                                 outline_color=Colors.BTN_ATTACK_OUTLINE,
+        #                                                 **common, onclick_f=lambda: self.change_mode(Mode.Attack))
+        # self.btn_move = PygameUIKit.button.ButtonText("Move",
+        #                                               rect_color=Colors.BTN_MOVE_BG,
+        #                                               outline_color=Colors.BTN_MOVE_OUTLINE,
+        #                                               font=self.font,
+        #                                               **common, onclick_f=lambda: self.change_mode(Mode.Move))
 
         self.selected_mon: Optional[Mob] = None
 
@@ -137,13 +137,13 @@ class AnkiRPG:
                             if mob.owner == self.engine.turn:
                                 self.selected_mon = mob
                                 self.selected_tile = (arena_i, arena_j)
-                                self.change_mode(Mode.Move)
-                                self.accessible_tiles = self.engine.get_accessible_cases((arena_i, arena_j), mob.element)
+                                self.change_mode(Mode.active)
+                                self.accessible_tiles = self.engine.get_moves((arena_i, arena_j))
                                 self.attackable_tiles = self.engine.get_attackable_cases((arena_i, arena_j))
-                elif self.engine.mode == Mode.Move:
-                    self.move_event(event)
-                elif self.engine.mode == Mode.Attack:
-                    self.attack_event(event)
+
+
+                elif self.engine.mode == Mode.active:
+                    self.handle_event(event)
 
         move = pygame.mouse.get_rel()
         if pygame.mouse.get_pressed()[1] or pygame.mouse.get_pressed()[2]:
@@ -153,10 +153,10 @@ class AnkiRPG:
             self.map.x_start = min(max(self.map.x_start, BOUNDING_RECT.left), BOUNDING_RECT.right)
             self.map.y_start = min(max(self.map.y_start, BOUNDING_RECT.top), BOUNDING_RECT.bottom)
 
-    def move_event(self, event):
+    def handle_event(self, event):
         if not self.selected_mon:
             return
-
+    
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             j, i = self.map.iso_to_ortho(*self.highlighted_tile)
             if (j, i) not in self.map.free_places:
@@ -165,17 +165,12 @@ class AnkiRPG:
                 self.selected_mon = None
                 self.selected_tile = None
                 self.change_mode(Mode.Idle)
+                
+                
 
-    def attack_event(self, event):
-        if not self.selected_mon:
-            return
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            j, i = self.map.iso_to_ortho(*self.highlighted_tile)
-            if not (j, i) in self.map.free_places:
-                return
-            arena_i, arena_j = i, j
-            if self.engine.contains_mob(arena_i, arena_j):
-                self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (arena_i, arena_j))
+            
+            elif self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (i, j)):
+                
                 self.selected_mon = None
                 self.selected_tile = None
                 self.change_mode(Mode.Idle)
@@ -210,11 +205,11 @@ class AnkiRPG:
                                 ], 2)
 
         # draw buttons bottom right
-        if self.selected_mon:
-            self.btn_attack.draw(self.win, self.win.get_width() - self.btn_attack.rect.width - 10,
-                                 self.win.get_height() - self.btn_attack.rect.height - 10)
-            self.btn_move.draw(self.win, self.win.get_width() - self.btn_move.rect.width - 10,
-                               self.win.get_height() - self.btn_move.rect.height - self.btn_attack.rect.height - 20)
+        # if self.selected_mon:
+        #     self.btn_attack.draw(self.win, self.win.get_width() - self.btn_attack.rect.width - 10,
+        #                          self.win.get_height() - self.btn_attack.rect.height - 10)
+        #     self.btn_move.draw(self.win, self.win.get_width() - self.btn_move.rect.width - 10,
+        #                        self.win.get_height() - self.btn_move.rect.height - self.btn_attack.rect.height - 20)
 
         # show whose turn it is
         text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"
@@ -236,7 +231,13 @@ class AnkiRPG:
     def draw_arena(self):
         for mob in self.engine.get_all_mobs():
             mob.draw(self.win, self.map)
-        if self.selected_mon and self.engine.mode == Mode.Move:
+        if self.selected_mon and self.engine.mode == Mode.active:
+            for i, j in self.attackable_tiles:
+                x, y = self.map.ortho_to_iso(j, i)
+                x += 0
+                y += 20
+                pygame.draw.circle(self.win, Color("pink"), (x, y), 5)
+        if self.selected_mon and self.engine.mode == Mode.active:
             for i, j in self.accessible_tiles:
                 if self.engine.contains_mob(i, j):
                     continue
@@ -244,12 +245,7 @@ class AnkiRPG:
                 x += 0
                 y += 20
                 pygame.draw.circle(self.win, Color("red"), (x, y), 5)
-        if self.selected_mon and self.engine.mode == Mode.Attack:
-            for i, j in self.attackable_tiles:
-                x, y = self.map.ortho_to_iso(j, i)
-                x += 0
-                y += 20
-                pygame.draw.circle(self.win, Color("pink"), (x, y), 5)
+
 
     def change_mode(self, mode: Mode):
         self.engine.mode = mode
