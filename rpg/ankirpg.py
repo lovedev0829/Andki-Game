@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 
 cwd = os.path.dirname(__file__)
 parent = os.path.dirname(cwd)
-data_path = Path(parent) / "data.json"
+data_path = os.path.join(parent, 'anki_data.json') 
+print(data_path)
 info = pygame.display.Info()
 size = info.current_w,info.current_h
 BOUNDING_RECT = pygame.Rect(-600+info.current_w/3, -700, 1000, 200)
@@ -63,40 +64,30 @@ class AnkiRPG:
             "fixed_width": 300,
         }
         
-        # self.btn_attack = PygameUIKit.button.ButtonText(text="Attack",
-        #                                                 rect_color=Colors.BTN_ATTACK_BG,
-        #                                                 font=self.font,
-        #                                                 outline_color=Colors.BTN_ATTACK_OUTLINE,
-        #                                                 **common, onclick_f=lambda: self.change_mode(Mode.Attack))
-        # self.btn_move = PygameUIKit.button.ButtonText("Move",
-        #                                               rect_color=Colors.BTN_MOVE_BG,
-        #                                               outline_color=Colors.BTN_MOVE_OUTLINE,
-        #                                               font=self.font,
-        #                                               **common, onclick_f=lambda: self.change_mode(Mode.Move))
-
         self.selected_mon: Optional[Mob] = None
-
+        self.counter = 0
         self.learned_cards = 0
         self.learned_card_checker()
 
     def learned_card_checker(self):
-        def thread_f():
-            while True:
-                time.sleep(1)
-                if not os.path.exists(data_path):
-                    continue
-                with open(data_path, "r") as f:
-                    data = json.load(f)
-                if len(data) > self.learned_cards:
-                    self.learned_cards = len(data)
-
-        threading.Thread(target=thread_f, daemon=True).start()
+        with open(data_path, "r") as f:
+            data = json.load(f)
+        if 'moves' not in data:
+            self.learned_cards = data['nb_cards_learned_today']
+            data['moves'] = self.learned_cards
+            json.dump(data, open(data_path, 'w'))
+        else:
+            self.learned_cards = data['moves']
 
     def run(self):
         self.running = True
+        frame = 0 
         while self.running:
             self.clock.tick(60)
+            frame = (frame+1) % 60
             # print(f"\rFPS: {self.clock.get_fps()}", end="")
+            if frame%10 == 0:
+                self.learned_card_checker()
             self.events()
             self.bot_event()
             self.update()
@@ -122,7 +113,7 @@ class AnkiRPG:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.players.get(self.engine.turn) == PlayerType.Human:
+            if self.players.get(self.engine.turn) == PlayerType.Human and self.learned_cards > 0:
                 if event.type == pygame.MOUSEMOTION:
                     x, y = pygame.mouse.get_pos()
                     self.highlighted_tile = x, y
@@ -165,6 +156,10 @@ class AnkiRPG:
                 self.selected_mon = None
                 self.selected_tile = None
                 self.change_mode(Mode.Idle)                
+                self.learned_cards -= 1
+                data = json.load(open(data_path, 'r'))
+                data['moves'] = self.learned_cards
+                json.dump(data, open(data_path, 'w'))
 
             elif self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (i, j)):
                 
