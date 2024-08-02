@@ -133,6 +133,8 @@ class Engine:
             logger.debug("End place is not accessible")
             return False
         attacker.attack(defender)
+        if defender.health <= 0:
+            defender = None
         self.switch_turn()
         return True
 
