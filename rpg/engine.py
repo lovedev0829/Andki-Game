@@ -146,7 +146,7 @@ class Engine:
         moves = set()
         pos = start
         if element == 'water':
-            for i in range(-max_dist-1, max_dist):
+            for i in range(-max_dist, max_dist+1):
                 if self.is_place_empty(i+pos[0], pos[1]):
                     moves.add((i+pos[0],pos[1]))
                 if self.is_place_empty(pos[0], i+pos[1]):
