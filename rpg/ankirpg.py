@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 cwd = os.path.dirname(__file__)
 parent = os.path.dirname(cwd)
 data_path = os.path.join(parent, 'anki_data.json') 
-print(data_path)
 info = pygame.display.Info()
 size = info.current_w,info.current_h
 BOUNDING_RECT = pygame.Rect(-600+info.current_w/3, -700, 1000, 200)
@@ -108,7 +107,7 @@ class AnkiRPG:
             'player1_mobs' : self.engine.player1_mobs,
             'player2_mobs' : self.engine.player2_mobs,
         }
-        print(self.engine.player1_mobs)
+        
         pickle.dump(data, open(path, 'wb'))
         
     def load(self):
@@ -120,7 +119,7 @@ class AnkiRPG:
             mob.img = mob.load_image()
 
     def bot_event(self):    
-        print(self.engine.turn)
+        
         if self.players.get(self.engine.turn) != PlayerType.Bot:
             return
         # randomly move a mob

@@ -21,7 +21,7 @@ class rpg_popup:
 	def __init__(self, choose_option) -> None:
 		self.setupUi(choose_option)
 
-	def setupUi(self, choose_option):
+	def setupUi(self, choose_option:QMainWindow):
 		choose_option.setObjectName("choose_option")
 		choose_option.resize(598, 347)
 		self.pushButton = QPushButton(choose_option)
@@ -33,17 +33,21 @@ class rpg_popup:
 		self.pushButton_2.setSizeIncrement(QSize(0, 0))
 		self.pushButton_2.setBaseSize(QSize(0, 0))
 		self.pushButton_2.setObjectName("pushButton_2")
+		self.pushButton_2.setAutoDefault(True)
 		self.okbutton = QPushButton(choose_option)
 		self.okbutton.setGeometry(QRect(210, 240, 191, 51))
 		self.okbutton.setSizeIncrement(QSize(0, 0))
 		self.okbutton.setBaseSize(QSize(0, 0))
 		self.okbutton.setObjectName("okbutton")
 		self.okbutton.clicked.connect(delete_win)
+		global started
+		if  os.path.exists(q:=os.path.join(cwd, 'rpg', 'game.save')):
+			started = True
 		if started:
 			self.pushButton.setGeometry(QRect(50, 100, 161, 51))
 			self.pushButton_2.setGeometry(QRect(390, 100, 161, 51))
 			self.continuebutton = QPushButton(choose_option,text="continue")
-			self.continuebutton.setGeometry(QRect(225, 100, 161, 51))
+			self.continuebutton.setGeometry(QRect(220, 100, 161, 51))
 			self.continuebutton.setSizeIncrement(QSize(0, 0))
 			self.continuebutton.setBaseSize(QSize(0, 0))
 			self.continuebutton.setObjectName("continuebutton")
