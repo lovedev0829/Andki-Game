@@ -13,9 +13,9 @@ from scripts.constants import *
 def delete_win():
     mw.win = None
 
-def start_chess():
+def start_chess(ankimons:dict):
 	delete_win()
-	mainloop()	
+	mainloop(ankimons)	
 started = False
 class rpg_popup:
 	def __init__(self, choose_option) -> None:
@@ -232,7 +232,14 @@ class attribute_popup:
 				return
 		global started
 		started = True
-		start_chess()
+		# try:
+		dic = {self.selected[i]:self.elements[i] for i in range(3)}
+		print(dic)
+		start_chess(dic)
+		# except Exception as e:
+		# 	print(e)
+		# 	utils.show_info('you have to choose 3 ankimons to start')
+		
 
 
 	def clicked(self, index):

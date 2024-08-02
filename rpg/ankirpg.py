@@ -17,6 +17,7 @@ from rpg.engine import Player, Engine, Mob, Mode
 from pathlib import Path
 from aqt import mw
 from scripts.utils import center_widget
+
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
@@ -34,14 +35,15 @@ class PlayerType(Enum):
 
 
 class AnkiRPG:
-    def __init__(self, win):
+    def __init__(self, win:pygame.Surface, ankimons:dict):
         self.win = win
         self.clock = pygame.time.Clock()
         self.running = False
         self.map = Pytmx(self.win)
         self.highlighted_tile = None
+        self.ankimons = ankimons
 
-        self.engine = Engine(self.map.free_places)
+        self.engine = Engine(self.map.free_places, ankimons)
 
         self.players = {
             Player.Player1: PlayerType.Human,
@@ -109,7 +111,7 @@ class AnkiRPG:
         # randomly move a mob
         mob = random.choice(self.engine.player2_mobs)
         i, j = mob.i, mob.j
-        accessible = self.engine.get_accessible_cases((i, j))
+        accessible = self.engine.get_accessible_cases((i, j), mob.element)
         move = random.choice(accessible)
         self.engine.perform_move((i, j), move)
 
@@ -136,7 +138,7 @@ class AnkiRPG:
                                 self.selected_mon = mob
                                 self.selected_tile = (arena_i, arena_j)
                                 self.change_mode(Mode.Move)
-                                self.accessible_tiles = self.engine.get_accessible_cases((arena_i, arena_j))
+                                self.accessible_tiles = self.engine.get_accessible_cases((arena_i, arena_j), mob.element)
                                 self.attackable_tiles = self.engine.get_attackable_cases((arena_i, arena_j))
                 elif self.engine.mode == Mode.Move:
                     self.move_event(event)

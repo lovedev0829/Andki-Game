@@ -12,10 +12,11 @@ MAX_MOVE_DISTANCE = 3
 
 
 class Mob:
-    def __init__(self, i, j, name, owner: "Player"):
+    def __init__(self, i, j, name, element, owner: "Player"):
         self.i = i
         self.j = j
         self.name = name
+        self.element = element
         self.img = images.load_mob_img(name)
         self.health = 100
         self.dmg = 10
@@ -57,22 +58,22 @@ class Mode(Enum):
 
 
 class Engine:
-    def __init__(self, free_places):
+    def __init__(self, free_places, ankimons: dict):
         self.turn: Player = Player.Player1
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
+        names = list(ankimons.keys())
+        self.add_mob(Mob(17, 21, names[0], ankimons[names[0]], Player.Player1))
+        self.add_mob(Mob(18, 21, names[1], ankimons[names[1]], Player.Player1))
+        self.add_mob(Mob(19, 21, names[2], ankimons[names[2]], Player.Player1))
 
-        self.add_mob(Mob(17, 21, "araignee", Player.Player1))
-        self.add_mob(Mob(18, 21, "av8r", Player.Player1))
-        self.add_mob(Mob(19, 21, "pharfan", Player.Player1))
-
-        self.add_mob(Mob(17, 24, "araignee", Player.Player2))
-        self.add_mob(Mob(18, 24, "av8r", Player.Player2))
-        self.add_mob(Mob(19, 24, "pharfan", Player.Player2))
+        self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2))
+        self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2))
+        self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2))
 
         self.mode: Mode = Mode.Idle
-
+        
     def add_mob(self, mob: Mob):
         player = mob.owner
         if player == Player.Player1:
@@ -100,7 +101,7 @@ class Engine:
         if not self.is_place_empty(*end):
             logger.debug("End place is not empty")
             return False
-        if (end[0], end[1]) not in self.get_accessible_cases((start[0], start[1])):
+        if (end[0], end[1]) not in self.get_accessible_cases((start[0], start[1]), mob.element):
             logger.debug("End place is not accessible")
             return False
         mob.move(*end)
@@ -128,7 +129,12 @@ class Engine:
     def get_all_mobs(self):
         return self.player1_mobs + self.player2_mobs
 
-    def get_accessible_cases(self, start: tuple[int, int], max_dist=MAX_MOVE_DISTANCE) -> list[tuple[int, int]]:
+    def get_accessible_cases(self, start: tuple[int, int], element:str) -> list[tuple[int, int]]:
+        element = element.lower()
+        if element == 'fire':
+            max_dist = 2
+        else:
+            max_dist = 3
         def get_neighbors(i, j):
             neighbors = []
             for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
@@ -137,6 +143,16 @@ class Engine:
                     neighbors.append((ni, nj))
             return neighbors
 
+        moves = set()
+        pos = start
+        if element == 'water':
+            for i in range(-max_dist-1, max_dist):
+                if self.is_place_empty(i+pos[0], pos[1]):
+                    moves.add((i+pos[0],pos[1]))
+                if self.is_place_empty(pos[0], i+pos[1]):
+                    print(pos[0], i+pos[1])
+                    moves.add((pos[0], i+pos[1]))                    
+            return list(moves)
         to_see = [start, None]
         current_distance = 0
         seen = set()
