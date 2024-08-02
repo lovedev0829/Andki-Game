@@ -100,9 +100,15 @@ class AnkiRPG:
         if self.players.get(self.engine.turn) != PlayerType.Bot:
             return
         # randomly move a mob
+        for mob in self.engine.player2_mobs:
+            i, j = mob.i, mob.j
+            accessible = self.engine.get_attackable_cases((i, j))
+            for move in random.choice([accessible]):
+                if self.engine.perform_attack((i, j), move):
+                    return True
         mob = random.choice(self.engine.player2_mobs)
         i, j = mob.i, mob.j
-        accessible = self.engine.get_accessible_cases((i, j), mob.element)
+        accessible = self.engine.get_moves((i, j))
         move = random.choice(accessible)
         self.engine.perform_move((i, j), move)
 
@@ -153,9 +159,6 @@ class AnkiRPG:
             if (j, i) not in self.map.free_places:
                 return
             if self.engine.perform_move((self.selected_mon.i, self.selected_mon.j), (i, j)):
-                self.selected_mon = None
-                self.selected_tile = None
-                self.change_mode(Mode.Idle)                
                 self.learned_cards -= 1
                 data = json.load(open(data_path, 'r'))
                 data['moves'] = self.learned_cards
@@ -163,14 +166,14 @@ class AnkiRPG:
 
             elif self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (i, j)):
                 
-                self.selected_mon = None
-                self.selected_tile = None
-                self.change_mode(Mode.Idle)
                 self.learned_cards -= 1
                 data = json.load(open(data_path, 'r'))
                 data['moves'] = self.learned_cards
                 json.dump(data, open(data_path, 'w'))
-
+            self.selected_mon = None
+            self.selected_tile = None
+            self.change_mode(Mode.Idle)
+            
 
     def update(self):
         pass

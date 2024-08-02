@@ -124,8 +124,13 @@ class Engine:
         attacker = self.get_mob(*start)
         defender = self.get_mob(*end)
         
-        if start == end: return False
-        if not defender: return False
+        if start == end: 
+            logger.debug(f"The end square is the same as the beggining square")
+            return False
+        
+        if not defender: 
+            logger.debug("No defender found")
+            return False
         if attacker.owner == defender.owner:
             logger.debug("Can't attack an ally")
             return False
