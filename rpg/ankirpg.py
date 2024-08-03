@@ -130,6 +130,8 @@ class AnkiRPG:
                 if self.engine.perform_attack((i, j), move):
                     return True
         mob = random.choice(self.engine.player2_mobs)
+        if not mob:
+            return
         i, j = mob.i, mob.j
         accessible = self.engine.get_moves((i, j))
         move = random.choice(accessible)

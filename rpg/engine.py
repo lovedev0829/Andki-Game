@@ -5,18 +5,11 @@ import images
 import pygame
 from pygame import Color
 import logging
-# This sets the root logger to write to stdout (your console).
-# Your script/app needs to call this somewhere at least once.
+
 logging.basicConfig()
 
-# By default the root logger is set to WARNING and all loggers you define
-# inherit that value. Here we set the root logger to NOTSET. This logging
-# level is automatically inherited by all existing and new sub-loggers
-# that do not set a less verbose level.
-logging.root.setLevel(logging.NOTSET)
+# logging.root.setLevel(logging.NOTSET)
 
-# The following line sets the root logger level as well.
-# It's equivalent to both previous statements combined:
 logging.basicConfig(level=logging.NOTSET)
 logger = logging.getLogger('game')
 
@@ -42,7 +35,21 @@ class Mob:
         self.j = j
 
     def attack(self, mob: "Mob"):
-        mob.lost_health(self.dmg)
+        multiplier = 1
+        if self.element.lower() == 'fire' and mob.element.lower() == 'ice':
+            multiplier = 1.2
+        elif self.element.lower() == 'ice' and mob.element.lower() == 'fire':
+            0.8
+        elif self.element.lower() == 'water' and mob.element.lower() == 'fire':
+            multiplier = 1.2
+        elif self.element.lower() == 'fire' and mob.element.lower() == 'water':
+            multiplier = 0.8
+        elif self.element.lower() == 'ice' and mob.element.lower() == 'water':
+            multiplier = 1.2
+        elif self.element.lower() == 'water' and mob.element.lower() == 'ice':
+            multiplier = 0.8
+        print(f"element:{self.element}, defender:{mob.element}, multiplier:{multiplier}")
+        mob.lost_health(self.dmg*multiplier)
 
     def lost_health(self, dmg):
         self.health = max(0, self.health - dmg)
