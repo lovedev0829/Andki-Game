@@ -43,7 +43,7 @@ class AnkiRPG:
         self.highlighted_tile = None
         self.ankimons = ankimons
         
-        self.engine = Engine(self.map.free_places, ankimons, self.win)
+        self.engine = Engine(self.map.free_places, ankimons, self.win, self.map)
         
         self.players = {
             Player.Player1: PlayerType.Human,
@@ -122,7 +122,7 @@ class AnkiRPG:
         for mob in self.engine.player1_mobs + self.engine.player2_mobs:
             mob.img = mob.load_image()
             mob.screen = self.win
-            mob.manager = EffectManager(self.win)
+            mob.manager = EffectManager(self.win, self.map)
 
     def bot_event(self):    
         

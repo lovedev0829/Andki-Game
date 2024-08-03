@@ -24,7 +24,7 @@ class Fire(pygame.sprite.Sprite):
         surf_size = 2 * self.radius * self.layers * self.layers * self.glow
         self.surf = pygame.Surface((surf_size, surf_size), pygame.SRCALPHA)
         
-    def update(self, win):
+    def update(self, win, pos):
         xvel = random.random() - 0.5
         self.x += xvel
         self.y -= self.yvel
@@ -60,16 +60,17 @@ show_torch = True
 
 running = True
 class EffectManager:
-    def __init__(self, screen) -> None:
+    def __init__(self, screen, map) -> None:
         self.particles = []  
         self.screen = screen      
+        self.map = map
         self.update()
             
     def update(self):
-        for fire in self.particles:
-            fire.update(self.screen)
-            if fire.radius <= 0.2:
-                fire.kill()
+        for particle in self.particles:
+            particle.update(self.screen, (1000,100))
+            if particle.radius <= 0.3:
+                self.particles.remove(particle)
 
     def add_particle(self, type, pos):
         for i in range(2):

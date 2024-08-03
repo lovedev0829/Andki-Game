@@ -5,7 +5,7 @@ from rpg.ParticleSystem import EffectManager, Fire
 import pygame
 from pygame import Color
 import logging
-
+import time
 logging.basicConfig()
 
 # logging.root.setLevel(logging.NOTSET)
@@ -17,7 +17,7 @@ MAX_MOVE_DISTANCE = 3
 
 
 class Mob:
-    def __init__(self, i, j, name, element, owner: "Player", screen):
+    def __init__(self, i, j, name, element, owner: "Player", screen, map_t):
         self.i = i
         self.j = j
         self.name = name
@@ -26,7 +26,8 @@ class Mob:
         self.health = 100
         self.dmg = 10
         self.screen = screen
-        self.manager = EffectManager(self.screen)
+        self.time = time.time()
+        self.manager = EffectManager(self.screen, map_t)
         self.owner = owner
     
     def load_image(self):
@@ -62,8 +63,8 @@ class Mob:
         x, y = map_t.ortho_to_iso(self.j, self.i)
         self.manager.update()
         
-        if self.element.lower() == 'fire':
-            self.manager.add_particle(Fire, (x, y+10))
+        if self.element.lower() == 'fire' and time.time() - self.time > 0.2:
+            self.manager.add_particle(Fire, (x,y))
         self.screen.blit(self.img, (x - 32, y - 24))
         # Health bar ally
         if self.owner == Player.Player1:
@@ -85,19 +86,19 @@ class Mode(Enum):
 
 
 class Engine:
-    def __init__(self, free_places, ankimons: dict, screen):
+    def __init__(self, free_places, ankimons: dict, screen, map_t):
         self.turn: Player = Player.Player1
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
         names = list(ankimons.keys())
         if ankimons:
-            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen))
-            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen))
-            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen))
-            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen))
-            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen))
-            self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2, screen))
+            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t))
+            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t))
+            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t))
+            self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t))
 
         self.mode: Mode = Mode.Idle
         
