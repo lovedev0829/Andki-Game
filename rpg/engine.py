@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 import images
-from rpg.ParticleSystem import EffectManager, Fire
+from rpg.ParticleSystem import EffectManager, Particle
 import pygame
 from pygame import Color
 import logging
@@ -62,9 +62,11 @@ class Mob:
     def draw(self, map_t):
         x, y = map_t.ortho_to_iso(self.j, self.i)
         self.manager.update()
-        
-        if self.element.lower() == 'fire' and time.time() - self.time > 0.2:
-            self.manager.add_particle(Fire, (x,y))
+        interval = 0.25
+        if self.element.lower() == 'fire' and time.time() - self.time > interval:
+            self.manager.add_particle((x,y), [[255, 0, 0], (255, 150, 0), (50, 50, 50)])
+        if self.element.lower() == 'water' and time.time() - self.time > interval:
+            self.manager.add_particle((x,y), ((15,94,156), (28,163,236), (116,204,244)))            
         self.screen.blit(self.img, (x - 32, y - 24))
         # Health bar ally
         if self.owner == Player.Player1:

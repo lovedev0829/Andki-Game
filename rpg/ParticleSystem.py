@@ -8,13 +8,13 @@ win = pygame.display.set_mode(SCREEN)
 clock = pygame.time.Clock()
 FPS = 60
 
-class Fire(pygame.sprite.Sprite):
-    def __init__(self, x, y, radius):
-        super(Fire, self).__init__()
+class Particle:
+    def __init__(self, x, y, radius, start, colors):
         self.x = x
         self.y = y
         self.radius = radius
-        
+        self.start = start
+        self.colors = colors
         self.yvel = random.random() * 1.8
         self.burn_rate = 0.02
         
@@ -43,16 +43,16 @@ class Fire(pygame.sprite.Sprite):
             radius = int(self.radius * self.glow * i * i)
              
             if self.radius >1.6:
-                color = 255, 0, 0
+                color = self.colors[0]
             elif self.radius > 1.1:
-                color = 255, 150, 0
+                color = self.colors[1]
             else:
-                color = 50, 50, 50
+                color = self.colors[2]
             color = (*color, alpha)
         
             pygame.draw.circle(self.surf, color, (self.surf.get_width() // 2, self.surf.get_height() // 2), radius)
-        win.blit(self.surf, self.surf.get_rect(center=(self.x, self.y)))
-        
+        win.blit(self.surf, self.surf.get_rect(center=(self.x-(self.start[0]-pos[0]), self.y-(self.start[1]-pos[1]))))
+
 
 pygame.mouse.set_pos((WIDTH//2, HEIGHT//2))
 
@@ -61,22 +61,22 @@ show_torch = True
 running = True
 class EffectManager:
     def __init__(self, screen, map) -> None:
-        self.particles = []  
+        self.particles: list[Particle] = []  
         self.screen = screen      
         self.map = map
         self.update()
             
     def update(self):
         for particle in self.particles:
-            particle.update(self.screen, (1000,100))
+            particle.update(self.screen, (self.map.x_start, self.map.y_start))
             if particle.radius <= 0.3:
                 self.particles.remove(particle)
 
-    def add_particle(self, type, pos):
+    def add_particle(self, pos, color):
         for i in range(2):
             x, y = pos
             r = random.random()*2
-            f = type(x, y, r)
+            f = Particle(x, y, r, (self.map.x_start, self.map.y_start), color)
             self.particles.append(f)        
 
 if __name__ == '__main__':
@@ -93,7 +93,7 @@ if __name__ == '__main__':
                 
         pos = pygame.mouse.get_pos()
         manager.update()
-        manager.add_particle(Fire, pos)
+        manager.add_particle(pos, ((15,94,156), (28,163,236), (116,204,244)))
         
         clock.tick(FPS)
         pygame.display.update()    

@@ -11,7 +11,7 @@ import pytmx
 from pygame import Color
 import logging
 import PygameUIKit
-from rpg.ParticleSystem import EffectManager, Fire
+from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode
 from pathlib import Path
