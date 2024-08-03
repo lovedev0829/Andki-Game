@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 import images
-
+from rpg.ParticleSystem import EffectManager, Fire
 import pygame
 from pygame import Color
 import logging
@@ -17,7 +17,7 @@ MAX_MOVE_DISTANCE = 3
 
 
 class Mob:
-    def __init__(self, i, j, name, element, owner: "Player"):
+    def __init__(self, i, j, name, element, owner: "Player", screen):
         self.i = i
         self.j = j
         self.name = name
@@ -25,6 +25,8 @@ class Mob:
         self.img = self.load_image()
         self.health = 100
         self.dmg = 10
+        self.screen = screen
+        self.manager = EffectManager(self.screen)
         self.owner = owner
     
     def load_image(self):
@@ -56,16 +58,20 @@ class Mob:
         if self.health == 0:
             self.owner = None
 
-    def draw(self, win, map_t):
+    def draw(self, map_t):
         x, y = map_t.ortho_to_iso(self.j, self.i)
-        win.blit(self.img, (x - 32, y - 24))
+        self.manager.update()
+        
+        if self.element.lower() == 'fire':
+            self.manager.add_particle(Fire, (x, y+10))
+        self.screen.blit(self.img, (x - 32, y - 24))
         # Health bar ally
         if self.owner == Player.Player1:
-            pygame.draw.rect(win, Color("red"), (x - 16, y - 16, 32, 4))
-            pygame.draw.rect(win, Color("green"), (x - 16, y - 16, 32 * self.health / 100, 4))
+            pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32, 4))
+            pygame.draw.rect(self.screen, Color("green"), (x - 16, y - 16, 32 * self.health / 100, 4))
         else:
-            pygame.draw.rect(win, Color("black"), (x - 16, y - 16, 32, 4))
-            pygame.draw.rect(win, Color("red"), (x - 16, y - 16, 32 * self.health / 100, 4))
+            pygame.draw.rect(self.screen, Color("black"), (x - 16, y - 16, 32, 4))
+            pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32 * self.health / 100, 4))
 
 class Player(Enum):
     Player1 = 1
@@ -79,20 +85,19 @@ class Mode(Enum):
 
 
 class Engine:
-    def __init__(self, free_places, ankimons: dict):
+    def __init__(self, free_places, ankimons: dict, screen):
         self.turn: Player = Player.Player1
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
         names = list(ankimons.keys())
         if ankimons:
-            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1))
-            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1))
-            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1))
-
-            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2))
-            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2))
-            self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2))
+            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen))
+            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen))
+            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen))
+            self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2, screen))
 
         self.mode: Mode = Mode.Idle
         

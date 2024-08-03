@@ -11,7 +11,7 @@ import pytmx
 from pygame import Color
 import logging
 import PygameUIKit
-
+from rpg.ParticleSystem import EffectManager, Fire
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode
 from pathlib import Path
@@ -43,7 +43,7 @@ class AnkiRPG:
         self.highlighted_tile = None
         self.ankimons = ankimons
         
-        self.engine = Engine(self.map.free_places, ankimons)
+        self.engine = Engine(self.map.free_places, ankimons, self.win)
         
         self.players = {
             Player.Player1: PlayerType.Human,
@@ -81,6 +81,7 @@ class AnkiRPG:
         else:
             self.learned_cards = data['moves']
 
+    
     def run(self):
         self.running = True
         frame = 0 
@@ -95,6 +96,7 @@ class AnkiRPG:
             self.bot_event()
             self.update()
             self.draw()
+            print(self.clock.get_fps())
         self.save()
         pygame.quit()
     
@@ -102,6 +104,8 @@ class AnkiRPG:
         path = os.path.join(cwd, 'game.save')
         for mob in self.engine.player1_mobs+self.engine.player2_mobs:
             mob.img = None
+            mob.screen = None
+            mob.manager = None
         data = {
             "turn": self.engine.turn,
             'player1_mobs' : self.engine.player1_mobs,
@@ -117,6 +121,8 @@ class AnkiRPG:
         self.engine.player2_mobs = data['player2_mobs']
         for mob in self.engine.player1_mobs + self.engine.player2_mobs:
             mob.img = mob.load_image()
+            mob.screen = self.win
+            mob.manager = EffectManager(self.win)
 
     def bot_event(self):    
         
@@ -248,7 +254,7 @@ class AnkiRPG:
 
     def draw_arena(self):
         for mob in self.engine.get_all_mobs():
-            mob.draw(self.win, self.map)
+            mob.draw(self.map)
         if self.selected_mon and self.engine.mode == Mode.active:
             for i, j in self.attackable_tiles:
                 x, y = self.map.ortho_to_iso(j, i)
