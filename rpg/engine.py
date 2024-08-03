@@ -67,6 +67,8 @@ class Mob:
             self.manager.add_particle((x,y), [[255, 0, 0], (255, 150, 0), (50, 50, 50)])
         if self.element.lower() == 'water' and time.time() - self.time > interval:
             self.manager.add_particle((x,y), ((15,94,156), (28,163,236), (116,204,244)))            
+        if self.element.lower() == 'ice' and time.time() - self.time > interval:
+            self.manager.add_particle((x,y), ((63,208,212), (185,232,234), (255,255,255)))                        
         self.screen.blit(self.img, (x - 32, y - 24))
         # Health bar ally
         if self.owner == Player.Player1:
