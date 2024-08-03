@@ -15,6 +15,7 @@ def delete_win():
 
 def start_chess(ankimons:dict, load_save=False):
 	delete_win()
+	mw.web.eval("pycmd('study');")
 	mainloop(ankimons, load_save)
 started = False
 class rpg_popup:
@@ -236,14 +237,8 @@ class attribute_popup:
 				return
 		global started
 		started = True
-		# try:
 		dic = {self.selected[i]:self.elements[i] for i in range(3)}
-		print(dic)
 		start_chess(dic)
-		# except Exception as e:
-		# 	print(e)
-		# 	utils.show_info('you have to choose 3 ankimons to start')
-		
 
 
 	def clicked(self, index):

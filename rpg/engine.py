@@ -86,9 +86,9 @@ class Engine:
         self.player2_mobs: list[Mob] = []
         names = list(ankimons.keys())
         if ankimons:
-            self.add_mob(Mob(17, 21, names[0], ankimons[names[0]], Player.Player1))
-            self.add_mob(Mob(18, 21, names[1], ankimons[names[1]], Player.Player1))
-            self.add_mob(Mob(19, 21, names[2], ankimons[names[2]], Player.Player1))
+            self.add_mob(Mob(25, 21, names[0], ankimons[names[0]], Player.Player1))
+            self.add_mob(Mob(26, 21, names[1], ankimons[names[1]], Player.Player1))
+            self.add_mob(Mob(27, 21, names[2], ankimons[names[2]], Player.Player1))
 
             self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2))
             self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2))
@@ -127,6 +127,9 @@ class Engine:
             logger.debug("End place is not accessible")
             return False
         mob.move(*end)
+        neighbors = filter(lambda x: self.contains_mob(*x) and self.get_mob(*x).owner != self.turn, self.get_neighbors(*end))
+        for neighbor in neighbors:
+            self.get_mob(*neighbor).attack(mob)
         self.switch_turn()
         return True
 

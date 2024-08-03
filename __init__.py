@@ -30,18 +30,20 @@ stats = manager()
 
 def bridge(handled, message: str, context):
     global started
-    print(message)
-    if message == "start_rpg":
-        start_rpg()
-    if message == "start_streak":
-        start_game()
-    if message == "attribute":
-        mw.win = QMainWindow()
-        from scripts import utils
-        attribute_popup(mw.win, True if utils.started else False)
+    
+    for message in message.split(' '):
+        print(message)
+        if message == "start_rpg":
+            start_rpg()
+        if message == "start_streak":
+            start_game()
+        if message == "attribute":
+            mw.win = QMainWindow()
+            from scripts import utils
+            attribute_popup(mw.win, True if utils.started else False)
 
-    if message in ["ease1", "ease2", "ease3", "ease4"]:
-        add_msg_to_db(message)
+        if message in ["ease1", "ease2", "ease3", "ease4"]:
+            add_msg_to_db(message)
     return handled
 
 
