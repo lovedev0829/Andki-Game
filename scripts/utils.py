@@ -23,7 +23,7 @@ def process_file(a, b, c):
         anki_data['moves'] = anki_data['nb_cards_learned_today']
         json.dump(anki_data, open(anki_data_path, 'w'))
     else:
-        anki_data['moves'] += 1
+        anki_data['moves'] += 0.1
     
 
     json.dump(anki_data, open(anki_data_path, "w"))

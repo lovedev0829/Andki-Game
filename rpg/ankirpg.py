@@ -170,7 +170,7 @@ class AnkiRPG:
                                 self.attackable_tiles = self.engine.get_attackable_cases((arena_i, arena_j))
 
 
-                elif self.engine.mode == Mode.active and self.learned_cards > 0:
+                elif self.engine.mode == Mode.active and self.learned_cards >= 1:
                     self.handle_event(event)
 
         move = pygame.mouse.get_rel()
@@ -246,9 +246,13 @@ class AnkiRPG:
         self.win.blit(text, (10, 50))
 
         # Show learned cards in the center
-        text = f"Learned cards: {self.learned_cards}"
+        text = f"Learned cards: {round(self.learned_cards)}"
         text = self.font.render(text, True, Color("white"))
         self.win.blit(text, (self.win.get_width() // 2 - text.get_width() // 2, 10))
+
+        text = f"cards to learn: {round(self.learned_cards%1*10)}/10"
+        text = self.font.render(text, True, Color("white"))
+        self.win.blit(text, (self.win.get_width() // 2 - text.get_width() // 2 -160, 90))
 
         pygame.display.flip()
 

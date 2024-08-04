@@ -26,6 +26,7 @@ class Mob:
         self.health = 100
         self.dmg = 10
         self.screen = screen
+        self.last_attacked = time.time()
         self.time = time.time()
         self.manager = EffectManager(self.screen, map_t)
         self.owner = owner
@@ -56,6 +57,7 @@ class Mob:
 
     def lost_health(self, dmg):
         self.health = max(0, self.health - dmg)
+        self.last_attacked = time.time()
         if self.health == 0:
             self.owner = None
 
@@ -69,7 +71,11 @@ class Mob:
             self.manager.add_particle((x,y), ((15,94,156), (28,163,236), (116,204,244)))            
         if self.element.lower() == 'ice' and time.time() - self.time > interval:
             self.manager.add_particle((x,y), ((63,208,212), (185,232,234), (255,255,255)))                        
-        self.screen.blit(self.img, (x - 32, y - 24))
+        if time.time() -  self.last_attacked < 1:
+            if round(self.last_attacked*10) %2 == 0:
+                self.screen.blit(self.img, (x - 32, y - 24))
+        else:
+            self.screen.blit(self.img, (x - 32, y - 24))
         # Health bar ally
         if self.owner == Player.Player1:
             pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32, 4))
