@@ -72,10 +72,13 @@ class Mob:
         if self.element.lower() == 'ice' and time.time() - self.time > interval:
             self.manager.add_particle((x,y), ((63,208,212), (185,232,234), (255,255,255)))                        
         if time.time() -  self.last_attacked < 1:
-            if round(self.last_attacked*10) %2 == 0:
+            if round((time.time() - self.last_attacked)%1*10) %2 == 0:
+                print(round((time.time() - self.last_attacked)%1*10))
                 self.screen.blit(self.img, (x - 32, y - 24))
+            print(round(self.last_attacked%1*10))
         else:
             self.screen.blit(self.img, (x - 32, y - 24))
+        
         # Health bar ally
         if self.owner == Player.Player1:
             pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32, 4))

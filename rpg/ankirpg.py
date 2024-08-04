@@ -50,7 +50,7 @@ class AnkiRPG:
             Player.Player2: PlayerType.Bot
         }
         self.selected_tile = None
-
+        self.last_move = time.time()
         self.accessible_tiles = []
         self.attackable_tiles = []
 
@@ -96,7 +96,7 @@ class AnkiRPG:
             self.bot_event()
             self.update()
             self.draw()
-            print(self.clock.get_fps())
+            # print(self.clock.get_fps())
         self.save()
         pygame.quit()
     
@@ -125,8 +125,9 @@ class AnkiRPG:
             mob.manager = EffectManager(self.win, self.map)
 
     def bot_event(self):    
-        
         if self.players.get(self.engine.turn) != PlayerType.Bot:
+            return
+        if time.time() - self.last_move < 1.3:
             return
         # randomly move a mob
         for mob in self.engine.player2_mobs:
@@ -194,6 +195,7 @@ class AnkiRPG:
                 data = json.load(open(data_path, 'r'))
                 data['moves'] = self.learned_cards
                 json.dump(data, open(data_path, 'w'))
+                self.last_move = time.time()
 
             elif self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (i, j)):
                 
@@ -201,6 +203,7 @@ class AnkiRPG:
                 data = json.load(open(data_path, 'r'))
                 data['moves'] = self.learned_cards
                 json.dump(data, open(data_path, 'w'))
+                self.last_move = time.time()
             self.selected_mon = None
             self.selected_tile = None
             self.change_mode(Mode.Idle)
