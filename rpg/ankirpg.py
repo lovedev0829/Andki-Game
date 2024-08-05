@@ -241,21 +241,7 @@ class AnkiRPG:
         # show whose turn it is
         text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"
         text = self.font.render(text, True, Color("white"))
-        self.win.blit(text, (10, 10))
-
-        # Show mode
-        text = "Mode: " + self.engine.mode.name
-        text = self.font.render(text, True, Color("white"))
-        self.win.blit(text, (10, 50))
-
-        # Show learned cards in the center
-        text = f"Learned cards: {round(self.learned_cards)}"
-        text = self.font.render(text, True, Color("white"))
-        self.win.blit(text, (self.win.get_width() // 2 - text.get_width() // 2, 10))
-
-        text = f"cards to learn: {round(self.learned_cards%1*10)}/10"
-        text = self.font.render(text, True, Color("white"))
-        self.win.blit(text, (self.win.get_width() // 2 - text.get_width() // 2 -160, 90))
+        self.win.blit(text, (self.win.get_width()/2 - text.get_width()/2, 10))
 
         pygame.display.flip()
 

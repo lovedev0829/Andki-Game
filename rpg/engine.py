@@ -6,6 +6,7 @@ import pygame
 from pygame import Color
 import logging
 import time
+# from rpg.ankirpg import Pytmx
 logging.basicConfig()
 
 # logging.root.setLevel(logging.NOTSET)
@@ -14,12 +15,14 @@ logging.basicConfig(level=logging.NOTSET)
 logger = logging.getLogger('game')
 
 MAX_MOVE_DISTANCE = 3
+import math
 
 
 class Mob:
     def __init__(self, i, j, name, element, owner: "Player", screen, map_t):
         self.i = i
         self.j = j
+        self.old_pos = [i, j]
         self.name = name
         self.element = element
         self.img = self.load_image()
@@ -63,6 +66,7 @@ class Mob:
 
     def draw(self, map_t):
         x, y = map_t.ortho_to_iso(self.j, self.i)
+        old_pos = map_t.ortho_to_iso(self.old_pos[1], self.old_pos[0])
         self.manager.update()
         interval = 0.25
         if self.element.lower() == 'fire' and time.time() - self.time > interval:
@@ -77,8 +81,12 @@ class Mob:
                 self.screen.blit(self.img, (x - 32, y - 24))
             print(round(self.last_attacked%1*10))
         else:
-            self.screen.blit(self.img, (x - 32, y - 24))
-        
+            print(self.old_pos, self.i,self.j)
+            self.old_pos[0] += (self.i - self.old_pos[0])/3
+            self.old_pos[1] += (self.j - self.old_pos[1])/3
+            self.screen.blit(self.img, ((x - 32 + old_pos[0]-32)/2, (y - 24 + old_pos[1]-24)/2))
+            # self.screen.blit(self.img, (x - 32, y-24))
+     
         # Health bar ally
         if self.owner == Player.Player1:
             pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32, 4))
@@ -138,6 +146,16 @@ class Engine:
     def perform_move(self, start: tuple[int, int], end: tuple[int, int]) -> bool:
         logger.debug(f"Trying to move from {start} to {end}")
         mob = self.get_mob(*start)
+        if self.move_condition(start, end):
+            mob.move(*end)
+            neighbors = filter(lambda x: self.contains_mob(*x) and self.get_mob(*x).owner != self.turn, self.get_neighbors(*end))
+            for neighbor in neighbors:
+                1
+                # self.get_mob(*neighbor).attack(mob)
+            self.switch_turn()
+            return True
+
+    def move_condition(self, start, end):
         if start == end: return False
         if not self.is_place_empty(*end):
             logger.debug("End place is not empty")
@@ -145,15 +163,24 @@ class Engine:
         if (end[0], end[1]) not in self.get_moves((start[0], start[1])):
             logger.debug("End place is not accessible")
             return False
-        mob.move(*end)
-        neighbors = filter(lambda x: self.contains_mob(*x) and self.get_mob(*x).owner != self.turn, self.get_neighbors(*end))
-        for neighbor in neighbors:
-            self.get_mob(*neighbor).attack(mob)
-        self.switch_turn()
         return True
-
+        
     def perform_attack(self, start: tuple[int, int], end: tuple[int, int]) -> bool:
         logger.debug(f"Trying to attack from {start} to {end}")
+        attacker = self.get_mob(*start)
+        defender = self.get_mob(*end)
+        
+        if self.attack_condition(start, end):
+            attacker.attack(defender)
+            if defender.health <= 0:
+                if defender in self.player1_mobs:
+                    self.player1_mobs.remove(defender)
+                else:
+                    self.player2_mobs.remove(defender)
+            self.switch_turn()
+            return True
+
+    def attack_condition(self, start, end):
         attacker = self.get_mob(*start)
         defender = self.get_mob(*end)
         
@@ -169,16 +196,8 @@ class Engine:
             return False
         if (end[0], end[1]) not in self.get_attackable_cases((start[0], start[1])):
             logger.debug("End place is not accessible")
-            return False
-        attacker.attack(defender)
-        if defender.health <= 0:
-            if defender in self.player1_mobs:
-                self.player1_mobs.remove(defender)
-            else:
-                self.player2_mobs.remove(defender)
-        self.switch_turn()
+            return False        
         return True
-
     def switch_turn(self):
         self.turn = Player.Player1 if self.turn == Player.Player2 else Player.Player2
 
