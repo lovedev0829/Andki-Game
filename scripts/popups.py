@@ -74,6 +74,8 @@ class rpg_popup:
 		self.okbutton.setText(_translate("choose_option", "ok"))
 		
 
+
+
 def run_class(_class):
 	mw.win = QMainWindow()
 	_class(mw.win)

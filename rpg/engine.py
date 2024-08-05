@@ -29,7 +29,7 @@ class Mob:
         self.health = 100
         self.dmg = 10
         self.screen = screen
-        self.last_attacked = time.time()
+        self.last_attacked = time.time() -2
         self.time = time.time()
         self.manager = EffectManager(self.screen, map_t)
         self.owner = owner
@@ -77,13 +77,10 @@ class Mob:
             self.manager.add_particle((x,y), ((63,208,212), (185,232,234), (255,255,255)))                        
         if time.time() -  self.last_attacked < 1:
             if round((time.time() - self.last_attacked)%1*10) %2 == 0:
-                print(round((time.time() - self.last_attacked)%1*10))
                 self.screen.blit(self.img, (x - 32, y - 24))
-            print(round(self.last_attacked%1*10))
         else:
-            print(self.old_pos, self.i,self.j)
-            self.old_pos[0] += (self.i - self.old_pos[0])/3
-            self.old_pos[1] += (self.j - self.old_pos[1])/3
+            self.old_pos[0] += (self.i - self.old_pos[0])/4
+            self.old_pos[1] += (self.j - self.old_pos[1])/4
             self.screen.blit(self.img, ((x - 32 + old_pos[0]-32)/2, (y - 24 + old_pos[1]-24)/2))
             # self.screen.blit(self.img, (x - 32, y-24))
      

@@ -21,8 +21,7 @@ def mainloop(ankimons, loadsave=False):
     from rpg.ankirpg import AnkiRPG
     win = pygame.display.set_mode((size[0]/2,size[1]-yoffset*2.3), pygame.DOUBLEBUF | pygame.HWSURFACE|pygame.RESIZABLE)
     AnkiRPG(win, ankimons, loadsave).run()
-    mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
-    center_widget(mw.window())
+    
 
 if __name__ == '__main__':
     mainloop()

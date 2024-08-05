@@ -14,6 +14,7 @@ import PygameUIKit
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode
+from rpg.popups import SaveWindow
 from pathlib import Path
 from aqt import mw
 from scripts.utils import center_widget
@@ -97,8 +98,8 @@ class AnkiRPG:
             self.update()
             self.draw()
             # print(self.clock.get_fps())
-        self.save()
-        pygame.quit()
+        self.win = SaveWindow(self.save)
+         
     
     def save(self):
         path = os.path.join(cwd, 'game.save')
