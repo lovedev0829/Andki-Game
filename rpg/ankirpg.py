@@ -94,7 +94,6 @@ class AnkiRPG:
     def run(self):
         self.running = True
         frame = 0 
-        print(round((self.learned_cards - self.completed_cards) *10))
         while self.running:
             self.clock.tick(60)
             frame = (frame+1) % 60
@@ -129,7 +128,7 @@ class AnkiRPG:
                 self.last_move = time.time()
         else:
             self.completed_cards = self.learned_cards
-        print(self.ankiwin, round((self.learned_cards - self.completed_cards) *10))
+        
          
     
     def save(self):
@@ -139,7 +138,6 @@ class AnkiRPG:
             mob.screen = None
             mob.manager = None
         self.learned_card_checker()
-        print(self.completed_cards)
         data = {
             "turn": self.engine.turn,
             'player1_mobs' : self.engine.player1_mobs,
@@ -239,10 +237,10 @@ class AnkiRPG:
 
             elif self.engine.attack_condition(*coords):
                 self.ankiwin = ActionWindow(Actions.ATTACK, 10, coords, self)
-            else:
-                self.selected_mon = None
-                self.selected_tile = None
-                self.change_mode(Mode.Idle)
+            self.change_mode(Mode.Idle)
+            self.selected_mon = None
+            self.selected_tile = None
+                
             self.learned_card_checker()
             
     def update(self):

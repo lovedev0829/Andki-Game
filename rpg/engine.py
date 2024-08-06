@@ -16,7 +16,7 @@ logger = logging.getLogger('game')
 
 MAX_MOVE_DISTANCE = 3
 import math
-
+font = pygame.font.SysFont("Comicsans", 26)
 
 class Mob:
     def __init__(self, i, j, name, element, owner: "Player", screen, map_t):
@@ -28,6 +28,7 @@ class Mob:
         self.img = self.load_image()
         self.health = 100
         self.dmg = 10
+        self.last_damaged = 0
         self.screen = screen
         self.last_attacked = time.time() -2
         self.time = time.time()
@@ -59,7 +60,12 @@ class Mob:
         mob.lost_health(self.dmg*multiplier)
 
     def lost_health(self, dmg):
+        if self.health > dmg:
+            self.last_damaged = dmg
+        else:
+            self.last_damaged = self.health
         self.health = max(0, self.health - dmg)
+        
         self.last_attacked = time.time()
         if self.health == 0:
             self.owner = None
@@ -78,12 +84,16 @@ class Mob:
         if time.time() -  self.last_attacked < 1:
             if round((time.time() - self.last_attacked)%1*10) %2 == 0:
                 self.screen.blit(self.img, (x - 32, y - 24))
+            text = font.render(f"-{int(self.last_damaged)}", 1, (255, 0, 0))
+            text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
+            self.screen.blit(text, (x ,y- (time.time() -  self.last_attacked)*100))
+
         else:
             self.old_pos[0] += (self.i - self.old_pos[0])/4
             self.old_pos[1] += (self.j - self.old_pos[1])/4
             self.screen.blit(self.img, ((x - 32 + old_pos[0]-32)/2, (y - 24 + old_pos[1]-24)/2))
             # self.screen.blit(self.img, (x - 32, y-24))
-     
+
         # Health bar ally
         if self.owner == Player.Player1:
             pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32, 4))
