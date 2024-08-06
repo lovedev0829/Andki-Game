@@ -116,7 +116,6 @@ class AnkiRPG:
             
                                                             
                                         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-            
             if self.ankiwin.completed_cards == self.ankiwin.required_cards:
                 if self.ankiwin.action == Actions.MOVE:
                     self.engine.perform_move(*self.ankiwin.coords)
@@ -130,6 +129,7 @@ class AnkiRPG:
                 self.last_move = time.time()
         else:
             self.completed_cards = self.learned_cards
+        print(self.ankiwin, round((self.learned_cards - self.completed_cards) *10))
          
     
     def save(self):
@@ -234,11 +234,11 @@ class AnkiRPG:
                 return
             coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
             if self.engine.move_condition(*coords):
-                self.ankiwin = ActionWindow(Actions.MOVE, 10, coords, self)
+                self.ankiwin = ActionWindow(Actions.MOVE, 5, coords, self)
                 
 
             elif self.engine.attack_condition(*coords):
-                self.ankiwin = ActionWindow(Actions.ATTACK, 5, coords, self)
+                self.ankiwin = ActionWindow(Actions.ATTACK, 10, coords, self)
             else:
                 self.selected_mon = None
                 self.selected_tile = None

@@ -121,8 +121,12 @@ class ActionWindow(QMainWindow):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 20px;")
         main_layout.addWidget(self.label)
-        
         self.show()        
+
+    def closeEvent(self, event):
+        self.game.ankiwin = None
+        event.accept()
+
     def save_file(self):
         self.save_func()
         self.close_window()
@@ -131,7 +135,7 @@ class ActionWindow(QMainWindow):
         pygame.quit()
         pygame.init()
         info = pygame.display.Info()
-        self.game.completed_cards = self.game.learned_cards
+        
         mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
         center_widget(mw.window())
         pygame.quit()
