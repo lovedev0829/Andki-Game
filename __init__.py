@@ -87,13 +87,6 @@ def update_streak_btn_js(
     web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, path)
 
-def update_moves(card, ease):
-    data = json.load(open(anki_data_path, 'r'))
-    if not data['moves']:
-        data['moves'] = 1
-    else:
-        data['moves'] += 1
-    json.dump(data, open(anki_data_path, "w"))
 
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)

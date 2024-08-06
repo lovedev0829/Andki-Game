@@ -116,7 +116,7 @@ class Engine:
             self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t))
             self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t))
             self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t))
-            self.add_mob(Mob(19, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t))
+            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t))
 
         self.mode: Mode = Mode.Idle
         
