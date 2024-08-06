@@ -38,6 +38,7 @@ class PlayerType(Enum):
 class Actions(Enum):
     MOVE = 'move'
     ATTACK = 'attack'
+    DEFEND = 'defend'
 
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, load_save:bool=False):
@@ -115,17 +116,31 @@ class AnkiRPG:
             
                                                             
                                         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+            if self.ankiwin.action == Actions.DEFEND:
+                self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
+                
+                                                                
+                                            {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+            
             if self.ankiwin.completed_cards == self.ankiwin.required_cards:
                 if self.ankiwin.action == Actions.MOVE:
                     self.engine.perform_move(*self.ankiwin.coords)
                     self.ankiwin = None
                     self.completed_cards = self.learned_cards
+                    self.last_move = time.time()
                 elif self.ankiwin.action == Actions.ATTACK:
                     self.engine.perform_attack(*self.ankiwin.coords)
                     self.ankiwin = None
                     self.completed_cards = self.learned_cards
-
-                self.last_move = time.time()
+                    self.last_move = time.time()
+                elif self.ankiwin.action == Actions.DEFEND:
+                    self.engine.get_mob(*self.ankiwin.coords[1]).defense = 0.4
+                    self.engine.perform_attack(*self.ankiwin.coords)
+                    if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
+                        mob.defense = 1
+                    self.ankiwin = None
+                    self.completed_cards = self.learned_cards                        
+                
         else:
             self.completed_cards = self.learned_cards
         
@@ -174,8 +189,9 @@ class AnkiRPG:
             i, j = mob.i, mob.j
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
-                if self.engine.perform_attack((i, j), move):
-                    return True
+                if self.engine.attack_condition((i, j), move):
+                    self.ankiwin = ActionWindow(Actions.DEFEND, 10, ((i, j), move), self)
+                    return
         if not mob:
             return
         mob = random.choice(self.engine.player2_mobs)
@@ -232,11 +248,11 @@ class AnkiRPG:
                 return
             coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
             if self.engine.move_condition(*coords):
-                self.ankiwin = ActionWindow(Actions.MOVE, 5, coords, self)
+                self.ankiwin = ActionWindow(Actions.MOVE, 10, coords, self)
                 
 
             elif self.engine.attack_condition(*coords):
-                self.ankiwin = ActionWindow(Actions.ATTACK, 10, coords, self)
+                self.ankiwin = ActionWindow(Actions.ATTACK, 5, coords, self)
             self.change_mode(Mode.Idle)
             self.selected_mon = None
             self.selected_tile = None
