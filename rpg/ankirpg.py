@@ -134,10 +134,10 @@ class AnkiRPG:
                     self.completed_cards = self.learned_cards
                     self.last_move = time.time()
                 elif self.ankiwin.action == Actions.DEFEND:
-                    self.engine.get_mob(*self.ankiwin.coords[1]).defense = 0.4
+                    self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
                     self.engine.perform_attack(*self.ankiwin.coords)
                     if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
-                        mob.defense = 1
+                        mob.defense /= 0.4
                     self.ankiwin = None
                     self.completed_cards = self.learned_cards                        
                 
