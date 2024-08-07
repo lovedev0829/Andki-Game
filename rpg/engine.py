@@ -19,6 +19,14 @@ import math
 font = pygame.font.SysFont("Comicsans", 26)
 smallfont = pygame.font.SysFont("Comicsans", 16)
 
+class Trainer:
+	def __init__(self, name, attack, defense):
+		self.name = name
+		self.attack = attack
+		self.defense = detense
+ 
+
+
 class Mob:
     def __init__(self, i, j, name, element, owner: "Player", screen, map_t):
         self.i = i
@@ -136,6 +144,7 @@ class Engine:
             self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t))
 
         self.mode: Mode = Mode.Idle
+        
         
     def add_mob(self, mob: Mob):
         player = mob.owner
