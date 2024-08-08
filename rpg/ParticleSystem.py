@@ -1,12 +1,6 @@
 import pygame
 import random
 
-pygame.init()
-SCREEN = WIDTH, HEIGHT = 288, 512
-win = pygame.display.set_mode(SCREEN)
-
-clock = pygame.time.Clock()
-FPS = 60
 
 class Particle:
     def __init__(self, x, y, radius, start, colors):
@@ -54,11 +48,7 @@ class Particle:
         win.blit(self.surf, self.surf.get_rect(center=(self.x-(self.start[0]-pos[0]), self.y-(self.start[1]-pos[1]))))
 
 
-pygame.mouse.set_pos((WIDTH//2, HEIGHT//2))
 
-show_torch = True
-
-running = True
 class EffectManager:
     def __init__(self, screen, map) -> None:
         self.particles: list[Particle] = []  
@@ -80,6 +70,17 @@ class EffectManager:
             self.particles.append(f)        
 
 if __name__ == '__main__':
+    pygame.init()
+    SCREEN = WIDTH, HEIGHT = 288, 512
+    win = pygame.display.set_mode(SCREEN)
+    pygame.mouse.set_pos((WIDTH//2, HEIGHT//2))
+
+    show_torch = True
+
+    running = True
+    clock = pygame.time.Clock()
+    FPS = 60
+
     manager = EffectManager(win)
     while running:
         win.fill((0, 0, 0))

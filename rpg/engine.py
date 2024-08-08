@@ -16,6 +16,7 @@ logger = logging.getLogger('game')
 
 MAX_MOVE_DISTANCE = 3
 import math
+pygame.init()
 font = pygame.font.SysFont("Comicsans", 26)
 smallfont = pygame.font.SysFont("Comicsans", 16)
 
@@ -23,17 +24,17 @@ class Trainer:
 	def __init__(self, name, attack, defense):
 		self.name = name
 		self.attack = attack
-		self.defense = detense
+		self.defense = defense
  
 
-
 class Mob:
-    def __init__(self, i, j, name, element, owner: "Player", screen, map_t):
+    def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer):
         self.i = i
         self.j = j
         self.old_pos = [i, j]
         self.name = name
         self.element = element
+        self.trainer = trainer
         self.img = self.load_image()
         self.health = 100
         self.defense = 1
@@ -45,6 +46,9 @@ class Mob:
         self.time = time.time()
         self.manager = EffectManager(self.screen, map_t)
         self.owner = owner
+        self.defense *= trainer.defense
+        self.dmg *= trainer.attack
+        
     
     def load_image(self):
         return images.load_mob_img(self.name)
@@ -98,11 +102,11 @@ class Mob:
             text = font.render(f"-{int(self.last_damaged)}", 1, (255, 0, 0))
             text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
             self.screen.blit(text, (x ,y- (time.time() -  self.last_attacked)*100))
-            # if self.blocked:
+            if self.blocked:
                 
-            #     text = smallfont.render(f"blocked", 1, (255, 0, 0))
-            #     text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
-                # self.screen.blit(text, (x- 30,y - 30- (time.time() -  self.last_attacked)*100))            
+                text = smallfont.render(f"blocked", 1, (255, 0, 0))
+                text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
+                self.screen.blit(text, (x- 30,y - 30- (time.time() -  self.last_attacked)*100))            
         else:
             self.old_pos[0] += (self.i - self.old_pos[0])/4
             self.old_pos[1] += (self.j - self.old_pos[1])/4
@@ -129,19 +133,19 @@ class Mode(Enum):
 
 
 class Engine:
-    def __init__(self, free_places, ankimons: dict, screen, map_t):
+    def __init__(self, free_places, ankimons: dict, screen, map_t, trainer:list[Trainer]):
         self.turn: Player = Player.Player1
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
         names = list(ankimons.keys())
         if ankimons:
-            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t))
-            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t))
-            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t))
-            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t))
-            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t))
-            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t))
+            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainer[0]))
+            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t, trainer[0]))
+            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t, trainer[0]))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainer[1]))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainer[1]))
+            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainer[1]))
 
         self.mode: Mode = Mode.Idle
         

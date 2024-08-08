@@ -13,15 +13,12 @@ import logging
 import PygameUIKit
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
-from rpg.engine import Player, Engine, Mob, Mode, Trainer
-from rpg.popups import SaveWindow, ActionWindow, trainer_popup, learned_card_checker
-
+from rpg.engine import Player, Engine, Mob, Mode
+from rpg.popups import SaveWindow, ActionWindow
 from pathlib import Path
 from aqt import mw
 from scripts.utils import center_widget
-from aqt.qt import *
 import pickle
-from scripts.constants import TRAINERS
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
@@ -37,13 +34,9 @@ class PlayerType(Enum):
     Human = 1
     Bot = 2
 
-class Actions(Enum):
-    MOVE = 'move'
-    ATTACK = 'attack'
-    DEFEND = 'defend'
 
 class AnkiRPG:
-    def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
+    def __init__(self, win:pygame.Surface, ankimons:dict, load_save:bool=False):
         self.win = win
         self.clock = pygame.time.Clock()
         self.running = False
@@ -51,8 +44,8 @@ class AnkiRPG:
         self.highlighted_tile = None
         self.ankimons = ankimons
         self.ankiwin = None
-        self.trainers = trainers
-        self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
+
+        self.engine = Engine(self.map.free_places, ankimons, self.win, self.map)
         
         self.players = {
             Player.Player1: PlayerType.Human,
@@ -78,7 +71,6 @@ class AnkiRPG:
         self.counter = 0
         self.learned_cards = 0
         self.learned_card_checker()
-        self.completed_cards = self.learned_cards
         if load_save:
             self.load()
 
@@ -97,8 +89,7 @@ class AnkiRPG:
     def run(self):
         self.running = True
         frame = 0 
-        self.ankiwin = trainer_popup(1)
-        self.ankiwin.cards = learned_card_checker(data_path)
+        self.ankiwin = ActionWindow('move', 10)
         while self.running:
             self.clock.tick(60)
             frame = (frame+1) % 60
@@ -106,61 +97,13 @@ class AnkiRPG:
             if frame%10 == 0:
                 self.learned_card_checker()
             self.events()
-            if not self.ankiwin:
-                self.bot_event()
+            self.bot_event()
             self.update()
             self.draw()
-            self.update_anki()
             # print(self.clock.get_fps())
         self.savewin = SaveWindow(self.save, self)
         
-    def update_anki(self):
-        if self.ankiwin:
-            self.ankiwin.completed_cards = round((self.learned_cards - self.completed_cards) *10)
 
-            if not hasattr(self.ankiwin, 'action'):
-                self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
-I'll show you that I'm the best 
-AnkiMon trainer here, not you!
-learn 10 cards to accept the challenge
-                            {int((self.learned_cards-self.ankiwin.cards)*10)}/{self.ankiwin.cost}
-                                """)
-                if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
-                    self.ankiwin = None
-                return
-
-            elif self.ankiwin.action == Actions.DEFEND:
-                self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
-                
-                                                                
-                                            {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-            else:
-                self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
-                
-                                                                
-                                            {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-            if self.ankiwin.completed_cards == self.ankiwin.required_cards:
-                if self.ankiwin.action == Actions.MOVE:
-                    self.engine.perform_move(*self.ankiwin.coords)
-                    self.ankiwin = None
-                    self.completed_cards = self.learned_cards
-                    self.last_move = time.time()
-                elif self.ankiwin.action == Actions.ATTACK:
-                    self.engine.perform_attack(*self.ankiwin.coords)
-                    self.ankiwin = None
-                    self.completed_cards = self.learned_cards
-                    self.last_move = time.time()
-                elif self.ankiwin.action == Actions.DEFEND:
-                    self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
-                    self.engine.perform_attack(*self.ankiwin.coords)
-                    if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
-                        mob.defense /= 0.4
-                    self.ankiwin = None
-                    self.completed_cards = self.learned_cards                        
-                
-        else:
-            self.completed_cards = self.learned_cards
-        
          
     
     def save(self):
@@ -169,13 +112,11 @@ learn 10 cards to accept the challenge
             mob.img = None
             mob.screen = None
             mob.manager = None
-        self.learned_card_checker()
         data = {
             "turn": self.engine.turn,
             'player1_mobs' : self.engine.player1_mobs,
             'player2_mobs' : self.engine.player2_mobs,
-            'completed_cards' : self.completed_cards,
-            'ankiwin' : [self.ankiwin.action, self.ankiwin.required_cards, self.ankiwin.coords, round((self.learned_cards - self.completed_cards) *10)] if self.ankiwin else None
+            'ankiwin' : [self.ankiwin.action, self.ankiwin.required_cards, self.ankiwin.completed_cards] if self.ankiwin else None
         }
 
         
@@ -186,10 +127,10 @@ learn 10 cards to accept the challenge
         self.engine.turn = data['turn']
         self.engine.player1_mobs = data['player1_mobs']
         self.engine.player2_mobs = data['player2_mobs']
-        self.completed_cards = data['completed_cards']
         if data['ankiwin']:
-            self.ankiwin = ActionWindow(data['ankiwin'][0], data['ankiwin'][1], data['ankiwin'][2], self)
-            self.ankiwin.completed_cards = data['ankiwin'][3]
+            self.ankiwin = ActionWindow(data['ankiwin'][0], data['ankiwin'][1])
+            self.ankiwin.completed_cards = data['ankiwin'][2]
+            self.completed_cards = data['ankiwin'][2]
 
         for mob in self.engine.player1_mobs + self.engine.player2_mobs:
             mob.img = mob.load_image()
@@ -206,9 +147,8 @@ learn 10 cards to accept the challenge
             i, j = mob.i, mob.j
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
-                if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, 1, ((i, j), move), self)
-                    return
+                if self.engine.perform_attack((i, j), move):
+                    return True
         if not mob:
             return
         mob = random.choice(self.engine.player2_mobs)
@@ -260,23 +200,28 @@ learn 10 cards to accept the challenge
             return
     
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if not self.ankiwin:
-                j, i = self.map.iso_to_ortho(*self.highlighted_tile)
-                if (j, i) not in self.map.free_places:
-                    return
-                coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
-                if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, 1, coords, self)
-                    
+            j, i = self.map.iso_to_ortho(*self.highlighted_tile)
+            if (j, i) not in self.map.free_places:
+                return
+            if self.engine.perform_move((self.selected_mon.i, self.selected_mon.j), (i, j)):
+                self.learned_cards -= 1
+                data = json.load(open(data_path, 'r'))
+                data['moves'] = self.learned_cards
+                json.dump(data, open(data_path, 'w'))
+                self.last_move = time.time()
 
-                elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, 1, coords, self)
-                self.change_mode(Mode.Idle)
-                self.selected_mon = None
-                self.selected_tile = None
+            elif self.engine.perform_attack((self.selected_mon.i, self.selected_mon.j), (i, j)):
                 
-            self.learned_card_checker()
+                self.learned_cards -= 1
+                data = json.load(open(data_path, 'r'))
+                data['moves'] = self.learned_cards
+                json.dump(data, open(data_path, 'w'))
+                self.last_move = time.time()
+            self.selected_mon = None
+            self.selected_tile = None
+            self.change_mode(Mode.Idle)
             
+
     def update(self):
         pass
 

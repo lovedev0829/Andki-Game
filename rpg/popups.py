@@ -2,7 +2,21 @@ import sys
 from aqt.qt import *
 import pygame
 from aqt import mw
+import random
+from scripts.constants import ANKIMONS, TRAINERS, anki_data_path as data_path
 from scripts.popups import center_widget
+import json
+
+def learned_card_checker(data_path):
+    with open(data_path, "r") as f:
+        data = json.load(f)
+    if 'moves' not in data:
+        learned_cards = data['nb_cards_learned_today']
+        data['moves'] = learned_cards
+        json.dump(data, open(data_path, 'w'))
+    else:
+        learned_cards = data['moves']
+    return learned_cards
 class SaveWindow(QMainWindow):
     def __init__(self, func, game):
         super().__init__()
@@ -140,6 +154,63 @@ class ActionWindow(QMainWindow):
         center_widget(mw.window())
         pygame.quit()
 
+class trainer_popup(QMainWindow):
+    def __init__(self, cost):
+        super().__init__()
+        
+        # set the title
+        self.setWindowTitle("AnkiNick-mon")
+        self.cost = cost
+        # setting the geometry of window
+        self.setFixedSize(500,180)
+        center_widget(self)
+
+        # creating label
+        self.label = QLabel(self)
+        self.text_label = QLabel(f"""So you want to take on the next challenge?
+    I'll show you that I'm the best 
+    AnkiMon trainer here, not you!
+    learn 10 cards to accept the challenge
+    0/{self.cost}
+                            """, self)
+        self.text_label.setFont(QFont(self.text_label.font().toString(),15))
+        self.text_label.adjustSize()
+        self.text_label.move(10,15)
+        # loading image
+        scaler = 2
+        
+        image_name = random.choice(TRAINERS)
+        self.pixmap = QPixmap(image_name)
+        # self.pixmap.	
+        # adding image to label
+        self.label.setPixmap(self.pixmap)
+
+        # Optional, resize label to image size
+        self.label.resize(self.pixmap.width()*scaler,
+                        self.pixmap.height()*scaler)
+        self.label.setScaledContents(True)
+        self.label.move(380,20)
+        if image_name.startswith('Scientist'):		
+            # Flip the QPixmap horizontally if the name of trainer starts with scientist
+            transform = QTransform().scale(-1, 1)
+            flipped_pixmap = self.pixmap.transformed(transform)
+            # Set the flipped QPixmap to the QLabel
+            self.label.setPixmap(flipped_pixmap)               
+        # self.okbutton = QPushButton(self)
+        # self.okbutton.setGeometry(QRect(180, 170, 91, 51))
+        # self.okbutton.setObjectName("okbutton")
+        # self.okbutton.clicked.connect(lambda : self.close())
+        # self.okbutton.setText("OK")
+        
+        # show all the widgets
+        self.show()
+        
+    def closeEvent(self, event:QCloseEvent):
+        if int((self.cards - learned_card_checker(data_path))*10) >= self.cost:
+            print('Congratulations! You accepted the challenge!')
+            event.accept()
+        else:
+            event.ignore()
 
 def center_win(win:QMainWindow):
     pygame.init()
