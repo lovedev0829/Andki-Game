@@ -82,7 +82,8 @@ def update_streak_btn_js(
         return
     addon_name = mw.addonManager.addonFromModule(__name__)
     cwd = os.path.dirname(__file__)
-    path = os.path.join(cwd, f"assets", "ui","Farm.gif")
+    path = os.path.join(cwd, "assets", "ui","Farm.gif")
+    print(path)
     base64_image = image_to_base64(path)
     web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, path)
