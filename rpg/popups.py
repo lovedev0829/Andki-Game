@@ -155,7 +155,7 @@ class ActionWindow(QMainWindow):
         pygame.quit()
 
 class trainer_popup(QMainWindow):
-    def __init__(self, cost):
+    def __init__(self, cost, image_name):
         super().__init__()
         
         # set the title
@@ -179,10 +179,12 @@ class trainer_popup(QMainWindow):
         # loading image
         scaler = 2
         
-        image_name = random.choice(TRAINERS)
-        self.pixmap = QPixmap(image_name)
-        # self.pixmap.	
-        # adding image to label
+
+        cwd = os.getcwd()+os.sep[0]
+        
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'trainers',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
+        
+        self.pixmap = QPixmap(path)        
         self.label.setPixmap(self.pixmap)
 
         # Optional, resize label to image size

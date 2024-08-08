@@ -97,7 +97,7 @@ class AnkiRPG:
     def run(self):
         self.running = True
         frame = 0 
-        self.ankiwin = trainer_popup(1)
+        self.ankiwin = trainer_popup(1, self.trainers[1].name)
         self.ankiwin.cards = learned_card_checker(data_path)
         while self.running:
             self.clock.tick(60)
@@ -128,36 +128,37 @@ learn 10 cards to accept the challenge
                 if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
                     self.ankiwin = None
                 return
-
-            elif self.ankiwin.action == Actions.DEFEND:
-                self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
-                
-                                                                
-                                            {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
             else:
-                self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
-                
-                                                                
-                                            {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-            if self.ankiwin.completed_cards == self.ankiwin.required_cards:
-                if self.ankiwin.action == Actions.MOVE:
-                    self.engine.perform_move(*self.ankiwin.coords)
-                    self.ankiwin = None
-                    self.completed_cards = self.learned_cards
-                    self.last_move = time.time()
-                elif self.ankiwin.action == Actions.ATTACK:
-                    self.engine.perform_attack(*self.ankiwin.coords)
-                    self.ankiwin = None
-                    self.completed_cards = self.learned_cards
-                    self.last_move = time.time()
-                elif self.ankiwin.action == Actions.DEFEND:
-                    self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
-                    self.engine.perform_attack(*self.ankiwin.coords)
-                    if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
-                        mob.defense /= 0.4
-                    self.ankiwin = None
-                    self.completed_cards = self.learned_cards                        
-                
+                if self.ankiwin.action == Actions.DEFEND:
+                    self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
+                    
+                                                                    
+                                                {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                else:
+                    self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
+                    
+                                                                    
+                                                {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                if self.ankiwin.completed_cards == self.ankiwin.required_cards:
+                    if self.ankiwin.action == Actions.MOVE:
+                        self.engine.perform_move(*self.ankiwin.coords)
+                        self.ankiwin = None
+                        self.completed_cards = self.learned_cards
+                        self.last_move = time.time()
+                    elif self.ankiwin.action == Actions.ATTACK:
+                        self.engine.perform_attack(*self.ankiwin.coords)
+                        self.ankiwin = None
+                        self.completed_cards = self.learned_cards
+                        self.last_move = time.time()
+                        
+                    elif self.ankiwin.action == Actions.DEFEND:
+                        self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
+                        self.engine.perform_attack(*self.ankiwin.coords)
+                        if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
+                            mob.defense /= 0.4
+                        self.ankiwin = None
+                        self.completed_cards = self.learned_cards                        
+                    
         else:
             self.completed_cards = self.learned_cards
         
@@ -201,13 +202,12 @@ learn 10 cards to accept the challenge
             return
         if time.time() - self.last_move < 1.3:
             return
-        # randomly move a mob
         for mob in self.engine.player2_mobs:
             i, j = mob.i, mob.j
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
                 if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, 1, ((i, j), move), self)
+                    self.ankiwin = ActionWindow(Actions.DEFEND, 0, ((i, j), move), self)
                     return
         if not mob:
             return
@@ -266,11 +266,11 @@ learn 10 cards to accept the challenge
                     return
                 coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
                 if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, 1, coords, self)
+                    self.ankiwin = ActionWindow(Actions.MOVE, 0, coords, self)
                     
 
                 elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, 1, coords, self)
+                    self.ankiwin = ActionWindow(Actions.ATTACK, 0, coords, self)
                 self.change_mode(Mode.Idle)
                 self.selected_mon = None
                 self.selected_tile = None
@@ -283,6 +283,7 @@ learn 10 cards to accept the challenge
     def draw(self):
         self.win.fill(Color("black"))
         self.map.draw(self.win)
+
         self.draw_arena()
         if self.highlighted_tile:
             j, i = self.map.iso_to_ortho(*self.highlighted_tile)
@@ -314,7 +315,8 @@ learn 10 cards to accept the challenge
         pygame.display.flip()
 
     def draw_arena(self):
-        for mob in self.engine.get_all_mobs():
+        for i,mob in enumerate(self.engine.get_all_mobs()):
+            
             mob.draw(self.map)
         if self.selected_mon and self.engine.mode == Mode.active:
             for i, j in self.attackable_tiles:

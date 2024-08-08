@@ -17,14 +17,13 @@ logger = logging.getLogger('game')
 MAX_MOVE_DISTANCE = 3
 import math
 pygame.init()
-font = pygame.font.SysFont("Comicsans", 26)
-smallfont = pygame.font.SysFont("Comicsans", 16)
 
 class Trainer:
-	def __init__(self, name, attack, defense):
-		self.name = name
-		self.attack = attack
-		self.defense = defense
+    def __init__(self, name, attack, defense,movement=0):
+        self.name = name
+        self.attack = attack
+        self.defense = defense
+        self.movement = movement
  
 
 class Mob:
@@ -48,6 +47,8 @@ class Mob:
         self.owner = owner
         self.defense *= trainer.defense
         self.dmg *= trainer.attack
+        self.font = pygame.font.SysFont("Comicsans", 26)
+        self.smallfont = pygame.font.SysFont("Comicsans", 16)
         
     
     def load_image(self):
@@ -73,15 +74,18 @@ class Mob:
             multiplier = 0.8
         print(f"element:{self.element}, defender:{mob.element}, multiplier:{multiplier}")
         mob.lost_health(self.dmg*multiplier*self.defense)
+        
 
     def lost_health(self, dmg):
+        dmg*=self.defense
         if self.health > dmg:
-            self.last_damaged = dmg*self.defense
+            self.last_damaged = dmg
         else:
             self.last_damaged = self.health
-        self.blocked = self.defense != 1
-        self.health = max(0, self.health - dmg*self.defense)
+        self.blocked = self.defense != 1 and self.owner == Player.Player1
+        self.health = max(0, self.health - dmg)
         self.last_attacked = time.time()
+        print(dmg)
         if self.health == 0:
             self.owner = None
 
@@ -99,12 +103,11 @@ class Mob:
         if time.time() -  self.last_attacked < 1:
             if round((time.time() - self.last_attacked)%1*10) %2 == 0:
                 self.screen.blit(self.img, (x - 32, y - 24))
-            text = font.render(f"-{int(self.last_damaged)}", 1, (255, 0, 0))
+            text = self.font.render(f"-{int(self.last_damaged)}", 1, (255, 0, 0))
             text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
             self.screen.blit(text, (x ,y- (time.time() -  self.last_attacked)*100))
             if self.blocked:
-                
-                text = smallfont.render(f"blocked", 1, (255, 0, 0))
+                text = self.smallfont.render(f"blocked", 1, (255, 0, 0))
                 text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
                 self.screen.blit(text, (x- 30,y - 30- (time.time() -  self.last_attacked)*100))            
         else:
@@ -198,6 +201,7 @@ class Engine:
         defender = self.get_mob(*end)
         
         if self.attack_condition(start, end):
+            
             attacker.attack(defender)
             if defender.health <= 0:
                 if defender in self.player1_mobs:
@@ -239,7 +243,8 @@ class Engine:
             max_dist = 2
         else:
             max_dist = 3
-
+        mob = self.get_mob(*start)
+        max_dist += mob.trainer.movement
         moves = set()
         pos = start
         if element == 'water':

@@ -9,7 +9,7 @@ from functools import partial
 import json
 from rpg.ankirpg import data_path
 import random
-from scripts.constants import cwd, ANKIMONS
+from scripts.constants import cwd, ANKIMONS, TRAINERS
 
 
 def delete_win():
@@ -22,9 +22,10 @@ def start_chess(ankimons:dict, load_save=False):
 started = False
 
 Ankimons = ANKIMONS
-def load_sheet(i):
+def load_sheet(i, folder='heads', names=Ankimons):
 	cwd = os.getcwd()+os.sep[0]
-	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets//heads//{Ankimons[i]}.png").replace(cwd, '').replace(os.sep[0],'/')
+	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png").replace(cwd, '').replace(os.sep[0],'/')
+	print(path)
 	return	f'''border-image : url({path});
 				
 				height: 100%;
@@ -42,7 +43,7 @@ class rpg_popup:
 		self.pushButton = QPushButton(choose_option)
 		self.pushButton.setGeometry(QRect(90, 100, 161, 51))
 		self.pushButton.setObjectName("pushButton")
-		self.pushButton.clicked.connect(lambda: run_class(attribute_popup))
+		self.pushButton.clicked.connect(lambda: run_class(trainer_manager))
 		self.pushButton_2 = QPushButton(choose_option)
 		self.pushButton_2.setGeometry(QRect(350, 100, 161, 51))
 		self.pushButton_2.setSizeIncrement(QSize(0, 0))
@@ -96,7 +97,7 @@ def run_class(_class):
 
 
 class attribute_popup:
-	def __init__(self, win):
+	def __init__(self, win:QMainWindow):
 		self.counter = 0
 		# set the title
 		self.things = []
@@ -106,7 +107,7 @@ class attribute_popup:
 		win.setFixedSize(700,400)
 		center_widget(win)
 		data = get_data()
-		self.Ankimons = ["AnkiNick","Beekeeper Alder King","Primus Nephritico","Silver Globe Knight","Chrome-coated info soap","Immune Shield Globe Knight","Icy Gold Pastor","Illuminated goblin","Ancient evergreen reactor","Tent landlord Hedgehog Moon","Plump Bell Ogre","Clever Maasai Gold Net Warrior","Diamond Ninja Messenger","Glowing Net Knight"]
+		self.Ankimons = ANKIMONS
 		self.elements = ["Ice","Water","Fire"]
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
@@ -161,8 +162,7 @@ class attribute_popup:
 	def clicked(self, index):
 		self.counter += 1
 		if self.counter > 3:	
-			self.tempwin = QMainWindow()		
-			self.things.append(ankimon_selector(self.tempwin, self, index))
+			self.things.append(ankimon_selector(self, index))
 
 	def update_ui(self):
 		for i, button in enumerate(self.buttons):
@@ -173,31 +173,33 @@ class attribute_popup:
 			except TypeError as e:
 				print(e)
 
-class ankimon_selector:
-	def __init__(self, win:QMainWindow, attribute: attribute_popup, index):
+class ankimon_selector(QMainWindow):
+	def __init__(self, attribute: attribute_popup, index):
+		super().__init__()
 		self.ankimon_index = index
 		# set the title
 		self.attribute = attribute
-		self.win = win
-		win.setWindowTitle("AnkiNick-mon")        
+		self.setWindowTitle("AnkiNick-mon")        
 		# setting the geometry of window
-		win.setFixedSize(840,580)
-		center_widget(win)
-		central_widget = win
+		self.setFixedSize(840,580)
+		center_widget(self)
+		central_widget = self
 		data = get_data()
 		self.Ankimons = attribute.Ankimons
 		self.buttons : list[QPushButton] = []
 		labels : list[QLabel] = []
         # Create a scroll area
-		scroll_area = QScrollArea(win)
-		scroll_area.setWidgetResizable(True)
-
-		# Adjust scroll bar value to move elements
-		bar = scroll_area.verticalScrollBar()
-		bar.valueChanged.connect(self.on_scroll)		
-		bar.move(20,20)
 		self.counter = 0
 		index = 0
+
+		# show all the widgets
+		self.completed = False
+		scroll_area = QScrollArea()
+		scroll_area.setWidgetResizable(True)
+
+		# Create a widget and a layout for the scroll area
+		# content_widget = QWidget()
+		# content_layout = QGridLayout(content_widget)
 		for i in range(len(self.Ankimons)):
 			if self.Ankimons[i] not in self.attribute.selected:
 				self.buttons.append(QPushButton(central_widget))
@@ -211,11 +213,18 @@ class ankimon_selector:
 
 				self.buttons[index].setStyleSheet(load_sheet(i))
 				self.buttons[index].clicked.connect(partial(self.clicked,i))
+				# content_layout.addWidget(labels[index])
+				# content_layout.addWidget(self.buttons[index])
 				index += 1
+		
+	
 
-		# show all the widgets
-		self.completed = False
-		win.show()
+		# Set the widget with labels as the scroll area's widget
+		# scroll_area.setWidget(content_widget)
+
+		# # Set the scroll area as the central widget
+		# self.setCentralWidget(content_widget)
+		self.show()
 		if self.completed:
 			return
 
@@ -228,14 +237,68 @@ class ankimon_selector:
 				self.attribute.selected.append(self.Ankimons[i])
 			self.completed = True
 			self.attribute.tempwin = None
-			self.win = None
+			self.close()
 			self.attribute.update_ui()
 		self.counter += 1
-	def on_scroll(self, value):
 
-		for element in self.win.children():
-			element.move(element.x(), element.y()-value)
 
+class trainer_selector(QMainWindow):
+	def __init__(self, attribute: attribute_popup, index):
+		super().__init__()
+		self.trainer_index = index
+		# set the title
+		self.attribute = attribute
+		self.setWindowTitle("AnkiNick-mon")        
+		# setting the geometry of window
+		self.setFixedSize(840,580)
+		center_widget(self)
+		central_widget = self
+		data = get_data()
+		self.trainers = TRAINERS
+		self.buttons : list[QPushButton] = []
+		labels : list[QLabel] = []
+        # Create a scroll area
+		self.counter = 0
+		index = 0
+
+		# show all the widgets
+		self.completed = False
+		for i in range(len(self.trainers)):
+			if self.trainers[i] not in self.attribute.selected:
+				self.buttons.append(QPushButton(central_widget))
+				text=str(self.trainers[i])
+				labels.append(QLabel(parent=central_widget,text=text))
+				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
+				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
+				labels[index].adjustSize()
+				self.buttons[index].animateClick()
+				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
+
+				self.buttons[index].setStyleSheet(load_sheet(i, 'trainers', self.trainers))
+				self.buttons[index].clicked.connect(partial(self.clicked,i))
+				index += 1
+		
+	
+		self.show()
+		if self.completed:
+			return
+
+	def clicked(self, i):
+		if self.counter > len(self.buttons)-1:
+			try:
+				self.attribute.selected[self.trainer_index] = self.trainers[i]
+			except IndexError as e:
+				print(e)
+				self.attribute.selected.append(self.trainers[i])
+			self.completed = True
+			self.attribute.update_ui()
+			
+			self.attribute.things = []
+			mw.win = QMainWindow()
+			attribute_popup(mw.win)				
+			self.close()
+
+		self.counter += 1
 
 class LoginHandler:
 	def __init__(self, main_window:QMainWindow):
@@ -293,6 +356,68 @@ class LoginHandler:
 			QMessageBox.warning(self.main_window, 'Login', 'Incorrect username or password.')
 			self.textbox_password.clear()
 
+class trainer_manager:
+	def __init__(self, win:QMainWindow):
+		self.counter = 0
+		# set the title
+		self.things = []
+		self.selected = [None]
+		win.setWindowTitle("AnkiNick-mon")        
+		# setting the geometry of window
+		win.setFixedSize(700,400)
+		center_widget(win)
+		data = get_data()
+		self.trainers = TRAINERS
+		self.tempwin = None
+		self.buttons : list[QPushButton] = []
+		self.indexes = [2,2,2]
+		for i in range(1):
+			self.buttons.append(QPushButton(win))
+			self.buttons[i].animateClick()
+			self.buttons[i].setGeometry(70+1*200,70,150,150)
+			self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
+			
+			height: 100%;
+			width: 100%;                             
+			background-position: center;
+			background-repeat: no-repeat;                           ''')
+			self.buttons[i].clicked.connect(partial(self.clicked,i))
+		if data['default_trainer']:
+			self.selected = [data['default_trainer']]
+			self.update_ui()
+		# show all the widgets
+		self.okbutton = QPushButton(win,text="OK")
+		self.okbutton.setGeometry(QRect(265, 320, 141, 51))
+		self.okbutton.clicked.connect(self.ok)
+			
+		win.show()
+	
+
+
+	def ok(self):
+		mw.win = QMainWindow()
+		attribute_popup(mw.win)
+		
+
+
+	def clicked(self, index):
+		self.counter += 1
+		if self.counter > 1:	
+			self.things.append(trainer_selector(self, index))
+			
+
+	def update_ui(self):
+		print(self.selected)
+		for i, button in enumerate(self.buttons):
+			try:
+				button.setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
+				QPixmap(f"assets/trainers/{self.selected[i]}.png")
+				change_data("default_trainer", self.selected[0])
+				
+				
+			except Exception as e:
+				print(e)
+		
 
 
 if __name__ == "__main__":
