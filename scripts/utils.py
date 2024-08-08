@@ -93,7 +93,7 @@ def add_btn(
         deck_browser: "aqt.overview.Overview", 
         content: "aqt.overview.OverviewContent",
 ) -> None:
-    path = os.path.join(cwd, f"assets", "ui","sunset.gif")
+    path = os.path.join(cwd, f"assets", "ui","Chess.gif")
     content.table += get_html(image_to_base64(path), "start_rpg")
 
 class manager:

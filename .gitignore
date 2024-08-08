@@ -3,3 +3,4 @@ __pycache__/
 *$py.class
 assets/temp/
 cython_debug/
+.save
