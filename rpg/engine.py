@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 import images
-from rpg.ParticleSystem import EffectManager, Particle
+from rpg.ParticleSystem import EffectManager, Particle, Colors
 import pygame
 from pygame import Color
 import logging
@@ -25,6 +25,12 @@ class Trainer:
         self.defense = defense
         self.movement = movement
  
+def fps_counter(clock, font:pygame.font.Font, screen:pygame.Surface):
+    fps = str(int(clock.get_fps()))
+    
+    fps_t = font.render(fps , 1, pygame.Color("green"))
+    
+    screen.blit(fps_t,(0,0))
 
 class Mob:
     def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer):
@@ -93,13 +99,14 @@ class Mob:
         x, y = map_t.ortho_to_iso(self.j, self.i)
         old_pos = map_t.ortho_to_iso(self.old_pos[1], self.old_pos[0])
         self.manager.update()
-        interval = 0.25
-        if self.element.lower() == 'fire' and time.time() - self.time > interval:
-            self.manager.add_particle((x,y), [[255, 0, 0], (255, 150, 0), (50, 50, 50)])
-        if self.element.lower() == 'water' and time.time() - self.time > interval:
-            self.manager.add_particle((x,y), ((15,94,156), (28,163,236), (116,204,244)))            
-        if self.element.lower() == 'ice' and time.time() - self.time > interval:
-            self.manager.add_particle((x,y), ((63,208,212), (185,232,234), (255,255,255)))                        
+        interval = 0.5
+        if time.time() - self.time > interval:
+            if self.element.lower() == 'fire':
+                self.manager.add_particle((x,y), Colors.FIRE.value)
+            if self.element.lower() == 'water':
+                self.manager.add_particle((x,y), Colors.WATER.value)  
+            if self.element.lower() == 'ice':
+                self.manager.add_particle((x,y), Colors.ICE.value)
         if time.time() -  self.last_attacked < 1:
             if round((time.time() - self.last_attacked)%1*10) %2 == 0:
                 self.screen.blit(self.img, (x - 32, y - 24))
@@ -114,7 +121,7 @@ class Mob:
             self.old_pos[0] += (self.i - self.old_pos[0])/4
             self.old_pos[1] += (self.j - self.old_pos[1])/4
             self.screen.blit(self.img, ((x - 32 + old_pos[0]-32)/2, (y - 24 + old_pos[1]-24)/2))
-            # self.screen.blit(self.img, (x - 32, y-24))
+            
 
         # Health bar ally
         if self.owner == Player.Player1:
@@ -149,7 +156,7 @@ class Engine:
             self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainer[1]))
             self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainer[1]))
             self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainer[1]))
-
+        
         self.mode: Mode = Mode.Idle
         
         

@@ -294,8 +294,7 @@ class trainer_selector(QMainWindow):
 			self.attribute.update_ui()
 			
 			self.attribute.things = []
-			mw.win = QMainWindow()
-			attribute_popup(mw.win)				
+			mw.win = attribute_popup(mw.win)				
 			self.close()
 
 		self.counter += 1
@@ -403,7 +402,8 @@ class trainer_manager:
 	def clicked(self, index):
 		self.counter += 1
 		if self.counter > 1:	
-			self.things.append(trainer_selector(self, index))
+			if not get_data()['default_trainer']:
+				self.things.append(trainer_selector(self, index))
 			
 
 	def update_ui(self):

@@ -13,7 +13,7 @@ import logging
 import PygameUIKit
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
-from rpg.engine import Player, Engine, Mob, Mode, Trainer
+from rpg.engine import Player, Engine, Mob, Mode, Trainer, fps_counter
 from rpg.popups import SaveWindow, ActionWindow, trainer_popup, learned_card_checker
 
 from pathlib import Path
@@ -97,20 +97,26 @@ class AnkiRPG:
     def run(self):
         self.running = True
         frame = 0 
-        self.ankiwin = trainer_popup(1, self.trainers[1].name)
+        self.ankiwin = trainer_popup(0, self.trainers[1].name)
         self.ankiwin.cards = learned_card_checker(data_path)
         while self.running:
             self.clock.tick(60)
+            
             frame = (frame+1) % 60
             # print(f"\rFPS: {self.clock.get_fps()}", end="")
-            if frame%10 == 0:
+            if frame%20 == 0:
                 self.learned_card_checker()
+                self.update_anki()
             self.events()
             if not self.ankiwin:
                 self.bot_event()
+            
             self.update()
+            
             self.draw()
-            self.update_anki()
+            
+            
+            
             # print(self.clock.get_fps())
         self.savewin = SaveWindow(self.save, self)
         
@@ -311,7 +317,7 @@ learn 10 cards to accept the challenge
         text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"
         text = self.font.render(text, True, Color("white"))
         self.win.blit(text, (self.win.get_width()/2 - text.get_width()/2, 10))
-
+        fps_counter(self.clock, self.engine.player1_mobs[0].font, self.win)
         pygame.display.flip()
 
     def draw_arena(self):
