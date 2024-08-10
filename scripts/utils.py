@@ -30,8 +30,7 @@ def process_file(a, b, c):
 
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
-    if data in anki_data:
-        anki_data[data] = value
+    anki_data[data] = value
     json.dump(anki_data, open(anki_data_path,'w'))
 
 def add_data(data, value):

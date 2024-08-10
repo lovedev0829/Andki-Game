@@ -9,7 +9,7 @@ from functools import partial
 import json
 from rpg.ankirpg import data_path
 import random
-from scripts.constants import cwd, ANKIMONS, TRAINERS
+from scripts.constants import *
 
 
 def delete_win():
@@ -25,7 +25,6 @@ Ankimons = ANKIMONS
 def load_sheet(i, folder='heads', names=Ankimons):
 	cwd = os.getcwd()+os.sep[0]
 	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png").replace(cwd, '').replace(os.sep[0],'/')
-	print(path)
 	return	f'''border-image : url({path});
 				
 				height: 100%;
@@ -370,10 +369,11 @@ class trainer_manager:
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
 		self.indexes = [2,2,2]
-		for i in range(1):
+		self.item = data.get('item', None)
+		for i in range(2):
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
-			self.buttons[i].setGeometry(70+1*200,70,150,150)
+			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
 			self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
 			
 			height: 100%;
@@ -381,7 +381,7 @@ class trainer_manager:
 			background-position: center;
 			background-repeat: no-repeat;                           ''')
 			self.buttons[i].clicked.connect(partial(self.clicked,i))
-		if data['default_trainer']:
+		if data.get('default_trainer', None):
 			self.selected = [data['default_trainer']]
 			self.update_ui()
 		# show all the widgets
@@ -401,23 +401,77 @@ class trainer_manager:
 
 	def clicked(self, index):
 		self.counter += 1
-		if self.counter > 1:	
+		if self.counter > len(self.buttons):	
 			if not get_data()['default_trainer']:
 				self.things.append(trainer_selector(self, index))
+			if index == 1:
+				self.things.append(item_selector(self, index))		
 			
 
 	def update_ui(self):
-		print(self.selected)
+		
 		for i, button in enumerate(self.buttons):
 			try:
-				button.setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
-				QPixmap(f"assets/trainers/{self.selected[i]}.png")
-				change_data("default_trainer", self.selected[0])
-				
-				
+				if i == 1:
+					if self.item:
+						button.setStyleSheet(load_sheet(ITEMS.index(self.item), 'items', ITEMS))
+						change_data("item", self.item)				
+				else:
+					button.setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
+					change_data("default_trainer", self.selected[0])
 			except Exception as e:
 				print(e)
 		
+class item_selector(QMainWindow):
+	def __init__(self, attribute: trainer_manager, index):
+		super().__init__()
+		self.item_index = index
+		# set the title
+		self.attribute = attribute
+		self.setWindowTitle("AnkiNick-mon")        
+		# setting the geometry of window
+		self.setFixedSize(840,580)
+		center_widget(self)
+		central_widget = self
+		data = get_data()
+		self.items = ITEMS
+		self.buttons : list[QPushButton] = []
+		labels : list[QLabel] = []
+        # Create a scroll area
+		self.counter = 0
+		index = 0
+
+		# show all the widgets
+		self.completed = False
+		for i in range(len(self.items)):
+			if self.items[i] not in self.attribute.selected:
+				self.buttons.append(QPushButton(central_widget))
+				text=str(self.items[i])
+				labels.append(QLabel(parent=central_widget,text=text))
+				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
+				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
+				labels[index].adjustSize()
+				self.buttons[index].animateClick()
+				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
+
+				self.buttons[index].setStyleSheet(load_sheet(i, 'items', self.items))
+				self.buttons[index].clicked.connect(partial(self.clicked,i))
+				index += 1
+		
+	
+		self.show()
+		if self.completed:
+			return
+
+	def clicked(self, i):
+		if self.counter > len(self.buttons)-1:
+				self.attribute.item = self.items[i]
+				self.attribute.update_ui()
+				self.close()
+				self.attribute.selected.append(self.items[i])
+			
+
+		self.counter += 1
 
 
 if __name__ == "__main__":
