@@ -12,7 +12,7 @@ from aqt import gui_hooks, mw
 from aqt.qt import * 
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, manager
+from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, xp_to_lvl, manager
 import asyncio, time
 from scripts.popups import rpg_popup, attribute_popup, LoginHandler
 from aqt.deckbrowser import DeckBrowser
@@ -59,7 +59,8 @@ def start_rpg():
 screen_size = []
 def on_profile_open():
     pygame.init()
-    info = pygame.display.Info()    
+    info = pygame.display.Info() 
+    change_data('trainer_xp',0)
     mw.web.eval('pycmd("start_rpg")')
     global screen_size
     screen_size = [info.current_w, info.current_h]
@@ -70,7 +71,6 @@ def on_profile_open():
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))
-
 
 
 cwd = os.path.dirname(__file__)

@@ -21,16 +21,17 @@ def start_chess(ankimons:dict, load_save=False):
 	mainloop(ankimons, load_save)
 started = False
 
-Ankimons = ANKIMONS
-def load_sheet(i, folder='heads', names=Ankimons):
+Ankimons = UNLOCKED_ANKIMONS
+def load_sheet(i, folder='heads', names:list[str]=Ankimons):
 	cwd = os.getcwd()+os.sep[0]
-	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png").replace(cwd, '').replace(os.sep[0],'/')
+	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
+	print(path)
 	return	f'''border-image : url({path});
 				
 				height: 100%;
 				width: 100%;                             
 				background-position: center;
-				background-repeat: no-repeat;                           '''
+				background-REPEAT: no-repeat;                           '''
 
 class rpg_popup:
 	def __init__(self, choose_option) -> None:
@@ -106,13 +107,14 @@ class attribute_popup:
 		win.setFixedSize(700,400)
 		center_widget(win)
 		data = get_data()
-		self.Ankimons = ANKIMONS
+		self.Ankimons = Ankimons
 		self.elements = ["Ice","Water","Fire"]
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
 		self.dropdows : list[QComboBox] = []
 		self.indexes = [2,2,2]
 		self.selected_dropdows = [False for i in range(3)]
+		print(self.Ankimons)
 		for i in range(3):
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
@@ -130,15 +132,16 @@ class attribute_popup:
 			background-repeat: no-repeat;                           ''')
 			self.buttons[i].clicked.connect(partial(self.clicked,i))
 		if data['default_ankimon']:
-			self.selected = data['default_ankimon']
+			self.selected =  [anki for anki in data['default_ankimon'] if anki in self.Ankimons]
 			self.update_ui()
+		while len(self.selected) < 3:self.selected.append(None)
 		# show all the widgets
 		self.okbutton = QPushButton(win,text="OK")
 		self.okbutton.setGeometry(QRect(255, 320, 141, 51))
 		self.okbutton.clicked.connect(self.ok)
 		for index, dropdown in enumerate(self.dropdows):
 			self.indexes[index] = dropdown.currentIndex()
-			
+		print(self.selected)
 		win.show()
 	
 
@@ -167,9 +170,9 @@ class attribute_popup:
 		for i, button in enumerate(self.buttons):
 			try:
 				button.setStyleSheet(load_sheet(self.Ankimons.index(self.selected[i])))
-				QPixmap(f"assets/heads/{self.selected[i]}.png")
 				change_data("default_ankimon", self.selected)
-			except TypeError as e:
+			except Exception as e:
+				button.setStyleSheet(load_sheet(0, 'ui', ['empty.PNG']))
 				print(e)
 
 class ankimon_selector(QMainWindow):
@@ -253,7 +256,7 @@ class trainer_selector(QMainWindow):
 		center_widget(self)
 		central_widget = self
 		data = get_data()
-		self.trainers = TRAINERS
+		self.trainers = list(filter(lambda x:x not in STATS.keys() ,TRAINERS))
 		self.buttons : list[QPushButton] = []
 		labels : list[QLabel] = []
         # Create a scroll area
@@ -268,7 +271,7 @@ class trainer_selector(QMainWindow):
 				text=str(self.trainers[i])
 				labels.append(QLabel(parent=central_widget,text=text))
 				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
-				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
+				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),130,150)
 				labels[index].adjustSize()
 				self.buttons[index].animateClick()
 				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
@@ -291,9 +294,7 @@ class trainer_selector(QMainWindow):
 				self.attribute.selected.append(self.trainers[i])
 			self.completed = True
 			self.attribute.update_ui()
-			
-			self.attribute.things = []
-			mw.win = attribute_popup(mw.win)				
+						
 			self.close()
 
 		self.counter += 1

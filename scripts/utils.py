@@ -28,6 +28,14 @@ def process_file(a, b, c):
 
     json.dump(anki_data, open(anki_data_path, "w"))
 
+def xp_to_lvl(xp:int):
+    count = 0
+    for i in range(100):
+        count += 50*pow(2,i//10)
+        if count >= xp:
+            return i+1 + (count - xp)/50*pow(2,i//10)
+        print(count)    
+
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
     anki_data[data] = value

@@ -14,7 +14,7 @@ import PygameUIKit
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode, Trainer, fps_counter
-from rpg.popups import SaveWindow, ActionWindow, trainer_popup, learned_card_checker
+from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, learned_card_checker
 
 from pathlib import Path
 from aqt import mw
@@ -78,6 +78,7 @@ class AnkiRPG:
         self.counter = 0
         self.learned_cards = 0
         self.learned_card_checker()
+        self.game_over = False
         self.completed_cards = self.learned_cards
         if load_save:
             self.load()
@@ -122,49 +123,56 @@ class AnkiRPG:
         
     def update_anki(self):
         if self.ankiwin:
-            self.ankiwin.completed_cards = round((self.learned_cards - self.completed_cards) *10)
+            if not self.game_over:
+                self.ankiwin.completed_cards = round((self.learned_cards - self.completed_cards) *10)
 
-            if not hasattr(self.ankiwin, 'action'):
-                self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
-I'll show you that I'm the best 
-AnkiMon trainer here, not you!
-learn 10 cards to accept the challenge
-                            {int((self.learned_cards-self.ankiwin.cards)*10)}/{self.ankiwin.cost}
-                                """)
-                if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
-                    self.ankiwin = None
-                return
-            else:
-                if self.ankiwin.action == Actions.DEFEND:
-                    self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
-                    
-                                                                    
-                                                {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                if not hasattr(self.ankiwin, 'action'):
+                    self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
+    I'll show you that I'm the best 
+    AnkiMon trainer here, not you!
+    learn 10 cards to accept the challenge
+                                {int((self.learned_cards-self.ankiwin.cards)*10)}/{self.ankiwin.cost}
+                                    """)
+                    if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
+                        self.ankiwin = None
+                    return
                 else:
-                    self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
-                    
-                                                                    
-                                                {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-                if self.ankiwin.completed_cards == self.ankiwin.required_cards:
-                    if self.ankiwin.action == Actions.MOVE:
-                        self.engine.perform_move(*self.ankiwin.coords)
-                        self.ankiwin = None
-                        self.completed_cards = self.learned_cards
-                        self.last_move = time.time()
-                    elif self.ankiwin.action == Actions.ATTACK:
-                        self.engine.perform_attack(*self.ankiwin.coords)
-                        self.ankiwin = None
-                        self.completed_cards = self.learned_cards
-                        self.last_move = time.time()
+                    if self.ankiwin.action == Actions.DEFEND:
+                        self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
                         
-                    elif self.ankiwin.action == Actions.DEFEND:
-                        self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
-                        self.engine.perform_attack(*self.ankiwin.coords)
-                        if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
-                            mob.defense /= 0.4
-                        self.ankiwin = None
-                        self.completed_cards = self.learned_cards                        
-                    
+                                                                        
+                                                    {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                    else:
+                        self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
+                        
+                                                                        
+                                                    {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                    if self.ankiwin.completed_cards == self.ankiwin.required_cards:
+                        if self.ankiwin.action == Actions.MOVE:
+                            self.engine.perform_move(*self.ankiwin.coords)
+                            self.ankiwin = None
+                            self.completed_cards = self.learned_cards
+                            self.last_move = time.time()
+                        elif self.ankiwin.action == Actions.ATTACK:
+                            self.engine.perform_attack(*self.ankiwin.coords)
+                            self.ankiwin = None
+                            self.completed_cards = self.learned_cards
+                            self.last_move = time.time()
+
+                            if  not self.engine.player2_mobs:
+                                self.ankiwin = Win_popup(10, True)
+                                self.game_over = True                            
+                        elif self.ankiwin.action == Actions.DEFEND:
+                            self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
+                            self.engine.perform_attack(*self.ankiwin.coords)
+                            if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
+                                mob.defense /= 0.4
+                            self.ankiwin = None
+                            self.completed_cards = self.learned_cards            
+                            if  not self.engine.player1_mobs:
+                                self.ankiwin = Win_popup(10, False)
+                                self.game_over = True                                        
+                        
         else:
             self.completed_cards = self.learned_cards
         
@@ -175,6 +183,8 @@ learn 10 cards to accept the challenge
         for mob in self.engine.player1_mobs+self.engine.player2_mobs:
             mob.img = None
             mob.screen = None
+            mob.font = None
+            mob.smallfont = None
             mob.manager = None
         self.learned_card_checker()
         data = {
@@ -202,6 +212,8 @@ learn 10 cards to accept the challenge
             mob.img = mob.load_image()
             mob.screen = self.win
             mob.manager = EffectManager(self.win, self.map)
+            mob.font = pygame.font.SysFont("Comicsans", 26)
+            mob.smallfont = pygame.font.SysFont("Comicsans", 16)
 
     def bot_event(self):    
         if self.players.get(self.engine.turn) != PlayerType.Bot:
@@ -213,7 +225,7 @@ learn 10 cards to accept the challenge
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
                 if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, 0, ((i, j), move), self)
+                    self.ankiwin = ActionWindow(Actions.DEFEND, 10, ((i, j), move), self)
                     return
         if not mob:
             return
@@ -272,11 +284,11 @@ learn 10 cards to accept the challenge
                     return
                 coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
                 if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, 0, coords, self)
+                    self.ankiwin = ActionWindow(Actions.MOVE, 5, coords, self)
                     
 
                 elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, 0, coords, self)
+                    self.ankiwin = ActionWindow(Actions.ATTACK, 10, coords, self)
                 self.change_mode(Mode.Idle)
                 self.selected_mon = None
                 self.selected_tile = None
@@ -317,7 +329,7 @@ learn 10 cards to accept the challenge
         text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"
         text = self.font.render(text, True, Color("white"))
         self.win.blit(text, (self.win.get_width()/2 - text.get_width()/2, 10))
-        fps_counter(self.clock, self.engine.player1_mobs[0].font, self.win)
+        fps_counter(self.clock, self.font, self.win)
         pygame.display.flip()
 
     def draw_arena(self):

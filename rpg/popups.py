@@ -3,7 +3,8 @@ from aqt.qt import *
 import pygame
 from aqt import mw
 import random
-from scripts.constants import ANKIMONS, TRAINERS, anki_data_path as data_path
+from scripts.utils import get_data, change_data, anki_data_path
+from scripts.constants import *
 from scripts.popups import center_widget
 import json
 
@@ -180,8 +181,7 @@ class trainer_popup(QMainWindow):
         scaler = 2
         
 
-        cwd = os.getcwd()+os.sep[0]
-        
+        cwd = os.getcwd()+os.sep[0]        
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'trainers',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
         
         self.pixmap = QPixmap(path)        
@@ -197,22 +197,65 @@ class trainer_popup(QMainWindow):
             transform = QTransform().scale(-1, 1)
             flipped_pixmap = self.pixmap.transformed(transform)
             # Set the flipped QPixmap to the QLabel
-            self.label.setPixmap(flipped_pixmap)               
-        # self.okbutton = QPushButton(self)
-        # self.okbutton.setGeometry(QRect(180, 170, 91, 51))
-        # self.okbutton.setObjectName("okbutton")
-        # self.okbutton.clicked.connect(lambda : self.close())
-        # self.okbutton.setText("OK")
+            self.label.setPixmap(flipped_pixmap)              
         
         # show all the widgets
         self.show()
         
     def closeEvent(self, event:QCloseEvent):
-        if int((self.cards - learned_card_checker(data_path))*10) >= self.cost:
+        if int((self.cards - learned_card_checker(anki_data_path))*10) >= self.cost:
             print('Congratulations! You accepted the challenge!')
             event.accept()
         else:
             event.ignore()
+
+
+class Win_popup(QMainWindow):
+    def __init__(self, xp=10, won=True):
+        super().__init__()
+        
+        # set the title
+        self.setWindowTitle("AnkiNick-mon")
+        # setting the geometry of window
+        self.setFixedSize(640,480)
+        center_widget(self)
+
+
+        if won:
+            possible_winnings = [anki for anki in ANKIMONS if anki not in UNLOCKED_ANKIMONS]
+            trainer_xp += xp
+
+            change_data('trainer_xp', trainer_xp)
+            image_name = None
+            if possible_winnings:
+                image_name = random.choice(possible_winnings)
+                UNLOCKED_ANKIMONS.append(image_name)
+                change_data('Unlocked_Ankimons', UNLOCKED_ANKIMONS)
+
+            self.text_label = QLabel(f"congratulations on winning you have won {xp}xp"+f' and a new Ankimon \n {image_name}' if image_name else '', self)
+            self.text_label.move(25,15)
+            cwd = os.getcwd()+os.sep[0]        
+            path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
+            print(path)
+            self.label = QLabel(self)
+            self.pixmap = QPixmap(path)        
+            self.label.setPixmap(self.pixmap)
+            scaler = 0.6
+            # Optional, resize label to image size
+            self.label.resize(self.pixmap.width()*scaler,
+                            self.pixmap.height()*scaler)
+            self.label.setScaledContents(True)
+            self.label.move(100,30)
+        else:
+            self.text_label = QLabel(f"You have lost better luck next time!", self)
+            self.text_label.move(160,10)                        
+        self.text_label.setFont(QFont(self.text_label.font().toString(),15))
+        self.text_label.adjustSize()
+        self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # show all the widgets
+        self.show()
+        
 
 def center_win(win:QMainWindow):
     pygame.init()
