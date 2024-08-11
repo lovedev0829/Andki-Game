@@ -14,7 +14,7 @@ import PygameUIKit
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode, Trainer, fps_counter
-from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, learned_card_checker
+from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, learned_card_checker, center_win
 
 from pathlib import Path
 from aqt import mw
@@ -41,6 +41,12 @@ class Actions(Enum):
     MOVE = 'move'
     ATTACK = 'attack'
     DEFEND = 'defend'
+
+class Costs(Enum):
+    ATTACK = 10
+    DEFEND = 10
+    MOVE = 5
+    CHALLENGE = 10
 
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
@@ -98,14 +104,15 @@ class AnkiRPG:
     def run(self):
         self.running = True
         frame = 0 
-        self.ankiwin = trainer_popup(0, self.trainers[1].name)
+        self.ankiwin = trainer_popup(Costs.CHALLENGE.value, self.trainers[1].name)
+        center_win(self.ankiwin)
         self.ankiwin.cards = learned_card_checker(data_path)
         while self.running:
             self.clock.tick(60)
             
             frame = (frame+1) % 60
             # print(f"\rFPS: {self.clock.get_fps()}", end="")
-            if frame%20 == 0:
+            if frame%10 == 0:
                 self.learned_card_checker()
                 self.update_anki()
             self.events()
@@ -130,7 +137,7 @@ class AnkiRPG:
                     self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
     I'll show you that I'm the best 
     AnkiMon trainer here, not you!
-    learn 10 cards to accept the challenge
+    learn {self.ankiwin.cost} cards to accept the challenge
                                 {int((self.learned_cards-self.ankiwin.cards)*10)}/{self.ankiwin.cost}
                                     """)
                     if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
@@ -147,7 +154,7 @@ class AnkiRPG:
                         
                                                                         
                                                     {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-                    if self.ankiwin.completed_cards == self.ankiwin.required_cards:
+                    if self.ankiwin.completed_cards >= self.ankiwin.required_cards:
                         if self.ankiwin.action == Actions.MOVE:
                             self.engine.perform_move(*self.ankiwin.coords)
                             self.ankiwin = None
@@ -160,7 +167,7 @@ class AnkiRPG:
                             self.last_move = time.time()
 
                             if  not self.engine.player2_mobs:
-                                self.ankiwin = Win_popup(10, True)
+                                self.ankiwin = Win_popup(won=True)
                                 self.game_over = True                            
                         elif self.ankiwin.action == Actions.DEFEND:
                             self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
@@ -225,7 +232,7 @@ class AnkiRPG:
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
                 if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, 10, ((i, j), move), self)
+                    self.ankiwin = ActionWindow(Actions.DEFEND, Costs.DEFEND.value, ((i, j), move), self)
                     return
         if not mob:
             return
@@ -284,11 +291,11 @@ class AnkiRPG:
                     return
                 coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
                 if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, 5, coords, self)
+                    self.ankiwin = ActionWindow(Actions.MOVE, Costs.MOVE.value, coords, self)
                     
 
                 elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, 10, coords, self)
+                    self.ankiwin = ActionWindow(Actions.ATTACK, Costs.ATTACK.value, coords, self)
                 self.change_mode(Mode.Idle)
                 self.selected_mon = None
                 self.selected_tile = None

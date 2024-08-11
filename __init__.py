@@ -59,9 +59,7 @@ def start_rpg():
 screen_size = []
 def on_profile_open():
     pygame.init()
-    info = pygame.display.Info() 
-    change_data('trainer_xp',0)
-    mw.web.eval('pycmd("start_rpg")')
+    info = pygame.display.Info()
     global screen_size
     screen_size = [info.current_w, info.current_h]
     mw.window().setGeometry(10,60,info.current_w,info.current_h-70)

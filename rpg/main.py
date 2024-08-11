@@ -22,11 +22,11 @@ def mainloop(ankimons, loadsave=False):
     yoffset = 27
     from rpg.ankirpg import AnkiRPG, data_path
     trainer_name = json.load(open(data_path, 'r'))['default_trainer']
-    bot_trainer = random.choice(list(STATS.keys()))
+    for i in range(10):
+        bot_trainer = random.choice(list(STATS.keys()))
+        print(bot_trainer)
     default_stats = [1,1,0]
     trainers = [Trainer(trainer_name, *default_stats), Trainer(bot_trainer ,*STATS[bot_trainer])]
-    print(trainers[0].__dict__)
-    print(trainers[1].__dict__)
     mw.window().setGeometry(0,yoffset,size[0]/2,size[1]-yoffset*2.3)
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (size[0]/2,yoffset)
     

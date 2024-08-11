@@ -5,6 +5,7 @@ from aqt import mw
 import random
 from scripts.utils import get_data, change_data, anki_data_path
 from scripts.constants import *
+from scripts.constants import trainer_xp
 from scripts.popups import center_widget
 import json
 
@@ -168,10 +169,11 @@ class trainer_popup(QMainWindow):
 
         # creating label
         self.label = QLabel(self)
+        print(cost)
         self.text_label = QLabel(f"""So you want to take on the next challenge?
     I'll show you that I'm the best 
     AnkiMon trainer here, not you!
-    learn 10 cards to accept the challenge
+    learn {self.cost} cards to accept the challenge
     0/{self.cost}
                             """, self)
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
@@ -220,7 +222,7 @@ class Win_popup(QMainWindow):
         self.setFixedSize(640,480)
         center_widget(self)
 
-
+        global trainer_xp
         if won:
             possible_winnings = [anki for anki in ANKIMONS if anki not in UNLOCKED_ANKIMONS]
             trainer_xp += xp

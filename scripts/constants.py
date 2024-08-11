@@ -10,4 +10,4 @@ ITEMS = [name.replace('.png','') for name in os.listdir(os.path.join(cwd,f'asset
 ANKIMONS = ["AnkiNick","Beekeeper Alder King","Primus Nephritico","Silver Globe Knight","Chrome-coated info soap","Immune Shield Globe Knight","Icy Gold Pastor","Illuminated goblin","Ancient evergreen reactor","Tent landlord Hedgehog Moon","Plump Bell Ogre","Clever Maasai Gold Net Warrior","Diamond Ninja Messenger","Glowing Net Knight"]
 UNLOCKED_ANKIMONS = DATA.get('Unlocked_Ankimons', None) or ANKIMONS
 trainer_xp = DATA.get('Trainer_xp', 0)
-STATS = {'Scientist': [0.8, 0.8, 1],'Alchemist': [1.4, 0.8, 0], 'Dragon': [1.2, 1.2, 0],'Farmer': [1.0, 1.5, 0], 'Ninja': [1.6, 0.5, 1]}
+STATS = {'Scientist': [0.8, 0.8, 1],'Alchemist': [1.4, 0.7, 0], 'Dragon': [1.2, 1.2, 0],'Farmer': [1.0, 1.5, 0], 'Ninja': [1.6, 0.5, 1]}

@@ -13,7 +13,10 @@ def process_file(a, b, c):
     # get today's ordinal date
     today_ordinal = datetime.date.today().toordinal()
     anki_data = json.load(open(anki_data_path))
-    anki_data['xp'] += 1
+    if 'trainer_xp' in anki_data:
+        anki_data['trainer_xp'] += 1
+    else:
+        anki_data['trainer_xp'] = 1
     if "time_ordinal" not in anki_data or anki_data["time_ordinal"] != today_ordinal:
         anki_data["time_ordinal"] = today_ordinal
         anki_data["nb_cards_learned_today"] = 1
