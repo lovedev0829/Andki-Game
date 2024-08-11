@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 import os
 import aqt
 from aqt import mw
@@ -33,12 +34,12 @@ def process_file(a, b, c):
 
 def xp_to_lvl(xp:int):
     count = 0
+    if xp == 0: return 1
     for i in range(100):
         count += 50*pow(2,i//10)
         if count >= xp:
-            return i+1 + (count - xp)/50*pow(2,i//10)
-        print(count)    
-
+            return i+1 + (xp-count)/50*pow(2,(i-1)//10)
+print(xp_to_lvl(0))
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
     anki_data[data] = value

@@ -9,6 +9,7 @@ from functools import partial
 import json
 from rpg.ankirpg import data_path
 import random
+from scripts.utils import xp_to_lvl
 from scripts.constants import *
 
 
@@ -362,15 +363,21 @@ class trainer_manager:
 		self.things = []
 		self.selected = [None]
 		win.setWindowTitle("AnkiNick-mon")        
+		self.ratio = .6
 		# setting the geometry of window
+		self.win = win
 		win.setFixedSize(700,400)
 		center_widget(win)
 		data = get_data()
+		self.label = QLabel(self.win)
 		self.trainers = TRAINERS
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
 		self.indexes = [2,2,2]
 		self.item = data.get('item', None)
+		print(data.get('trainer_xp', 0))
+		self.level = xp_to_lvl(data.get('trainer_xp', 0))
+		self.set_ratio(self.level%1)
 		for i in range(2):
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
@@ -385,16 +392,42 @@ class trainer_manager:
 		if data.get('default_trainer', None):
 			self.selected = [data['default_trainer']]
 			self.update_ui()
+
 		# show all the widgets
 		self.okbutton = QPushButton(win,text="OK")
 		self.okbutton.setGeometry(QRect(265, 320, 141, 51))
 		self.okbutton.clicked.connect(self.ok)
-			
+		self.win.paintEvent = self.paintEvent			
 		win.show()
 	
 
+	def set_ratio(self, ratio):
+		"""Sets the health ratio and updates the display."""
+		self.ratio = max(0, min(1, ratio))  # Ensure ratio is between 0 and 1
+		self.label.setText(f"lvl{int(self.level)}")
+		print(self.level)
+		self.label.move(int(self.win.width()//2.5),5)
+		self.label.setFont(QFont(self.label.font().toString(),15))
+		self.win.update()  # Trigger a repaint
+
+	def paintEvent(self, event):
+		painter = QPainter(self.win)
+		painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+		# Get current window size
+		current_width = self.win.width()//4
+		current_height = 20
+		# Draw a border around the health bar
+		painter.setPen(QColor(0, 0, 0))
+		painter.drawRect(current_width*1.2, 40, current_width-1, current_height-1)
+		# Draw foreground (filled part of the health bar based on ratio)
+		painter.setBrush(QBrush(Qt.GlobalColor.green))
+		filled_width = current_width * self.ratio
+		painter.drawRect(current_width*1.2, 40, filled_width, current_height)
+
 
 	def ok(self):
+		self.win.close()
 		mw.win = QMainWindow()
 		attribute_popup(mw.win)
 		
