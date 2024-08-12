@@ -43,10 +43,10 @@ class Actions(Enum):
     DEFEND = 'defend'
 
 class Costs(Enum):
-    ATTACK = 0
-    DEFEND = 0
-    MOVE = 0
-    CHALLENGE =0
+    ATTACK = 10
+    DEFEND = 10
+    MOVE = 5
+    CHALLENGE = 10
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
         self.win = win
