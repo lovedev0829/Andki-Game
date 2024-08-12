@@ -31,14 +31,25 @@ def process_file(a, b, c):
     
 
     json.dump(anki_data, open(anki_data_path, "w"))
+import math
 
-def xp_to_lvl(xp:int):
-    count = 0
-    if xp == 0: return 1
-    for i in range(100):
-        count += 50*pow(2,i//10)
-        if count >= xp:
-            return i+1 + (xp-count)/50*pow(2,(i-1)//10)
+def area_until_x(x):
+    """Calculate the area under the curve from x=0 to a given x."""
+    n = math.floor(x / 10)
+    # Sum the areas for all complete intervals before the current interval
+    area = sum(2**i * 50 * 10 for i in range(n))
+    # Add the partial area for the current interval
+    area += (x - n * 10) * (2**n * 50)
+    return area
+
+def xp_to_lvl(xp):
+    """Find the x value where the area under the curve equals xp."""
+    x = 0
+    # Incrementally increase x until the area under the curve equals xp
+    while area_until_x(x) < xp:
+        x += 0.01  # Increase x by small increments for better precision
+    return x
+
 print(xp_to_lvl(0))
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
