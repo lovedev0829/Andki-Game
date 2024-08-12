@@ -14,6 +14,8 @@ def process_file(a, b, c):
     # get today's ordinal date
     today_ordinal = datetime.date.today().toordinal()
     anki_data = json.load(open(anki_data_path))
+    if hasattr(mw.win, 'update'):
+        mw.win.update()
     if 'trainer_xp' in anki_data:
         anki_data['trainer_xp'] += 1
     else:
