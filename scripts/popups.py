@@ -1,4 +1,5 @@
 from scripts.utils import center_widget, get_data, change_data
+import pickle
 from aqt.qt import *
 
 import threading
@@ -7,7 +8,7 @@ from aqt import utils
 from rpg.main import mainloop
 from functools import partial
 import json
-from rpg.ankirpg import data_path
+from rpg.ankirpg import data_path, AnkiRPG
 import random
 from scripts.utils import xp_to_lvl
 from scripts.constants import *
@@ -58,8 +59,14 @@ class rpg_popup:
 		self.okbutton.setObjectName("okbutton")
 		self.okbutton.clicked.connect(delete_win)
 		global started
-		if  os.path.exists(q:=os.path.join(cwd, 'rpg', 'game.save')):
-			started = True
+		if  os.path.exists(q:=SAVE_PATH):
+			print('save path exists')
+			try:
+				AnkiRPG.check()
+				started = True
+			except Exception as e:
+				print(e)
+			
 		if started:
 			self.pushButton.setGeometry(QRect(50, 100, 161, 51))
 			self.pushButton_2.setGeometry(QRect(390, 100, 161, 51))
@@ -406,7 +413,6 @@ class trainer_manager:
 		"""Sets the health ratio and updates the display."""
 		self.ratio = max(0, min(1, ratio))  # Ensure ratio is between 0 and 1
 		self.label.setText(f"lvl{int(self.level)}")
-		print(self.level)
 		self.label.move(int(self.win.width()//2.5),5)
 		self.label.setFont(QFont(self.label.font().toString(),15))
 		self.win.update()  # Trigger a repaint

@@ -18,6 +18,9 @@ def process_file(a, b, c):
         mw.win.update()
     if 'trainer_xp' in anki_data:
         anki_data['trainer_xp'] += 1
+        prize()
+
+        
     else:
         anki_data['trainer_xp'] = 1
     if "time_ordinal" not in anki_data or anki_data["time_ordinal"] != today_ordinal:
@@ -52,7 +55,11 @@ def xp_to_lvl(xp):
         x += 0.01  # Increase x by small increments for better precision
     return x
 
-print(xp_to_lvl(0))
+
+def prize():
+    xp = get_data().get('trainer_xp', 1)
+    if xp_to_lvl(xp) % 1 == 0:
+        1
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
     anki_data[data] = value
@@ -117,8 +124,10 @@ def add_btn(
         deck_browser: "aqt.overview.Overview", 
         content: "aqt.overview.OverviewContent",
 ) -> None:
+    mw.web.eval('x=2;')
     path = os.path.join(cwd, f"assets", "ui","Chess.gif")
     content.table += get_html(image_to_base64(path), "start_rpg")
+    
 
 class manager:
     def __init__(self) -> None:

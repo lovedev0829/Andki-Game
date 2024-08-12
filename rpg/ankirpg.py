@@ -21,7 +21,7 @@ from aqt import mw
 from scripts.utils import center_widget
 from aqt.qt import *
 import pickle
-from scripts.constants import TRAINERS
+from scripts.constants import *
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
@@ -43,11 +43,10 @@ class Actions(Enum):
     DEFEND = 'defend'
 
 class Costs(Enum):
-    ATTACK = 10
-    DEFEND = 10
-    MOVE = 5
-    CHALLENGE = 10
-
+    ATTACK = 0
+    DEFEND = 0
+    MOVE = 0
+    CHALLENGE =0
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
         self.win = win
@@ -57,6 +56,7 @@ class AnkiRPG:
         self.highlighted_tile = None
         self.ankimons = ankimons
         self.ankiwin = None
+        self.ratio = 0
         self.trainers = trainers
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
         
@@ -100,13 +100,35 @@ class AnkiRPG:
         else:
             self.learned_cards = data['moves']
 
+
+
+    def paintEvent(self, event):
+        painter = QPainter(mw.window())
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        # Get current window size
+        mw.window()
+        current_width = mw.window().width()//4
+        current_height = 20
+        # Draw a border around the health bar
+        painter.setPen(QColor(0, 0, 0))
+        painter.drawRect(current_width*1.2, 40, current_width-1, current_height-1)
+        # Draw foreground (filled part of the health bar based on ratio)
+        painter.setBrush(QBrush(Qt.GlobalColor.green))
+        filled_width = current_width * self.ratio
+        painter.drawRect(current_width*1.2, 40, filled_width, current_height)
+        event.accept()
     
     def run(self):
         self.running = True
         frame = 0 
-        self.ankiwin = trainer_popup(Costs.CHALLENGE.value, self.trainers[1].name)
-        center_win(self.ankiwin)
-        self.ankiwin.cards = learned_card_checker(data_path)
+        if not self.ankiwin:
+            self.ankiwin = trainer_popup(Costs.CHALLENGE.value, self.trainers[1].name)
+            center_win(self.ankiwin)
+            self.ankiwin.cards = learned_card_checker(data_path)
+        mw.window().paintEvent = self.paintEvent
+
+        mw.window().update()
         while self.running:
             self.clock.tick(60)
             
@@ -142,6 +164,7 @@ class AnkiRPG:
                                     """)
                     if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
                         self.ankiwin = None
+                        
                     return
                 else:
                     if self.ankiwin.action == Actions.DEFEND:
@@ -186,7 +209,6 @@ class AnkiRPG:
          
     
     def save(self):
-        path = os.path.join(cwd, 'game.save')
         for mob in self.engine.player1_mobs+self.engine.player2_mobs:
             mob.img = None
             mob.screen = None
@@ -199,18 +221,32 @@ class AnkiRPG:
             'player1_mobs' : self.engine.player1_mobs,
             'player2_mobs' : self.engine.player2_mobs,
             'completed_cards' : self.completed_cards,
-            'ankiwin' : [self.ankiwin.action, self.ankiwin.required_cards, self.ankiwin.coords, round((self.learned_cards - self.completed_cards) *10)] if self.ankiwin else None
+            'ankiwin' : [self.ankiwin.action, self.ankiwin.required_cards, self.ankiwin.coords, round((self.learned_cards - self.completed_cards) *10)] if self.ankiwin and hasattr(self.ankiwin,'action') else None,
+            'trainer_name' : self.trainers[1].name,
         }
 
         
-        pickle.dump(data, open(path, 'wb'))
-        
+        pickle.dump(data, open(SAVE_PATH, 'wb'))
+    @staticmethod
+    def check():
+        data = pickle.load(open(SAVE_PATH, 'rb'))
+        data['turn']
+        data['player1_mobs']
+        data['player2_mobs']
+        data['completed_cards']
+        data['trainer_name']
     def load(self):
-        data = pickle.load(open(os.path.join(cwd, 'game.save'), 'rb'))
+        try:
+            AnkiRPG.check()
+        except Exception as e:
+            print(e)
+            return 
+        data = pickle.load(open(SAVE_PATH, 'rb'))
         self.engine.turn = data['turn']
         self.engine.player1_mobs = data['player1_mobs']
         self.engine.player2_mobs = data['player2_mobs']
         self.completed_cards = data['completed_cards']
+        self.trainers[1].name = data['trainer_name']
         if data['ankiwin']:
             self.ankiwin = ActionWindow(data['ankiwin'][0], data['ankiwin'][1], data['ankiwin'][2], self)
             self.ankiwin.completed_cards = data['ankiwin'][3]
