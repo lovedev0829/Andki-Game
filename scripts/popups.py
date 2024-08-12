@@ -159,7 +159,8 @@ class attribute_popup:
 		global started
 		started = True
 		dic = {self.selected[i]:self.elements[i] for i in range(3)}
-		start_chess(dic)
+		if all(dic.keys()):
+			start_chess(dic)
 
 
 	def clicked(self, index):
