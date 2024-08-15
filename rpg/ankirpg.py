@@ -181,20 +181,21 @@ class AnkiRPG:
                         self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
                         
                                                                         
-                                                    {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                                        {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
                     else:
                         self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
                         
                                                                         
-                                                    {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                                        {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
                     if self.ankiwin.completed_cards >= self.ankiwin.required_cards:
                         if self.ankiwin.action == Actions.MOVE:
                             self.engine.perform_move(*self.ankiwin.coords)
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
-                            if random.random <= .2:
-                                self.ankiwin = 2
+                            if random.random() <= .2:
+                                1
+                                # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:
                             self.engine.perform_attack(*self.ankiwin.coords)
                             self.ankiwin = None
