@@ -163,6 +163,8 @@ class trainer_popup(QMainWindow):
         # set the title
         self.setWindowTitle("AnkiNick-mon")
         self.cost = cost
+        self.required_cards = cost
+        self.completed_cards = 0
         # setting the geometry of window
         self.setFixedSize(500,180)
         center_widget(self)
@@ -213,6 +215,52 @@ class trainer_popup(QMainWindow):
 
 
 class Win_popup(QMainWindow):
+    def __init__(self, xp=10, won=True):
+        super().__init__()
+        
+        # set the title
+        self.setWindowTitle("AnkiNick-mon")
+        # setting the geometry of window
+        self.setFixedSize(640,480)
+        center_widget(self)
+
+        global trainer_xp
+        if won:
+            possible_winnings = [anki for anki in ANKIMONS if anki not in UNLOCKED_ANKIMONS]
+            trainer_xp += xp
+
+            change_data('trainer_xp', trainer_xp)
+            image_name = None
+            if possible_winnings:
+                image_name = random.choice(possible_winnings)
+                UNLOCKED_ANKIMONS.append(image_name)
+                change_data('Unlocked_Ankimons', UNLOCKED_ANKIMONS)
+
+            self.text_label = QLabel(f"congratulations on winning you have won {xp}xp"+f' and a new Ankimon \n {image_name}' if image_name else '', self)
+            self.text_label.move(25,15)
+            cwd = os.getcwd()+os.sep[0]        
+            path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
+            print(path)
+            self.label = QLabel(self)
+            self.pixmap = QPixmap(path)        
+            self.label.setPixmap(self.pixmap)
+            scaler = 0.6
+            # Optional, resize label to image size
+            self.label.resize(self.pixmap.width()*scaler,
+                            self.pixmap.height()*scaler)
+            self.label.setScaledContents(True)
+            self.label.move(100,30)
+        else:
+            self.text_label = QLabel(f"You have lost better luck next time!", self)
+            self.text_label.move(160,10)                        
+        self.text_label.setFont(QFont(self.text_label.font().toString(),15))
+        self.text_label.adjustSize()
+        self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # show all the widgets
+        self.show()
+
+class wild_ankimon(QMainWindow):
     def __init__(self, xp=10, won=True):
         super().__init__()
         

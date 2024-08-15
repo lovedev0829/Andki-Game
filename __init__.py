@@ -61,7 +61,6 @@ def on_profile_open():
     pygame.init()
     info = pygame.display.Info()
     global screen_size
-    gui_hooks.deck_browser_did_render(lambda x: print('yre'))
     screen_size = [info.current_w, info.current_h]
     mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
     center_widget(mw.window())
@@ -70,14 +69,14 @@ def on_profile_open():
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))
+    print(mw.col.sched.get_queued_cards())
 
 
 cwd = os.path.dirname(__file__)
 path = os.path.join(cwd, f"assets","image.png"    )
 # Inject a button in the deck view
 def update_streak_btn_js(
-    web_content: WebContent, context: object | None
-) -> None:
+    web_content: WebContent, context: object | None) -> None:
     if not isinstance(context, DeckBrowser):
         return
     addon_name = mw.addonManager.addonFromModule(__name__)

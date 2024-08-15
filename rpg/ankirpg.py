@@ -1,7 +1,6 @@
 import json
 import os
 import random
-import threading
 import time
 from enum import Enum
 from typing import Optional
@@ -151,18 +150,20 @@ class AnkiRPG:
         self.savewin = SaveWindow(self.save, self)
         
     def update_anki(self):
+        mw.win = self.ankiwin
         if self.ankiwin:
             if not self.game_over:
                 self.ankiwin.completed_cards = round((self.learned_cards - self.completed_cards) *10)
 
                 if not hasattr(self.ankiwin, 'action'):
+                    self.ankiwin.completed_cards = int((self.learned_cards-self.ankiwin.cards)*10)
                     self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
     I'll show you that I'm the best 
     AnkiMon trainer here, not you!
     learn {self.ankiwin.cost} cards to accept the challenge
-                                {int((self.learned_cards-self.ankiwin.cards)*10)}/{self.ankiwin.cost}
+                                {self.ankiwin.completed_cards}/{self.ankiwin.cost}
                                     """)
-                    if int((self.learned_cards - self.ankiwin.cards)*10) >= self.ankiwin.cost:
+                    if self.ankiwin.completed_cards >= self.ankiwin.cost:
                         self.ankiwin = None
                         
                     return
@@ -183,6 +184,8 @@ class AnkiRPG:
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
+                            if random.random <= .2:
+                                self.ankiwin = 2
                         elif self.ankiwin.action == Actions.ATTACK:
                             self.engine.perform_attack(*self.ankiwin.coords)
                             self.ankiwin = None

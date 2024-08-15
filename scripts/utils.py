@@ -6,16 +6,47 @@ import aqt
 from aqt import mw
 import base64
 import aqt.overview
+import aqt.reviewer
 from scripts.constants import anki_data_path
+from scripts.notification import Notification
 
 cwd = os.path.dirname(os.path.dirname(__file__))
 # requires arguments a, b, c because of how Anki calls the hook
-def process_file(a, b, c):
+def process_file(a:aqt.reviewer.Reviewer, b, c):
     # get today's ordinal date
+    
     today_ordinal = datetime.date.today().toordinal()
     anki_data = json.load(open(anki_data_path))
-    if hasattr(mw.win, 'update'):
-        mw.win.update()
+    if hasattr(mw, 'win'):
+        if hasattr(mw.win, 'update'):
+            mw.win.update()
+        print( hasattr(mw.win, 'required_cards') , hasattr(mw.win, 'completed_cards'))
+        if hasattr(mw.win, 'required_cards') and hasattr(mw.win, 'completed_cards'):
+            encouragement = ""
+            html = f"""\
+        <table cellpadding=10>
+        <tr>
+        <center><b>{mw.win.completed_cards+1}/{mw.win.required_cards} cards done so far!</b><br>
+        {encouragement}</center>
+        </td>
+        </tr>
+        </table>"""
+            
+            palette = mw.palette()
+            notification = Notification(
+                html,
+                mw.progress,
+                duration=1,
+                parent=mw.app.activeWindow() or mw,
+                align_horizontal='left',
+                align_vertical='bottom',
+                space_horizontal=mw.window().geometry().width()/20,
+                space_vertical=mw.window().geometry().height()/5,
+                # bg_color=palette.color(mw.backgroundRole()),
+            )
+
+            notification.show()
+
     if 'trainer_xp' in anki_data:
         anki_data['trainer_xp'] += 1
         prize()
