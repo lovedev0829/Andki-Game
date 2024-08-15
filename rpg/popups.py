@@ -172,12 +172,7 @@ class trainer_popup(QMainWindow):
         # creating label
         self.label = QLabel(self)
         print(cost)
-        self.text_label = QLabel(f"""So you want to take on the next challenge?
-    I'll show you that I'm the best 
-    AnkiMon trainer here, not you!
-    learn {self.cost} cards to accept the challenge
-    0/{self.cost}
-                            """, self)
+        self.text_label = QLabel(f"", self)
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
         self.text_label.adjustSize()
         self.text_label.move(10,15)

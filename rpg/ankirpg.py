@@ -56,6 +56,7 @@ class AnkiRPG:
         self.ankimons = ankimons
         self.ankiwin = None
         self.ratio = 0
+        self.load_save = load_save
         self.trainers = trainers
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
         
@@ -147,6 +148,7 @@ class AnkiRPG:
             
             
             # print(self.clock.get_fps())
+        mw.win = None
         self.savewin = SaveWindow(self.save, self)
         
     def update_anki(self):
@@ -157,12 +159,19 @@ class AnkiRPG:
 
                 if not hasattr(self.ankiwin, 'action'):
                     self.ankiwin.completed_cards = int((self.learned_cards-self.ankiwin.cards)*10)
-                    self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
-    I'll show you that I'm the best 
-    AnkiMon trainer here, not you!
-    learn {self.ankiwin.cost} cards to accept the challenge
-                                {self.ankiwin.completed_cards}/{self.ankiwin.cost}
-                                    """)
+                    if self.load_save:
+                        self.ankiwin.text_label.setText(f"""There you are again, want to keep playing? 
+        Then learn {self.ankiwin.cost} cards for me.
+
+                            {self.ankiwin.completed_cards}/{self.ankiwin.cost}""")
+                    else:
+                        self.ankiwin.text_label.setText(f"""So you want to take on the next challenge?
+        I'll show you that I'm the best 
+        AnkiMon trainer here, not you!
+        learn {self.ankiwin.cost} cards to accept the challenge
+                                    {self.ankiwin.completed_cards}/{self.ankiwin.cost}
+                                        """)
+                    self.ankiwin.text_label.adjustSize()    
                     if self.ankiwin.completed_cards >= self.ankiwin.cost:
                         self.ankiwin = None
                         
