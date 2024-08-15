@@ -48,7 +48,7 @@ The AnkiNick-Mon add-on consists of two main components:
 
 **Design**
 
-  Pixel Art Style: The game world and characters are designed in a pixel art style consistent with the AnkiNick project. The fundamental concept and ideas for the design were initially conceived and conceptualized by Ankinick. The design was then meticulously brought to life, implemented, and further refined by Alysonkof (https://www.fiverr.com/s/BRdb8gy) under contract based on Fiverr.
+  Pixel Art Style: The game world and characters are designed in a pixel art style consistent with the AnkiNick project. The fundamental concept and ideas for the design were initially conceived and conceptualized by Ankinick. The design was then meticulously brought to life, implemented, and further refined by Alysonkof (www.alysonkof.com.br) under contract based on Fiverr.
   
   UI Integration: The game interfaces are embedded within the Anki UI and as a Pygame-PopUp-Window for a seamless experience.
 
