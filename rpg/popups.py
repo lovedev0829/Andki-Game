@@ -179,7 +179,7 @@ class trainer_popup(QMainWindow):
         # loading image
         scaler = 2
         
-
+ 
         cwd = os.getcwd()+os.sep[0]        
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'trainers',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
         
