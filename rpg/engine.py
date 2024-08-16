@@ -33,7 +33,7 @@ def fps_counter(clock, font:pygame.font.Font, screen:pygame.Surface):
     screen.blit(fps_t,(0,0))
 
 class Mob:
-    def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer):
+    def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer, health=100):
         self.i = i
         self.j = j
         self.old_pos = [i, j]
@@ -41,7 +41,8 @@ class Mob:
         self.element = element
         self.trainer = trainer
         self.img = self.load_image()
-        self.health = 100
+        self.health = health
+        self.maxhealth = self.health
         self.defense = 1
         self.dmg = 10
         self.last_damaged = 0

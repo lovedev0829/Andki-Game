@@ -41,12 +41,13 @@ class Actions(Enum):
     ATTACK = 'attack'
     DEFEND = 'defend'
 
+
 class Costs(Enum):
-    ATTACK = 0
-    DEFEND = 0
-    MOVE = 0
-    CHALLENGE = 0
-    WILD = 0
+    ATTACK = 10
+    DEFEND = 10
+    MOVE = 5
+    CHALLENGE = 10
+    WILD = 50
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
         self.win = win
@@ -182,10 +183,11 @@ class AnkiRPG:
                         elif self.ankiwin.action == Actions.MOVE:
                             self.engine.perform_move(*self.ankiwin.coords)
                             coords = self.ankiwin.coords
+                            print(coords)
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
-                            if random.random:
+                            if random.random() <= 0.2:
                                 self.ankiwin = WildAnkimon(Costs.WILD.value, coords, self)
                                 # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:

@@ -102,8 +102,6 @@ def run_class(_class):
 	_class(mw.win)
 
 
-
-
 class attribute_popup:
 	def __init__(self, win:QMainWindow):
 		self.counter = 0

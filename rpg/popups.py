@@ -1,13 +1,21 @@
 import sys
 from aqt.qt import *
+import aqt.utils
 import pygame
+import aqt
 from aqt import mw
 import random
+from functools import partial
 from scripts.utils import get_data, change_data, anki_data_path
 from scripts.constants import *
 from scripts.constants import trainer_xp
 from scripts.popups import center_widget
 import json
+from enum import Enum
+
+class Rewards(Enum):
+    RELEASE = 150
+
 
 def learned_card_checker(data_path):
     with open(data_path, "r") as f:
@@ -215,7 +223,10 @@ class WildAnkimon(QMainWindow):
         painter.drawRect(current_width/2, 105, filled_width, current_height)
 
     def closeEvent(self, event):
-        self.game.ankiwin = captured_ankimon(self.name, self.coords, self.game)
+        if self.completed_cards >= self.required_cards:
+            self.game.ankiwin = captured_ankimon(self.name, self.coords, self.game)
+        else:
+            self.game.ankiwin = None
         event.accept()
 
 
@@ -233,23 +244,9 @@ class captured_ankimon(QMainWindow):
         center_win(self)
         
         global trainer_xp
-
-        if name in UNLOCKED_ANKIMONS:
-            self.text_label = QLabel(f"""you have defeated the ankimon would you like to release it for xp """,self)
-            self.ok_button = QPushButton("OK", self)
-            self.ok_button.move(300,400)
-            self.ok_button.animateClick()
-        else:
-            self.text_label = QLabel(f"""you have defeated the ankimon would you like to capture it 
-                            or release it for xp""",self)
-            self.capture = QPushButton("capture", self)
-            self.capture.move(170,400)
-            self.capture.animateClick()
-            self.release = QPushButton("release", self)
-            self.release.move(400,400)            
-            self.release.animateClick()
         # self.text_label.move(25,15)
-        cwd = os.getcwd()+os.sep[0]        
+        cwd = os.getcwd()+os.sep[0]       
+        self.name = name 
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{name}.png").replace(cwd, '').replace(os.sep[0],'/')
         self.label = QLabel(self)
         self.pixmap = QPixmap(path)        
@@ -263,6 +260,28 @@ class captured_ankimon(QMainWindow):
                         self.pixmap.height()*scaler)
         self.label.setScaledContents(True)
         self.label.move(100,30)
+
+        if name in UNLOCKED_ANKIMONS:
+            self.text_label = QLabel(f"""you have defeated the ankimon would you like to release it for xp """,self)
+            self.text_label.move(25,15)
+            self.ok_button = QPushButton(text="OK", parent=self)
+            self.ok_button.move(280,420)
+            self.ok_button.clicked.connect(self.releasefunc)
+            self.ok_button.setEnabled(True)
+        else:
+            self.text_label = QLabel(f"""you have defeated the ankimon would you like to capture it 
+            or release it for xp""",self)
+            self.text_label.move(45,15)
+            self.capture = QPushButton(text="capture", parent=self)
+            self.capture.move(170,420)
+            self.capture.clicked.connect(self.capturefunc)
+            self.capture.setEnabled(True)
+
+            self.release = QPushButton(text="release", parent=self)
+            
+            self.release.clicked.connect(self.releasefunc)
+            self.release.move(400,420)
+            self.release.setEnabled(True)          
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
         self.text_label.adjustSize()
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -270,9 +289,24 @@ class captured_ankimon(QMainWindow):
         # show all the widgets
         self.show()
 
+    def releasefunc(self):
+        xp = get_data().get('trainer_xp', 0)
+        change_data('trainer_xp', xp+Rewards.RELEASE.value)  
+        self.close()
+
+    def capturefunc(self):
+        UNLOCKED_ANKIMONS.append(self.name)  
+        change_data('Unlocked_Ankimons', UNLOCKED_ANKIMONS)
+        self.close()
+
     def closeEvent(self, event):
         self.game.ankiwin = None
+        mob = self.game.engine.get_mob(*self.coords[1])
+        mob.health = mob.maxhealth
         event.accept()
+        aqt.utils.showInfo("You're attacked Ankimon has been fully healed")
+        
+
 
 
 
