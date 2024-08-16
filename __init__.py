@@ -69,7 +69,7 @@ def on_profile_open():
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = to_review
     json.dump(data, open(anki_data_path, "w"))
-    print(mw.col.sched.get_queued_cards().cards)
+    
 
 
 cwd = os.path.dirname(__file__)

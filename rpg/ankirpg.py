@@ -134,9 +134,15 @@ class AnkiRPG:
             
             # print(self.clock.get_fps())
         mw.win = None
-        self.savewin = SaveWindow(self.save, self)
+        if not self.savewin:
+            self.savewin = SaveWindow(self.save, self)
         
     def update_anki(self):
+        if not mw.col.sched.get_queued_cards().cards:
+            self.savewin = SaveWindow(self.save, self)
+            self.savewin.label.setText()
+            self.game_over = True
+            self.running = False
         mw.win = self.ankiwin
         if self.ankiwin:
             if not self.game_over:

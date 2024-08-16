@@ -47,10 +47,10 @@ class SaveWindow(QMainWindow):
         main_widget.setLayout(main_layout)
         
         # Label
-        label = QLabel("Would you like to save your game?")
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 20px;")
-        main_layout.addWidget(label)
+        self.label = QLabel("Would you like to save your game?")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 20px;")
+        main_layout.addWidget(self.label)
         
         # Button layout
         button_layout = QHBoxLayout()

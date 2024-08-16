@@ -6,7 +6,7 @@ from rpg.config import config
 from scripts.constants import TRAINERS, ANKIMONS, STATS
 import time
 import ctypes
-from scripts.utils import center_widget
+from scripts.utils import center_widget, xp_to_lvl, get_data
 from rpg.engine import Trainer
 import random
 import json
@@ -26,6 +26,9 @@ def mainloop(ankimons, loadsave=False):
         bot_trainer = random.choice(list(STATS.keys()))
         print(bot_trainer)
     default_stats = [1,1,0]
+    num = (int(xp_to_lvl(get_data().get('trainer_xp', 0)))//2)
+    default_stats[0] += num * 0.1
+    default_stats[1] += num * 0.1
     trainers = [Trainer(trainer_name, *default_stats), Trainer(bot_trainer ,*STATS[bot_trainer])]
     mw.window().setGeometry(0,yoffset,size[0]/2,size[1]-yoffset*2.3)
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (size[0]/2,yoffset)
