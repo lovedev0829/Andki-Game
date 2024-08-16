@@ -13,7 +13,7 @@ import PygameUIKit
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode, Trainer, fps_counter
-from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, learned_card_checker, center_win
+from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, WildAnkimon, learned_card_checker, center_win
 
 from pathlib import Path
 from aqt import mw
@@ -42,10 +42,11 @@ class Actions(Enum):
     DEFEND = 'defend'
 
 class Costs(Enum):
-    ATTACK = 10
-    DEFEND = 10
-    MOVE = 5
-    CHALLENGE = 10
+    ATTACK = 0
+    DEFEND = 0
+    MOVE = 0
+    CHALLENGE = 0
+    WILD = 0
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
         self.win = win
@@ -102,22 +103,6 @@ class AnkiRPG:
 
 
 
-    def paintEvent(self, event):
-        painter = QPainter(mw.window())
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        # Get current window size
-        mw.window()
-        current_width = mw.window().width()//4
-        current_height = 20
-        # Draw a border around the health bar
-        painter.setPen(QColor(0, 0, 0))
-        painter.drawRect(current_width*1.2, 40, current_width-1, current_height-1)
-        # Draw foreground (filled part of the health bar based on ratio)
-        painter.setBrush(QBrush(Qt.GlobalColor.green))
-        filled_width = current_width * self.ratio
-        painter.drawRect(current_width*1.2, 40, filled_width, current_height)
-        event.accept()
     
     def run(self):
         self.running = True
@@ -126,7 +111,6 @@ class AnkiRPG:
             self.ankiwin = trainer_popup(Costs.CHALLENGE.value, self.trainers[1].name)
             center_win(self.ankiwin)
             self.ankiwin.cards = learned_card_checker(data_path)
-        mw.window().paintEvent = self.paintEvent
 
         mw.window().update()
         while self.running:
@@ -157,6 +141,11 @@ class AnkiRPG:
             if not self.game_over:
                 self.ankiwin.completed_cards = round((self.learned_cards - self.completed_cards) *10)
 
+                if isinstance(self.ankiwin, WildAnkimon):
+                    self.ankiwin.text_label.setText(f"""   A wild ankimon has approached you, learn {self.ankiwin.required_cards} cards to capture it    
+        {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}""")
+                    self.ankiwin.update()
+
                 if not hasattr(self.ankiwin, 'action'):
                     self.ankiwin.completed_cards = int((self.learned_cards-self.ankiwin.cards)*10)
                     if self.load_save:
@@ -182,26 +171,28 @@ class AnkiRPG:
                         
                                                                         
                                         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
-                    else:
+                    elif self.ankiwin.action:
                         self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
                         
                                                                         
                                         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
                     if self.ankiwin.completed_cards >= self.ankiwin.required_cards:
-                        if self.ankiwin.action == Actions.MOVE:
+                        if not self.ankiwin.action:
+                            self.ankiwin.close()
+                        elif self.ankiwin.action == Actions.MOVE:
                             self.engine.perform_move(*self.ankiwin.coords)
+                            coords = self.ankiwin.coords
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
-                            if random.random() <= .2:
-                                1
+                            if random.random:
+                                self.ankiwin = WildAnkimon(Costs.WILD.value, coords, self)
                                 # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:
                             self.engine.perform_attack(*self.ankiwin.coords)
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
-
                             if  not self.engine.player2_mobs:
                                 self.ankiwin = Win_popup(won=True)
                                 self.game_over = True                            

@@ -156,6 +156,126 @@ class ActionWindow(QMainWindow):
         center_widget(mw.window())
         pygame.quit()
 
+class WildAnkimon(QMainWindow):
+    def __init__(self, required_cards, coords, game):
+        super().__init__()
+        self.setWindowTitle("Ankimon")
+        self.setGeometry(100, 100, 400, 200)
+        self.setFixedSize(640,480)
+        self.coords = coords
+        self.ratio = 1
+        self.action = None
+        self.required_cards = required_cards
+        self.completed_cards = 0
+        self.game = game
+        center_win(self)
+        
+        global trainer_xp
+
+        image_name = random.choice(ANKIMONS)
+        self.text_label = QLabel(f"""   A wild ankimon has approached you, learn {self.required_cards} cards to capture it
+    {self.completed_cards}/{self.required_cards}""",self)
+        self.text_label.move(25,15)
+        cwd = os.getcwd()+os.sep[0]        
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
+        self.name = image_name
+        self.label = QLabel(self)
+        self.pixmap = QPixmap(path)        
+        self.label.setPixmap(self.pixmap)
+        scaler = 0.6
+        # Optional, resize label to image size
+        self.label.resize(self.pixmap.width()*scaler,
+                        self.pixmap.height()*scaler)
+        self.label.setScaledContents(True)
+        self.label.move(100,50)
+        self.text_label.setFont(QFont(self.text_label.font().toString(),15))
+        self.text_label.adjustSize()
+        self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # show all the widgets
+        self.show()
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        try:
+            self.ratio = self.completed_cards/self.required_cards
+        except ZeroDivisionError:
+            self.ratio = 1
+        # Get current window size
+        current_width = self.width()//2
+        current_height = 25
+        # Draw a border around the health bar
+        painter.setPen(QColor(0, 0, 0))
+        painter.drawRect(current_width/2, 105, current_width-1, current_height-1)
+        # Draw foreground (filled part of the health bar based on ratio)
+        painter.setBrush(QBrush(Qt.GlobalColor.red))
+        painter.drawRect(current_width/2, 105, current_width, current_height)
+        painter.setBrush(QBrush(Qt.GlobalColor.green))
+        filled_width = current_width * (1-self.ratio)
+        painter.drawRect(current_width/2, 105, filled_width, current_height)
+
+    def closeEvent(self, event):
+        self.game.ankiwin = captured_ankimon(self.name, self.coords, self.game)
+        event.accept()
+
+
+class captured_ankimon(QMainWindow):
+    def __init__(self, name, coords, game):
+        super().__init__()
+        self.setWindowTitle("Ankimon")
+        self.setGeometry(100, 100, 400, 200)
+        self.setFixedSize(640,480)
+        self.action = None
+        self.required_cards = 10
+        self.coords = coords
+        self.completed_cards = 0
+        self.game = game
+        center_win(self)
+        
+        global trainer_xp
+
+        if name in UNLOCKED_ANKIMONS:
+            self.text_label = QLabel(f"""you have defeated the ankimon would you like to release it for xp """,self)
+            self.ok_button = QPushButton("OK", self)
+            self.ok_button.move(300,400)
+            self.ok_button.animateClick()
+        else:
+            self.text_label = QLabel(f"""you have defeated the ankimon would you like to capture it 
+                            or release it for xp""",self)
+            self.capture = QPushButton("capture", self)
+            self.capture.move(170,400)
+            self.capture.animateClick()
+            self.release = QPushButton("release", self)
+            self.release.move(400,400)            
+            self.release.animateClick()
+        # self.text_label.move(25,15)
+        cwd = os.getcwd()+os.sep[0]        
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{name}.png").replace(cwd, '').replace(os.sep[0],'/')
+        self.label = QLabel(self)
+        self.pixmap = QPixmap(path)        
+        # OK button
+        
+
+        self.label.setPixmap(self.pixmap)
+        scaler = 0.6
+        # Optional, resize label to image size
+        self.label.resize(self.pixmap.width()*scaler,
+                        self.pixmap.height()*scaler)
+        self.label.setScaledContents(True)
+        self.label.move(100,30)
+        self.text_label.setFont(QFont(self.text_label.font().toString(),15))
+        self.text_label.adjustSize()
+        self.text_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        # show all the widgets
+        self.show()
+
+    def closeEvent(self, event):
+        self.game.ankiwin = None
+        event.accept()
+
+
+
 class trainer_popup(QMainWindow):
     def __init__(self, cost, image_name):
         super().__init__()
@@ -255,52 +375,6 @@ class Win_popup(QMainWindow):
         # show all the widgets
         self.show()
 
-class wild_ankimon(QMainWindow):
-    def __init__(self, xp=10, won=True):
-        super().__init__()
-        
-        # set the title
-        self.setWindowTitle("AnkiNick-mon")
-        # setting the geometry of window
-        self.setFixedSize(640,480)
-        center_widget(self)
-
-        global trainer_xp
-        if won:
-            possible_winnings = [anki for anki in ANKIMONS if anki not in UNLOCKED_ANKIMONS]
-            trainer_xp += xp
-
-            change_data('trainer_xp', trainer_xp)
-            image_name = None
-            if possible_winnings:
-                image_name = random.choice(possible_winnings)
-                UNLOCKED_ANKIMONS.append(image_name)
-                change_data('Unlocked_Ankimons', UNLOCKED_ANKIMONS)
-
-            self.text_label = QLabel(f"congratulations on winning you have won {xp}xp"+f' and a new Ankimon \n {image_name}' if image_name else '', self)
-            self.text_label.move(25,15)
-            cwd = os.getcwd()+os.sep[0]        
-            path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
-            print(path)
-            self.label = QLabel(self)
-            self.pixmap = QPixmap(path)        
-            self.label.setPixmap(self.pixmap)
-            scaler = 0.6
-            # Optional, resize label to image size
-            self.label.resize(self.pixmap.width()*scaler,
-                            self.pixmap.height()*scaler)
-            self.label.setScaledContents(True)
-            self.label.move(100,30)
-        else:
-            self.text_label = QLabel(f"You have lost better luck next time!", self)
-            self.text_label.move(160,10)                        
-        self.text_label.setFont(QFont(self.text_label.font().toString(),15))
-        self.text_label.adjustSize()
-        self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # show all the widgets
-        self.show()
-        
 
 def center_win(win:QMainWindow):
     pygame.init()

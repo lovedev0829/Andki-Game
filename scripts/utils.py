@@ -36,7 +36,7 @@ def process_file(a:aqt.reviewer.Reviewer, b, c):
             notification = Notification(
                 html,
                 mw.progress,
-                duration=1,
+                duration=2,
                 parent=mw.app.activeWindow() or mw,
                 align_horizontal='left',
                 align_vertical='bottom',
