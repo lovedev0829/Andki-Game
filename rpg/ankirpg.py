@@ -87,6 +87,7 @@ class AnkiRPG:
         self.learned_cards = 0
         self.learned_card_checker()
         self.game_over = False
+        self.savewin = None
         self.completed_cards = self.learned_cards
         if load_save:
             self.load()
@@ -140,7 +141,8 @@ class AnkiRPG:
     def update_anki(self):
         if not mw.col.sched.get_queued_cards().cards:
             self.savewin = SaveWindow(self.save, self)
-            self.savewin.label.setText()
+            self.label = QLabel("""The gamified learning is over 
+    do you want to save your progress?""")
             self.game_over = True
             self.running = False
         mw.win = self.ankiwin
