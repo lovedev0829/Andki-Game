@@ -292,6 +292,9 @@ class captured_ankimon(QMainWindow):
     def releasefunc(self):
         xp = get_data().get('trainer_xp', 0)
         change_data('trainer_xp', xp+Rewards.RELEASE.value)  
+        mob = self.game.engine.get_mob(*self.coords[1])
+        mob.health = min(mob.maxhealth, mob.health + mob.maxhealth*0.1)
+        aqt.utils.showInfo("You're attacked Ankimon has been healed 10%")
         self.close()
 
     def capturefunc(self):
@@ -301,10 +304,9 @@ class captured_ankimon(QMainWindow):
 
     def closeEvent(self, event):
         self.game.ankiwin = None
-        mob = self.game.engine.get_mob(*self.coords[1])
-        mob.health = mob.maxhealth
+
         event.accept()
-        aqt.utils.showInfo("You're attacked Ankimon has been fully healed")
+        
         
 
 

@@ -137,7 +137,7 @@ class AnkiRPG:
         mw.win = None
         if not self.savewin:
             self.savewin = SaveWindow(self.save, self)
-        
+
     def update_anki(self):
         if not mw.col.sched.get_queued_cards().cards:
             self.savewin = SaveWindow(self.save, self)
@@ -205,6 +205,7 @@ class AnkiRPG:
                             self.last_move = time.time()
                             if  not self.engine.player2_mobs:
                                 self.ankiwin = Win_popup(won=True)
+                                os.remove(SAVE_PATH)
                                 self.game_over = True                            
                         elif self.ankiwin.action == Actions.DEFEND:
                             self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
@@ -215,6 +216,7 @@ class AnkiRPG:
                             self.completed_cards = self.learned_cards            
                             if  not self.engine.player1_mobs:
                                 self.ankiwin = Win_popup(10, False)
+                                os.remove(SAVE_PATH)
                                 self.game_over = True                                        
                         
         else:
