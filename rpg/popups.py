@@ -6,7 +6,7 @@ import aqt
 from aqt import mw
 import random
 from functools import partial
-from scripts.utils import get_data, change_data, anki_data_path
+from scripts.utils import get_data, change_data, anki_data_path, xp_to_lvl
 from scripts.constants import *
 from scripts.constants import trainer_xp
 from scripts.popups import center_widget
@@ -16,6 +16,16 @@ from enum import Enum
 class Rewards(Enum):
     RELEASE = 150
 
+def load_sheet(i, folder='heads', names:list[str]=None):
+	cwd = os.getcwd()+os.sep[0]
+	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
+	print(path)
+	return	f'''border-image : url({path});
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-REPEAT: no-repeat;                           '''
 
 def learned_card_checker(data_path):
     with open(data_path, "r") as f:
@@ -308,6 +318,75 @@ class captured_ankimon(QMainWindow):
         event.accept()
         
         
+
+class trainer_xp_window(QMainWindow):
+    def __init__(self, game):
+        super().__init__(self)
+        self.counter = 0
+        self.setWindowTitle("AnkiNick-mon")        
+        self.ratio = .6
+        self.setFixedSize(700,400)
+        center_widget(self)
+        data = get_data()
+        self.label = QLabel(self)
+        self.trainers = TRAINERS
+        self.buttons : list[QPushButton] = []
+        self.item = data.get('item', None)
+        self.level = xp_to_lvl(data.get('trainer_xp', 0))
+        self.set_ratio(self.level%1)
+        for i in range(1):
+            self.buttons.append(QPushButton(win))
+            self.buttons[i].animateClick()
+            self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
+            self.buttons[i].setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
+        if data.get('default_trainer', None):
+            self.selected = [data['default_trainer']]
+            self.update_ui()
+        self.game = game
+        # show all the widgets
+        self.okbutton = QPushButton(win,text="OK")
+        self.okbutton.setGeometry(QRect(265, 320, 141, 51))
+        self.okbutton.clicked.connect(self.close)
+        win.show()
+
+
+    def set_ratio(self, ratio):
+        """Sets the health ratio and updates the display."""
+        self.ratio = max(0, min(1, ratio))  # Ensure ratio is between 0 and 1
+        self.label.setText(f"""you have gained {get_data().get('trainer_xp',0)-self.game.xp}xp for your trainer
+                           lvl{int(self.level)}""")
+        self.label.adjustSize()
+        self.label.move(self.width()/2-self.label.width()/2,5)
+        self.label.setFont(QFont(self.label.font().toString(),15))
+        self.update()  # Trigger a repaint
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        # Get current window size
+        current_width = self.width()//4
+        current_height = 20
+        # Draw a border around the health bar
+        painter.setPen(QColor(0, 0, 0))
+        painter.drawRect(current_width*1.2, 40, current_width-1, current_height-1)
+        # Draw foreground (filled part of the health bar based on ratio)
+        painter.setBrush(QBrush(Qt.GlobalColor.green))
+        filled_width = current_width * self.ratio
+        painter.drawRect(current_width*1.2, 40, filled_width, current_height)
+
+    def update_ui(self):
+        for i, button in enumerate(self.buttons):
+            try:
+                if i == 1:
+                    if self.item:
+                        button.setStyleSheet(load_sheet(ITEMS.index(self.item), 'items', ITEMS))
+                        change_data("item", self.item)				
+                else:
+                    button.setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
+                    change_data("default_trainer", self.selected[0])
+            except Exception as e:
+                print(e)
 
 
 

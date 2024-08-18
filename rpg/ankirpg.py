@@ -17,7 +17,7 @@ from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, WildA
 
 from pathlib import Path
 from aqt import mw
-from scripts.utils import center_widget
+from scripts.utils import center_widget, get_data, change_data
 from aqt.qt import *
 import pickle
 from scripts.constants import *
@@ -43,11 +43,12 @@ class Actions(Enum):
 
 
 class Costs(Enum):
-    ATTACK = 10
-    DEFEND = 10
-    MOVE = 5
-    CHALLENGE = 10
-    WILD = 50
+    ATTACK = 0
+    DEFEND = 1
+    MOVE = 0
+    CHALLENGE = 0
+    WILD = 0
+    MULTIPLIER = 1
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
         self.win = win
@@ -73,6 +74,7 @@ class AnkiRPG:
         self.accessible_tiles = []
         self.attackable_tiles = []
 
+        self.trainer_xp = get_data().get('trainer_xp',0)
         self.font = pygame.font.SysFont('comicsans', 36)
         self.group = PygameUIKit.Group()
         common = {
@@ -110,7 +112,7 @@ class AnkiRPG:
         self.running = True
         frame = 0 
         if not self.ankiwin:
-            self.ankiwin = trainer_popup(Costs.CHALLENGE.value, self.trainers[1].name)
+            self.ankiwin = trainer_popup(Costs.CHALLENGE.value*Costs.MULTIPLIER.value, self.trainers[1].name)
             center_win(self.ankiwin)
             self.ankiwin.cards = learned_card_checker(data_path)
 
@@ -180,6 +182,13 @@ class AnkiRPG:
                         
                                                                         
                                         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
+                        if not hasattr(self.ankiwin, 'skipbutton'):
+                            self.ankiwin.skipbutton = QPushButton(self.ankiwin)
+                            self.ankiwin.skipbutton.setText('Skip the Cards and get full damage')
+                            self.ankiwin.skipbutton.adjustSize()
+                            self.ankiwin.skipbutton.move(self.ankiwin.width()/2,160)
+                            self.ankiwin.skipbutton.clicked.connect(lambda : self.engine.perform_attack(self.ankiwin.coords[0], self.ankiwin.coords[1]) and self.ankiwin.close())
+                            self.ankiwin.skipbutton.show()
                     elif self.ankiwin.action:
                         self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
                         
@@ -196,7 +205,7 @@ class AnkiRPG:
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
                             if random.random() <= 0.2:
-                                self.ankiwin = WildAnkimon(Costs.WILD.value, coords, self)
+                                self.ankiwin = WildAnkimon(Costs.WILD.value*Costs.MULTIPLIER.value, coords, self)
                                 # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:
                             self.engine.perform_attack(*self.ankiwin.coords)
@@ -208,10 +217,11 @@ class AnkiRPG:
                                 os.remove(SAVE_PATH)
                                 self.game_over = True                            
                         elif self.ankiwin.action == Actions.DEFEND:
-                            self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 0.4
+                            self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 1.4
                             self.engine.perform_attack(*self.ankiwin.coords)
                             if (mob :=self.engine.get_mob(*self.ankiwin.coords[1])):
-                                mob.defense /= 0.4
+                                mob.defense /= 1.4
+                                mob.blocked = True
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards            
                             if  not self.engine.player1_mobs:
@@ -284,7 +294,7 @@ class AnkiRPG:
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
                 if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, Costs.DEFEND.value, ((i, j), move), self)
+                    self.ankiwin = ActionWindow(Actions.DEFEND, Costs.DEFEND.value*Costs.MULTIPLIER.value, ((i, j), move), self)
                     return
         if not mob:
             return
@@ -343,11 +353,11 @@ class AnkiRPG:
                     return
                 coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
                 if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, Costs.MOVE.value, coords, self)
+                    self.ankiwin = ActionWindow(Actions.MOVE, Costs.MOVE.value*Costs.MULTIPLIER.value, coords, self)
                     
 
                 elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, Costs.ATTACK.value, coords, self)
+                    self.ankiwin = ActionWindow(Actions.ATTACK, Costs.ATTACK.value*Costs.MULTIPLIER.value, coords, self)
                 self.change_mode(Mode.Idle)
                 self.selected_mon = None
                 self.selected_tile = None

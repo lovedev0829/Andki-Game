@@ -80,16 +80,15 @@ class Mob:
         elif self.element.lower() == 'water' and mob.element.lower() == 'ice':
             multiplier = 0.8
         print(f"element:{self.element}, defender:{mob.element}, multiplier:{multiplier}")
-        mob.lost_health(self.dmg*multiplier*self.defense)
+        mob.lost_health(self.dmg*multiplier)
         
 
     def lost_health(self, dmg):
-        dmg*=self.defense
+        dmg/=self.defense
         if self.health > dmg:
             self.last_damaged = dmg
         else:
             self.last_damaged = self.health
-        self.blocked = self.defense != 1 and self.owner == Player.Player1
         self.health = max(0, self.health - dmg)
         self.last_attacked = time.time()
         print(dmg)
@@ -119,6 +118,7 @@ class Mob:
                 text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
                 self.screen.blit(text, (x- 30,y - 30- (time.time() -  self.last_attacked)*100))            
         else:
+            self.blocked = False
             self.old_pos[0] += (self.i - self.old_pos[0])/4
             self.old_pos[1] += (self.j - self.old_pos[1])/4
             self.screen.blit(self.img, ((x - 32 + old_pos[0]-32)/2, (y - 24 + old_pos[1]-24)/2))
@@ -270,6 +270,9 @@ class Engine:
                 pos1 = i+pos[0], pos[1]-i
                 if self.is_place_empty(*pos1):
                     moves.add(pos1)
+            for move in self.get_neighbors(*start):
+                moves.add(move)
+                
             return list(moves)     
             
         to_see = [start, None]

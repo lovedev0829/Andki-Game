@@ -448,7 +448,6 @@ class trainer_manager:
 			
 
 	def update_ui(self):
-		
 		for i, button in enumerate(self.buttons):
 			try:
 				if i == 1:
