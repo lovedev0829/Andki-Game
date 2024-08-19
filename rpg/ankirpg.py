@@ -115,7 +115,7 @@ class AnkiRPG:
         self.running = True
         frame = 0 
         if not self.ankiwin:
-            self.ankiwin = trainer_popup(Costs.CHALLENGE.value*self.MULTIPLIER, self.trainers[1].name)
+            self.ankiwin = trainer_popup(int(Costs.CHALLENGE.value*self.MULTIPLIER), self.trainers[1].name)
             center_win(self.ankiwin)
             self.ankiwin.cards = learned_card_checker(data_path)
 
@@ -209,7 +209,7 @@ class AnkiRPG:
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
                             if random.random() <= 0.2:
-                                self.ankiwin = WildAnkimon(Costs.WILD.value*self.MULTIPLIER, coords, self)
+                                self.ankiwin = WildAnkimon(int(Costs.WILD.value*self.MULTIPLIER), coords, self)
                                 # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:
                             self.engine.perform_attack(*self.ankiwin.coords)
@@ -301,7 +301,7 @@ class AnkiRPG:
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
                 if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, Costs.DEFEND.value*self.MULTIPLIER, ((i, j), move), self)
+                    self.ankiwin = ActionWindow(Actions.DEFEND, int(Costs.DEFEND.value*self.MULTIPLIER), ((i, j), move), self)
                     return
         if not mob:
             return
@@ -361,11 +361,11 @@ class AnkiRPG:
                     return
                 coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
                 if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, Costs.MOVE.value*self.MULTIPLIER, coords, self)
+                    self.ankiwin = ActionWindow(Actions.MOVE, int(Costs.MOVE.value*self.MULTIPLIER), coords, self)
                     
 
                 elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, Costs.ATTACK.value*self.MULTIPLIER, coords, self)
+                    self.ankiwin = ActionWindow(Actions.ATTACK, int(Costs.ATTACK.value*self.MULTIPLIER), coords, self)
                 self.change_mode(Mode.Idle)
                 self.selected_mon = None
                 self.selected_tile = None
