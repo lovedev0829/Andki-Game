@@ -66,7 +66,7 @@ class AnkiRPG:
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
                 
         self.MULTIPLIER = get_data().get('Difficulty',1)
-        # self.MULTIPLIER = 0.02
+        self.MULTIPLIER = 0.02
         self.players = {
             Player.Player1: PlayerType.Human,
             Player.Player2: PlayerType.Bot
@@ -140,7 +140,7 @@ class AnkiRPG:
             
             # print(self.clock.get_fps())
         mw.win = None
-        if not self.savewin:
+        if not self.savewin and self.engine.player1_mobs and self.engine.player2_mobs:
             self.savewin = SaveWindow(self.save, self)
 
     def update_anki(self):

@@ -395,10 +395,11 @@ class trainer_xp_window(QMainWindow):
 
     def close(self, event):
         pygame.quit()
-        self.game.ankiwin = False
+        self.game.ankiwin = None
         mw.window().showMaximized()
         print(event)
 
+        del self.game
 class trainer_popup(QMainWindow):
     def __init__(self, cost, image_name):      
         super().__init__()
@@ -492,12 +493,12 @@ class Win_popup(QMainWindow):
             else:
                 self.text_label = QLabel(f"congratulations on winning", self)
                 self.text_label.adjustSize()
-                self.text_label.move(80,15)
+                self.text_label.move(190,15)
 
             
         else:
             self.text_label = QLabel(f"You have lost better luck next time!", self)
-            self.text_label.move(45,10)                        
+            self.text_label.move(165,10)                        
         print(won)
         self.okbutton = QPushButton(parent=self,text="OK")
         self.okbutton.move(self.width()/2-self.okbutton.width()/2,440)
@@ -514,6 +515,7 @@ class Win_popup(QMainWindow):
 
     def close(self, event):
         self.game.ankiwin = trainer_xp_window(self.game)
+        
 
 def center_win(win:QMainWindow):
     pygame.init()
