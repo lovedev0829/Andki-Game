@@ -9,6 +9,8 @@ import aqt.overview
 import aqt.reviewer
 from scripts.constants import anki_data_path
 from scripts.notification import Notification
+import math
+import pygame
 
 cwd = os.path.dirname(os.path.dirname(__file__))
 # requires arguments a, b, c because of how Anki calls the hook
@@ -67,7 +69,12 @@ def process_file(a:aqt.reviewer.Reviewer, b, c):
     
 
     json.dump(anki_data, open(anki_data_path, "w"))
-import math
+def activate_full_screen():
+    pygame.init()
+    info = pygame.display.Info()
+    global screen_size
+    screen_size = [info.current_w, info.current_h]
+    mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
 
 def area_until_x(x):
     """Calculate the area under the curve from x=0 to a given x."""

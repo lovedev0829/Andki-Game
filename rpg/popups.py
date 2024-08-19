@@ -234,8 +234,10 @@ class WildAnkimon(QMainWindow):
 
     def closeEvent(self, event):
         if self.completed_cards >= self.required_cards:
+            print('wildankimon close event ran with successful condition')
             self.game.ankiwin = captured_ankimon(self.name, self.coords, self.game)
         else:
+            print('wildankimon close event ran with failed condition')
             self.game.ankiwin = None
         event.accept()
 
@@ -393,7 +395,9 @@ class trainer_xp_window(QMainWindow):
 
     def close(self, event):
         pygame.quit()
-
+        self.game.ankiwin = False
+        mw.window().showMaximized()
+        print(event)
 
 class trainer_popup(QMainWindow):
     def __init__(self, cost, image_name):      
@@ -468,7 +472,7 @@ class Win_popup(QMainWindow):
             image_name = None
             if possible_winnings:
                 image_name = random.choice(possible_winnings)
-                self.text_label = QLabel(f"congratulations on winning you have won {xp*2}xp"+f' and a new Ankimon \n {image_name}' if image_name else '', self)
+                self.text_label = QLabel(f"congratulations on winning you unlocked a new Ankimon \n {image_name}" if image_name else '', self)
                 UNLOCKED_ANKIMONS.append(image_name)
                 change_data('Unlocked_Ankimons', UNLOCKED_ANKIMONS)
                 cwd = os.getcwd()+os.sep[0]        
@@ -483,11 +487,13 @@ class Win_popup(QMainWindow):
                                 self.pixmap.height()*scaler)
                 self.label.setScaledContents(True)
                 self.label.move(100,30)
-                self.text_label.move(25,15)
+                self.text_label.adjustSize()
+                self.text_label.move(80,15)
             else:
-                self.text_label = QLabel(f"congratulations on winning you have won {xp*2}xp", self)
-                self.text_label.move(95,15)
-            
+                self.text_label = QLabel(f"congratulations on winning", self)
+                self.text_label.adjustSize()
+                self.text_label.move(80,15)
+
             
         else:
             self.text_label = QLabel(f"You have lost better luck next time!", self)

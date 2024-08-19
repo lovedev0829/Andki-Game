@@ -66,6 +66,7 @@ class AnkiRPG:
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
                 
         self.MULTIPLIER = get_data().get('Difficulty',1)
+        # self.MULTIPLIER = 0.02
         self.players = {
             Player.Player1: PlayerType.Human,
             Player.Player2: PlayerType.Bot
@@ -107,8 +108,6 @@ class AnkiRPG:
             json.dump(data, open(data_path, 'w'))
         else:
             self.learned_cards = data['moves']
-
-
 
     
     def run(self):
@@ -233,13 +232,29 @@ class AnkiRPG:
                             self.completed_cards = self.learned_cards            
                             if  not self.engine.player1_mobs:
                                 self.ankiwin = Win_popup(self, False)
-                                os.remove(SAVE_PATH)
+                                try:
+                                    os.remove(SAVE_PATH)
+                                except FileNotFoundError:
+                                    pass
                                 self.game_over = True                                        
                         
         else:
             self.completed_cards = self.learned_cards
-        
-         
+            if  not self.engine.player2_mobs:
+                self.ankiwin = Win_popup(self, won=True)
+                try:
+                    os.remove(SAVE_PATH)
+                except FileNotFoundError:
+                    pass
+                self.game_over = True                            
+                 
+                if  not self.engine.player1_mobs:
+                    self.ankiwin = Win_popup(self, False)
+                    try:
+                        os.remove(SAVE_PATH)
+                    except FileNotFoundError:
+                        pass
+                    self.game_over = True                                        
     
     def save(self):
         for mob in self.engine.player1_mobs+self.engine.player2_mobs:
@@ -303,6 +318,8 @@ class AnkiRPG:
                 if self.engine.attack_condition((i, j), move):
                     self.ankiwin = ActionWindow(Actions.DEFEND, int(Costs.DEFEND.value*self.MULTIPLIER), ((i, j), move), self)
                     return
+        if not self.engine.player2_mobs:
+            return
         if not mob:
             return
         mob = random.choice(self.engine.player2_mobs)

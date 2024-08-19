@@ -25,7 +25,7 @@ def mainloop(ankimons, loadsave=False):
     for i in range(10):
         bot_trainer = random.choice(list(STATS.keys()))
         print(bot_trainer)
-    default_stats = [13,7,10]
+    default_stats = [1,1,0]
     # num = (int(xp_to_lvl(get_data().get('trainer_xp', 0)))//2)
     # default_stats[0] += num * 0.1
     # default_stats[1] += num * 0.1

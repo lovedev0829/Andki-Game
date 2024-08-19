@@ -60,12 +60,8 @@ def start_rpg():
 
 screen_size = []
 def on_profile_open():
-    pygame.init()
-    info = pygame.display.Info()
-    global screen_size
-    screen_size = [info.current_w, info.current_h]
-    mw.window().setGeometry(10,60,info.current_w,info.current_h-70)
     center_widget(mw.window())
+    mw.window().showMaximized()
     due_tree = mw.col.sched.deck_due_tree()
     to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
     data = json.load(open(anki_data_path, 'r'))
