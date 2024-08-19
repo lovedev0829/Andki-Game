@@ -172,7 +172,10 @@ class attribute_popup:
 	def clicked(self, index):
 		self.counter += 1
 		if self.counter > 3:	
-			self.things.append(ankimon_selector(self, index))
+			if [anki for anki in self.Ankimons if anki not in self.selected]:
+				self.things.append(ankimon_selector(self, index))
+			else:
+				utils.showInfo('Unlock more ankimons to choose from')
 
 	def update_ui(self):
 		for i, button in enumerate(self.buttons):

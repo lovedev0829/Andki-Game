@@ -91,7 +91,7 @@ def update_streak_btn_js(
     web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, path)
 
-action = aqt.qt.QAction("change Difficulty", mw)
+action = aqt.qt.QAction("Change Difficulty", mw)
 action.triggered.connect(change_difficulty)
 mw.form.menuTools.addAction(action)
 gui_hooks.profile_did_open.append(on_profile_open)
