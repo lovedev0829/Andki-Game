@@ -66,7 +66,7 @@ class AnkiRPG:
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
                 
         self.MULTIPLIER = get_data().get('Difficulty',1)
-        self.MULTIPLIER = 0.02
+        # self.MULTIPLIER = 0.02
         self.players = {
             Player.Player1: PlayerType.Human,
             Player.Player2: PlayerType.Bot
