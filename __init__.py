@@ -3,6 +3,8 @@ import datetime
 import json
 import os.path
 import sys
+
+import aqt.qt
 sys.path.append(os.path.dirname(__file__))
 import threading
 import base64
@@ -14,7 +16,7 @@ import streakgame.main
 from rpg.main import mainloop
 from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, xp_to_lvl, manager
 import asyncio, time
-from scripts.popups import rpg_popup, attribute_popup, LoginHandler
+from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyChoosingWindow
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
 
@@ -71,6 +73,8 @@ def on_profile_open():
     json.dump(data, open(anki_data_path, "w"))
     
 
+def change_difficulty():
+    mw.win = DifficultyChoosingWindow()
 
 cwd = os.path.dirname(__file__)
 path = os.path.join(cwd, f"assets","image.png"    )
@@ -87,7 +91,9 @@ def update_streak_btn_js(
     web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, path)
 
-
+action = aqt.qt.QAction("change Difficulty", mw)
+action.triggered.connect(change_difficulty)
+mw.form.menuTools.addAction(action)
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)

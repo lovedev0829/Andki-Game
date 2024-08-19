@@ -7,6 +7,7 @@ from aqt import mw
 from aqt import utils
 from rpg.main import mainloop
 from functools import partial
+from enum import Enum
 import json
 from rpg.ankirpg import data_path, AnkiRPG
 import random
@@ -511,7 +512,91 @@ class item_selector(QMainWindow):
 
 		self.counter += 1
 
+class Difficulties(Enum):
+	Easy = 0.5
+	Normal = 1
+	Hard = 2
+	Expert = 3
 
+class DifficultyChoosingWindow(QMainWindow):
+	def __init__(self):
+		super().__init__()
+		
+		self.setWindowTitle('Choose Difficulty')
+		self.setGeometry(100, 100, 400, 300)
+		center_widget(self)
+		self.initUI()
+		
+	def initUI(self):
+		# Main widget
+		widget = QWidget()
+		self.setCentralWidget(widget)
+		
+		# Layout
+		layout = QVBoxLayout()
+		
+		# Label
+		label = QLabel("Select Your Difficulty Level", self)
+		label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+		label.setFont(QFont('Arial', 24))
+		label.setStyleSheet("color: #FFFFFF; margin-bottom: 20px;")
+		layout.addWidget(label)
+		
+		# Button styles
+		button_style = """
+			QPushButton {
+				background-color: #3A3A3A;
+				color: #FFFFFF;
+				font-size: 18px;
+				font-family: Arial;
+				padding: 10px;
+				border-radius: 10px;
+				margin: 10px 0;
+			}
+			QPushButton:hover {
+				background-color: #5A5A5A;
+			}
+			QPushButton:pressed {
+				background-color: #2A2A2A;
+			}
+		"""
+		
+		# Buttons
+		easy_button = QPushButton('Easy', self)
+		medium_button = QPushButton('Medium', self)
+		hard_button = QPushButton('Hard', self)
+		expert_button = QPushButton('Expert', self)
+		
+		easy_button.setStyleSheet(button_style)
+		medium_button.setStyleSheet(button_style)
+		hard_button.setStyleSheet(button_style)
+		expert_button.setStyleSheet(button_style)
+		
+		# Connect buttons to functions
+		easy_button.clicked.connect(lambda: self.choose_difficulty(Difficulties.Easy))
+		medium_button.clicked.connect(lambda: self.choose_difficulty(Difficulties.Normal))
+		hard_button.clicked.connect(lambda: self.choose_difficulty(Difficulties.Hard))
+		expert_button.clicked.connect(lambda: self.choose_difficulty(Difficulties.Expert))
+		
+		# Add buttons to layout
+		layout.addWidget(easy_button)
+		layout.addWidget(medium_button)
+		layout.addWidget(hard_button)
+		layout.addWidget(expert_button)
+		
+		widget.setLayout(layout)
+		
+		# Set background color
+		palette = QPalette()
+		palette.setColor(QPalette.ColorRole.Window, QColor(30, 30, 30))
+		self.setPalette(palette)
+		self.show()
+		
+	def choose_difficulty(self, difficulty:Difficulties):
+		print(f'Difficulty chosen: {difficulty}')
+        # Save the difficulty to the JSON file and close the window.
+		change_data('Difficulty', difficulty.value)
+		self.close()
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)

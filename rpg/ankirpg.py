@@ -43,12 +43,14 @@ class Actions(Enum):
 
 
 class Costs(Enum):
-    ATTACK = 0
-    DEFEND = 1
-    MOVE = 0
-    CHALLENGE = 0
-    WILD = 0
-    MULTIPLIER = 1
+    ATTACK = 10
+    DEFEND = 10
+    MOVE = 5
+    CHALLENGE = 10
+    WILD = 50
+
+
+
 class AnkiRPG:
     def __init__(self, win:pygame.Surface, ankimons:dict, trainers:list[Trainer], load_save:bool=False):
         self.win = win
@@ -62,7 +64,8 @@ class AnkiRPG:
         self.load_save = load_save
         self.trainers = trainers
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, self.trainers)
-        
+                
+        self.MULTIPLIER = get_data().get('Difficulty',1)
         self.players = {
             Player.Player1: PlayerType.Human,
             Player.Player2: PlayerType.Bot
@@ -112,11 +115,10 @@ class AnkiRPG:
         self.running = True
         frame = 0 
         if not self.ankiwin:
-            self.ankiwin = trainer_popup(Costs.CHALLENGE.value*Costs.MULTIPLIER.value, self.trainers[1].name)
+            self.ankiwin = trainer_popup(Costs.CHALLENGE.value*self.MULTIPLIER, self.trainers[1].name)
             center_win(self.ankiwin)
             self.ankiwin.cards = learned_card_checker(data_path)
 
-        mw.window().update()
         while self.running:
             self.clock.tick(60)
             
@@ -125,15 +127,17 @@ class AnkiRPG:
             if frame%10 == 0:
                 self.learned_card_checker()
                 self.update_anki()
-            self.events()
+            try:
+                self.events()
+            except pygame.error as e:
+                print(e)
+                break
             if not self.ankiwin:
                 self.bot_event()
             
             self.update()
             
             self.draw()
-            
-            
             
             # print(self.clock.get_fps())
         mw.win = None
@@ -205,7 +209,7 @@ class AnkiRPG:
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
                             if random.random() <= 0.2:
-                                self.ankiwin = WildAnkimon(Costs.WILD.value*Costs.MULTIPLIER.value, coords, self)
+                                self.ankiwin = WildAnkimon(Costs.WILD.value*self.MULTIPLIER, coords, self)
                                 # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:
                             self.engine.perform_attack(*self.ankiwin.coords)
@@ -213,8 +217,11 @@ class AnkiRPG:
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
                             if  not self.engine.player2_mobs:
-                                self.ankiwin = Win_popup(won=True)
-                                os.remove(SAVE_PATH)
+                                self.ankiwin = Win_popup(self, won=True)
+                                try:
+                                    os.remove(SAVE_PATH)
+                                except FileNotFoundError:
+                                    pass
                                 self.game_over = True                            
                         elif self.ankiwin.action == Actions.DEFEND:
                             self.engine.get_mob(*self.ankiwin.coords[1]).defense *= 1.4
@@ -225,7 +232,7 @@ class AnkiRPG:
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards            
                             if  not self.engine.player1_mobs:
-                                self.ankiwin = Win_popup(10, False)
+                                self.ankiwin = Win_popup(self, False)
                                 os.remove(SAVE_PATH)
                                 self.game_over = True                                        
                         
@@ -294,7 +301,7 @@ class AnkiRPG:
             accessible = self.engine.get_attackable_cases((i, j))
             for move in random.choice([accessible]):
                 if self.engine.attack_condition((i, j), move):
-                    self.ankiwin = ActionWindow(Actions.DEFEND, Costs.DEFEND.value*Costs.MULTIPLIER.value, ((i, j), move), self)
+                    self.ankiwin = ActionWindow(Actions.DEFEND, Costs.DEFEND.value*self.MULTIPLIER, ((i, j), move), self)
                     return
         if not mob:
             return
@@ -306,6 +313,7 @@ class AnkiRPG:
 
     def events(self):
         events = pygame.event.get()
+        
         for event in events:
             self.group.handle_event(event)
             if event.type == pygame.QUIT:
@@ -353,11 +361,11 @@ class AnkiRPG:
                     return
                 coords = (self.selected_mon.i, self.selected_mon.j), (i, j)
                 if self.engine.move_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.MOVE, Costs.MOVE.value*Costs.MULTIPLIER.value, coords, self)
+                    self.ankiwin = ActionWindow(Actions.MOVE, Costs.MOVE.value*self.MULTIPLIER, coords, self)
                     
 
                 elif self.engine.attack_condition(*coords):
-                    self.ankiwin = ActionWindow(Actions.ATTACK, Costs.ATTACK.value*Costs.MULTIPLIER.value, coords, self)
+                    self.ankiwin = ActionWindow(Actions.ATTACK, Costs.ATTACK.value*self.MULTIPLIER, coords, self)
                 self.change_mode(Mode.Idle)
                 self.selected_mon = None
                 self.selected_tile = None

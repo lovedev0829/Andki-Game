@@ -281,7 +281,7 @@ class captured_ankimon(QMainWindow):
         else:
             self.text_label = QLabel(f"""you have defeated the ankimon would you like to capture it 
             or release it for xp""",self)
-            self.text_label.move(45,15)
+            self.text_label.move(75,15)
             self.capture = QPushButton(text="capture", parent=self)
             self.capture.move(170,420)
             self.capture.clicked.connect(self.capturefunc)
@@ -321,43 +321,45 @@ class captured_ankimon(QMainWindow):
 
 class trainer_xp_window(QMainWindow):
     def __init__(self, game):
-        super().__init__(self)
+        super().__init__()
         self.counter = 0
         self.setWindowTitle("AnkiNick-mon")        
+        self.game = game
         self.ratio = .6
         self.setFixedSize(700,400)
         center_widget(self)
         data = get_data()
-        self.label = QLabel(self)
         self.trainers = TRAINERS
         self.buttons : list[QPushButton] = []
         self.item = data.get('item', None)
         self.level = xp_to_lvl(data.get('trainer_xp', 0))
         self.set_ratio(self.level%1)
+        self.label = QLabel(self)
+        self.label.setText(f"""you have gained {(get_data().get('trainer_xp',0)-self.game.trainer_xp)*2}xp for your trainer
+                           lvl{int(self.level)}""")
+        self.label.setFont(QFont(self.label.font().toString(),15))
+        self.label.adjustSize()
+        self.label.move(self.width()/2-self.label.width()/2,5)
         for i in range(1):
-            self.buttons.append(QPushButton(win))
+            self.buttons.append(QPushButton(self))
             self.buttons[i].animateClick()
-            self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
-            self.buttons[i].setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
+            self.buttons[i].setGeometry(260+i*220,90+i*50,150-i*100,180-i*100+int(not i)*30)
+            self.buttons[i].setStyleSheet(load_sheet(self.trainers.index(get_data().get('default_trainer')), 'trainers', self.trainers))
         if data.get('default_trainer', None):
             self.selected = [data['default_trainer']]
             self.update_ui()
-        self.game = game
         # show all the widgets
-        self.okbutton = QPushButton(win,text="OK")
+        self.okbutton = QPushButton(self,text="OK")
         self.okbutton.setGeometry(QRect(265, 320, 141, 51))
         self.okbutton.clicked.connect(self.close)
-        win.show()
+        
 
+        self.show()
+        
 
     def set_ratio(self, ratio):
         """Sets the health ratio and updates the display."""
         self.ratio = max(0, min(1, ratio))  # Ensure ratio is between 0 and 1
-        self.label.setText(f"""you have gained {get_data().get('trainer_xp',0)-self.game.xp}xp for your trainer
-                           lvl{int(self.level)}""")
-        self.label.adjustSize()
-        self.label.move(self.width()/2-self.label.width()/2,5)
-        self.label.setFont(QFont(self.label.font().toString(),15))
         self.update()  # Trigger a repaint
 
     def paintEvent(self, event):
@@ -369,11 +371,11 @@ class trainer_xp_window(QMainWindow):
         current_height = 20
         # Draw a border around the health bar
         painter.setPen(QColor(0, 0, 0))
-        painter.drawRect(current_width*1.2, 40, current_width-1, current_height-1)
+        painter.drawRect(current_width*1.42, 60, current_width-1, current_height-1)
         # Draw foreground (filled part of the health bar based on ratio)
         painter.setBrush(QBrush(Qt.GlobalColor.green))
         filled_width = current_width * self.ratio
-        painter.drawRect(current_width*1.2, 40, filled_width, current_height)
+        painter.drawRect(current_width*1.42, 60, filled_width, current_height)
 
     def update_ui(self):
         for i, button in enumerate(self.buttons):
@@ -387,12 +389,14 @@ class trainer_xp_window(QMainWindow):
                     change_data("default_trainer", self.selected[0])
             except Exception as e:
                 print(e)
+                
 
-
+    def close(self, event):
+        pygame.quit()
 
 
 class trainer_popup(QMainWindow):
-    def __init__(self, cost, image_name):
+    def __init__(self, cost, image_name):      
         super().__init__()
         
         # set the title
@@ -445,7 +449,7 @@ class trainer_popup(QMainWindow):
 
 
 class Win_popup(QMainWindow):
-    def __init__(self, xp=10, won=True):
+    def __init__(self, game, won=True):
         super().__init__()
         
         # set the title
@@ -453,43 +457,57 @@ class Win_popup(QMainWindow):
         # setting the geometry of window
         self.setFixedSize(640,480)
         center_widget(self)
-
-        global trainer_xp
+        trainer_xp = get_data().get('trainer_xp',0)
         if won:
             possible_winnings = [anki for anki in ANKIMONS if anki not in UNLOCKED_ANKIMONS]
+            print(possible_winnings)
+            xp = trainer_xp - game.trainer_xp
             trainer_xp += xp
 
             change_data('trainer_xp', trainer_xp)
             image_name = None
             if possible_winnings:
                 image_name = random.choice(possible_winnings)
+                self.text_label = QLabel(f"congratulations on winning you have won {xp*2}xp"+f' and a new Ankimon \n {image_name}' if image_name else '', self)
                 UNLOCKED_ANKIMONS.append(image_name)
                 change_data('Unlocked_Ankimons', UNLOCKED_ANKIMONS)
-
-            self.text_label = QLabel(f"congratulations on winning you have won {xp}xp"+f' and a new Ankimon \n {image_name}' if image_name else '', self)
-            self.text_label.move(25,15)
-            cwd = os.getcwd()+os.sep[0]        
-            path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
-            print(path)
-            self.label = QLabel(self)
-            self.pixmap = QPixmap(path)        
-            self.label.setPixmap(self.pixmap)
-            scaler = 0.6
-            # Optional, resize label to image size
-            self.label.resize(self.pixmap.width()*scaler,
-                            self.pixmap.height()*scaler)
-            self.label.setScaledContents(True)
-            self.label.move(100,30)
+                cwd = os.getcwd()+os.sep[0]        
+                path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
+                print(path)
+                self.label = QLabel(self)
+                self.pixmap = QPixmap(path)        
+                self.label.setPixmap(self.pixmap)
+                scaler = 0.6
+                # Optional, resize label to image size
+                self.label.resize(self.pixmap.width()*scaler,
+                                self.pixmap.height()*scaler)
+                self.label.setScaledContents(True)
+                self.label.move(100,30)
+                self.text_label.move(25,15)
+            else:
+                self.text_label = QLabel(f"congratulations on winning you have won {xp*2}xp", self)
+                self.text_label.move(95,15)
+            
+            
         else:
             self.text_label = QLabel(f"You have lost better luck next time!", self)
-            self.text_label.move(160,10)                        
+            self.text_label.move(45,10)                        
+        print(won)
+        self.okbutton = QPushButton(parent=self,text="OK")
+        self.okbutton.move(self.width()/2-self.okbutton.width()/2,440)
+        self.okbutton.clicked.connect(self.close)
+
+        self.game = game
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
         self.text_label.adjustSize()
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+
         # show all the widgets
         self.show()
 
+    def close(self, event):
+        self.game.ankiwin = trainer_xp_window(self.game)
 
 def center_win(win:QMainWindow):
     pygame.init()
