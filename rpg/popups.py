@@ -249,9 +249,10 @@ class captured_ankimon(QMainWindow):
         self.setGeometry(100, 100, 400, 200)
         self.setFixedSize(640,480)
         self.action = None
-        self.required_cards = 10
+        self.required_cards = 1000
         self.coords = coords
         self.completed_cards = 0
+        self.action = None
         self.game = game
         center_win(self)
         
