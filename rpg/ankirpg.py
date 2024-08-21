@@ -144,6 +144,7 @@ class AnkiRPG:
             self.savewin = SaveWindow(self.save, self)
 
     def update_anki(self):
+        self.MULTIPLIER = get_data().get('Difficulty',1)
         if not mw.col.sched.get_queued_cards().cards:
             self.savewin = SaveWindow(self.save, self)
             self.label = QLabel("""The gamified learning is over 
