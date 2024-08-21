@@ -504,6 +504,7 @@ class Win_popup(QMainWindow):
         self.okbutton = QPushButton(parent=self,text="OK")
         self.okbutton.move(self.width()/2-self.okbutton.width()/2,440)
         self.okbutton.clicked.connect(self.close)
+        self.okbutton.keyPressEvent = self.keyPressEvent
 
         self.game = game
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
@@ -517,7 +518,11 @@ class Win_popup(QMainWindow):
     def close(self, event):
         self.game.ankiwin = trainer_xp_window(self.game)
         
-
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Space:
+            event.ignore()  # Ignore the space bar press
+        else:
+            super().keyPressEvent(event)
 def center_win(win:QMainWindow):
     pygame.init()
     info = pygame.display.Info()

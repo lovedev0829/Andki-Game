@@ -29,8 +29,11 @@ def mainloop(ankimons, loadsave=False):
     # num = (int(xp_to_lvl(get_data().get('trainer_xp', 0)))//2)
     # default_stats[0] += num * 0.1
     # default_stats[1] += num * 0.1
-
+    difficulty = get_data().get('Difficulty', 1)
+    
     trainers = [Trainer(trainer_name, *default_stats), Trainer(bot_trainer ,*STATS[bot_trainer])]
+    if not difficulty:
+        trainers = [Trainer(trainer_name, 15,15,15), Trainer(bot_trainer ,*STATS[bot_trainer])]
     mw.window().setGeometry(0,yoffset,size[0]/2,size[1]-yoffset*2.3)
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (size[0]/2,yoffset)
     
