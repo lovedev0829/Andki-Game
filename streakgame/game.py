@@ -160,7 +160,7 @@ class Game:
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
-        print(streak)
+        print(f"your streak is: {streak}")
         if streak > previous_streak:
             # Give the player some money depending on the streak
             money = min(70, 10 * streak)
@@ -358,7 +358,7 @@ class Pytmx:
         self.interactable_objects = []
         self.objects = SortedGroup()
         self.objects_under_npc = SortedGroup()
-
+        
         self.PATH_POINTS = []
         self.load_objects()
         self.load_special_tiles()
@@ -484,4 +484,5 @@ class Pytmx:
     def draw(self, win):
         self.map_layer.draw(win, win.get_rect())
         self.objects_under_npc.draw(win)
+        
         self.objects.draw(win)
