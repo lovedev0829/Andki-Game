@@ -66,7 +66,9 @@ class rpg_popup:
 				AnkiRPG.check()
 				started = True
 			except Exception as e:
-				print(e)
+				started = False
+		else:
+			started = False
 			
 		if started:
 			self.pushButton.setGeometry(QRect(50, 100, 161, 51))

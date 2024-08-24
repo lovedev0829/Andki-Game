@@ -235,8 +235,8 @@ class AnkiRPG:
                                 self.ankiwin = Win_popup(self, False)
                                 try:
                                     os.remove(SAVE_PATH)
-                                except FileNotFoundError:
-                                    pass
+                                except FileNotFoundError as e:
+                                    print(e)
                                 self.game_over = True                                        
                         
         else:
@@ -245,16 +245,16 @@ class AnkiRPG:
                 self.ankiwin = Win_popup(self, won=True)
                 try:
                     os.remove(SAVE_PATH)
-                except FileNotFoundError:
-                    pass
+                except FileNotFoundError as e:
+                    print(e)
                 self.game_over = True                            
                  
             if  not self.engine.player1_mobs:
                 self.ankiwin = Win_popup(self, False)
                 try:
                     os.remove(SAVE_PATH)
-                except FileNotFoundError:
-                    pass
+                except FileNotFoundError as e:
+                    print(e)
                 self.game_over = True                                        
     
     def save(self):

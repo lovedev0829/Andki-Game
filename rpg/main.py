@@ -33,7 +33,7 @@ def mainloop(ankimons, loadsave=False):
     
     trainers = [Trainer(trainer_name, *default_stats), Trainer(bot_trainer ,*STATS[bot_trainer])]
     if not difficulty:
-        trainers = [Trainer(trainer_name, 1,1,0), Trainer(bot_trainer ,*STATS[bot_trainer])]
+        trainers = [Trainer(trainer_name, 15,15,50), Trainer(bot_trainer ,*STATS[bot_trainer])]
     mw.window().setGeometry(0,yoffset,size[0]/2,size[1]-yoffset*2.3)
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (size[0]/2,yoffset)
     
