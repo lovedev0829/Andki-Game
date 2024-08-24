@@ -249,13 +249,13 @@ class AnkiRPG:
                     pass
                 self.game_over = True                            
                  
-                if  not self.engine.player1_mobs:
-                    self.ankiwin = Win_popup(self, False)
-                    try:
-                        os.remove(SAVE_PATH)
-                    except FileNotFoundError:
-                        pass
-                    self.game_over = True                                        
+            if  not self.engine.player1_mobs:
+                self.ankiwin = Win_popup(self, False)
+                try:
+                    os.remove(SAVE_PATH)
+                except FileNotFoundError:
+                    pass
+                self.game_over = True                                        
     
     def save(self):
         for mob in self.engine.player1_mobs+self.engine.player2_mobs:

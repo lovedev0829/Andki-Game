@@ -240,6 +240,11 @@ class WildAnkimon(QMainWindow):
             print('wildankimon close event ran with failed condition')
             self.game.ankiwin = None
         event.accept()
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Space:
+            event.ignore()  # Ignore the space bar press
+        else:
+            super().keyPressEvent(event)
 
 
 class captured_ankimon(QMainWindow):
@@ -307,7 +312,7 @@ class captured_ankimon(QMainWindow):
         change_data('trainer_xp', xp+Rewards.RELEASE.value)  
         mob = self.game.engine.get_mob(*self.coords[1])
         mob.health = min(mob.maxhealth, mob.health + mob.maxhealth*0.1)
-        aqt.utils.showInfo("You're attacked Ankimon has been healed 10%")
+        aqt.utils.showInfo("You're attacked Ankimon has been healed 10%, and you have gained 150xp")
         self.close()
 
     def capturefunc(self):
@@ -320,7 +325,12 @@ class captured_ankimon(QMainWindow):
 
         event.accept()
         
-        
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Space:
+            event.ignore()  # Ignore the space bar press
+        else:
+            super().keyPressEvent(event)
+
 
 class trainer_xp_window(QMainWindow):
     def __init__(self, game):
