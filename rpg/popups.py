@@ -525,8 +525,10 @@ class Win_popup(QMainWindow):
         # show all the widgets
         self.show()
 
-    def close(self, event):
+    def closeEvent(self, event):
         self.game.ankiwin = trainer_xp_window(self.game)
+        print(event)
+
         
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Space:
