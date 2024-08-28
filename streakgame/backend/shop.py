@@ -9,9 +9,9 @@ class ShopItem(Item):
 
 
 available_items = {
-    "fire seeds": ShopItem(10, "fire seeds", items_data["fire seeds"].img),
-    "water seeds": ShopItem(10, "water seeds", items_data["water seeds"].img),
-    "ice seeds": ShopItem(10, "ice seeds", items_data["ice seeds"].img)
+    "fire seeds": ShopItem(100, "fire seeds", items_data["fire seeds"].img),
+    "water seeds": ShopItem(50, "water seeds", items_data["water seeds"].img),
+    "ice seeds": ShopItem(30, "ice seeds", items_data["ice seeds"].img)
 }
 
 
@@ -53,6 +53,5 @@ class Shop:
             self.wallet.spend_money(item.price)
             self.inventory.add_item(item)
             print(f"bought {item} for {item.price}, you have {self.wallet.money} left")
-
         else:
             print("not enough money")

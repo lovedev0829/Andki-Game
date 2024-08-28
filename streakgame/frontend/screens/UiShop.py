@@ -38,6 +38,7 @@ class ShopUI(UIElement):
                                                       lambda i=item: self.shop.buy(i),
                                                       Color(124, 197, 96), border_radius=5,
                                                       font=self.btn_font,
+                                                      fixed_width=self.price_font.size(str(item.price))[0]+35
                                                       )
                                     )
 

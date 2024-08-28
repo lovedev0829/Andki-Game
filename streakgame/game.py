@@ -131,6 +131,7 @@ class Game:
         # Music
     def play_audio(self):
         pygame.mixer.init()
+        
         pygame.mixer.music.load(os.path.join(cwd, "assets", "music", "music.mp3"))
         pygame.mixer.music.play(-1)
         self.slider_music.current_value = 100
@@ -161,12 +162,16 @@ class Game:
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
         print(f"your streak is: {streak}")
-        if streak > previous_streak:
+        if streak != previous_streak:
             # Give the player some money depending on the streak
             money = min(70, 10 * streak)
             self.wallet.add_money(money)
-            self.create_popup("Good Job !",
-                              f"You have a {streak} day(s) streak !\n Here is a little reward !\n +{money} coins !")
+            if streak > 1:
+                self.create_popup("Good Job !",
+                                f"You have a {streak} {'day' if streak < 3 else 'days'} streak !\n Here is a little reward !\n +{money} coins !")
+            else:
+                self.create_popup("Good Job !",
+                                f"You have started a new streak !\n Here is a little reward !\n +{money} coins !")
 
     def run(self):
         clock = pygame.time.Clock()
@@ -223,16 +228,14 @@ class Game:
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
-        print(previous_streak, streak)
-        
+        print(f"farms watered {streak - previous_streak}")
     
         for farm in self.ptmx.farms:
-            farm.water_all( streak - previous_streak)
+            farm.water_all(streak - previous_streak)
         if  streak > previous_streak:
             self.create_popup("Good Job !",
                                 f"You have a {streak} day(s) streak !\n"
                                 f"Your plants have been watered accordingly !")
-
     def create_popup(self, title, text):
         popup = Popup(title=title, text=text, manager=self.ui_manager)
         self.ui_manager.add_popop(popup)
@@ -363,7 +366,7 @@ class Pytmx:
         self.load_objects()
         self.load_special_tiles()
 
-        # Game attributes
+        # Game attributes   
         self.map_layer.zoom = START_ZOOM
         self.zoom_target = self.map_layer.zoom
         self.is_scrolling = False

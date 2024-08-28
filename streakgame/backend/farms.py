@@ -397,7 +397,7 @@ class Plant:
         return self.development_index == self.max_development_index
 
     def water(self, n):
-        if self.development_index + n < len(self.imgs) - 1:
+        if self.development_index + n < len(self.imgs) - 1 and self.development_index + n >=0:
             self.development_index += n
             self.requires_update = True
 
