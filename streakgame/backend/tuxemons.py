@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Optional
-
+from scripts.constants import *
 from pygame import Color
 import pygame
 from streakgame.boring import imgs
@@ -36,7 +36,8 @@ all_tuxemons = {
     "noctula": TuxemonType.water,
     "noctalo": TuxemonType.water,
 }
-default_tuxemons = [
+default_tuxemons = UNLOCKED_ANKIMONS
+[
     "snowrilla",
     "metesaur",
     "fribbit",
@@ -91,16 +92,14 @@ class Tuxemon:
         self.xp = 0
         self.name = name
         self.imgs = imgs.load_tuxemon_imgs(name)
-        self.type = all_tuxemons[name]
+        self.favorite_color = (0, 0, 0)
 
     def max_xp(self):
         return 100 * self.level
 
     def __repr__(self):
-        return f"Tuxemon({self.name} type: {self.type})"
+        return f"Tuxemon({self.name})"
 
-    def favorite_color(self):
-        return type_colors[self.type]
 
     def add_xp(self, amount):
         self.xp += amount
@@ -110,30 +109,13 @@ class Tuxemon:
 
     def level_up(self):
         print(f"{self.name} leveled up!")
-        evolution = evolutions.get(self.name)
-        if evolution:
-            print(f"evolving into {evolution}")
-            self.level += 1
-            self.init_tuxemon(evolution)
-        else:
-            print(f"leveling up to level {self.level + 1}, no evolution")
-            self.level += 1
-            self.xp = 0
 
-    def favorite_fruit(self):
-        return favorite_fruits[self.type]
+        print(f"leveling up to level {self.level + 1}, no evolution")
+        self.level += 1
+        self.xp = 0
 
     def get_evolution_chain(self):
-        res = [self]
-        current = self
-        while True:
-            next = evolutions.get(current.name)
-            if next:
-                res.append(Tuxemon(next))
-                current = res[-1]
-            else:
-                break
-        return res
+        return [self]
 
 
 from streakgame.backend.inventory import Inventory

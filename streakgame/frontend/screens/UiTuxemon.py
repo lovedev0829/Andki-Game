@@ -26,7 +26,7 @@ class TuxemonCard(Hoverable):
         self.time_since_last_img = random.random() * (1 / self.ANIMATION_FPS)
         self.frame_index = 0
 
-        self.color = tux.favorite_color()
+        self.color = tux.favorite_color
 
     def update(self, dt):
         # handle animation
@@ -60,14 +60,15 @@ class TuxemonUI(UIElement):
 
         self.expanded = False
         self.focused_card: Optional[TuxemonCard] = None
+        self.fruits = ["fire fruit","water fruit","ice fruit"]
+        self.tuxemons_images_big = {}  # key is tuxemon name and value is the image
+        self.fruits_images = {}
         self.init_cards()
         self.btn_feed : list[button.ButtonText] = []
         for i in range(3): self.btn_feed.append(button.ButtonText("Feed", NotImplemented, Color("green"), border_radius=5,
                                           font_color=Color("black"),
                                           font=pygame.font.SysFont("Arial", 15)))
 
-        self.tuxemons_images_big = {}  # key is tuxemon name and value is the image
-        self.fruits_images = {}
 
         # rects
         # Tuxeomons part
@@ -90,7 +91,8 @@ class TuxemonUI(UIElement):
                 img = evolution.imgs["front"]
                 img = imgs.scale(img, (self.rect.width - 40, self.rect.height - 40))
                 self.tuxemons_images_big[evolution.name] = img
-            self.fruits_images[tuxemon.favorite_fruit()] = imgs.scale(imgs.items[tuxemon.favorite_fruit()], (30, 30))
+        for i in range(3):
+            self.fruits_images[self.fruits[i]] = imgs.scale(imgs.items[self.fruits[i]], (30, 30))
 
     def _draw(self, win):
         if len(self.cards) != len(self.tuxemons_inventory.tuxemons):
@@ -132,7 +134,8 @@ class TuxemonUI(UIElement):
         # Draw big big_tuxemon
         big_tuxemon = self.focused_card.tuxemon
         img = self.tuxemons_images_big[big_tuxemon.name]
-        win.blit(img, img.get_rect(center=self.tuxemon_part_rect.center))
+        pos = img.get_rect(center=self.tuxemon_part_rect.center)
+        win.blit(img, (pos[0], pos[1]+20))
 
         # Draw tuxemon level on top left
         text = f"Level {big_tuxemon.level}"
@@ -147,10 +150,10 @@ class TuxemonUI(UIElement):
         y2 = self.tuxemon_part_rect.bottom - off
         width_health_bar = 10
 
-        pygame.draw.rect(win, Color(big_tuxemon.favorite_color()), (x, y1, width_health_bar, y2 - y1), 2,
+        pygame.draw.rect(win, Color(big_tuxemon.favorite_color), (x, y1, width_health_bar, y2 - y1), 2,
                          border_radius=5)
         percentage = big_tuxemon.xp / big_tuxemon.max_xp()
-        pygame.draw.rect(win, big_tuxemon.favorite_color(), (x, y2 - (y2 - y1) * percentage,
+        pygame.draw.rect(win, big_tuxemon.favorite_color, (x, y2 - (y2 - y1) * percentage,
                                                              width_health_bar, (y2 - y1) * percentage), border_radius=5)
 
         text = f"{big_tuxemon.xp}/{big_tuxemon.max_xp()}"
@@ -165,10 +168,10 @@ class TuxemonUI(UIElement):
 
         # Drw tuxemon name
         text = big_tuxemon.name
-        label = utils.render(text, pygame.font.SysFont("Arial", 40),
-                             gfcolor=Color(big_tuxemon.favorite_color()),
+        label = utils.render(text, pygame.font.SysFont("Arial", 20),
+                             gfcolor=Color(big_tuxemon.favorite_color),
                              ocolor=Color("black"), opx=1)
-        win.blit(label, label.get_rect(midtop=(self.tuxemon_part_rect.centerx, self.tuxemon_part_rect.top + 10)))
+        win.blit(label, label.get_rect(midtop=(self.tuxemon_part_rect.centerx, self.tuxemon_part_rect.top + 20)))
         # Draw button to feed the big_tuxemon
         for i, btn in enumerate(self.btn_feed):
             surf = btn.surface
@@ -181,13 +184,12 @@ class TuxemonUI(UIElement):
         #     print(pos)
         #     btn.draw(win, *pos)
 
-        fruits = ["fire fruit","water fruit","ice fruit"]
         # Draw big_tuxemon favorite fruit and number of fruits
-        fruit_images = [self.fruits_images[fruits[i]] for i in range(3)]
+        fruit_images = [self.fruits_images[self.fruits[i]] for i in range(3)]
         for i, fruit in enumerate(fruit_images):
             win.blit(fruit, (740 + 90*i, 622))
         # Draw the number of fruits in the inventory
-        nb = [self.tuxemons_inventory.inventory.get(fruits[i], 0) for i in range(3)]
+        nb = [self.tuxemons_inventory.inventory.get(self.fruits[i], 0) for i in range(3)]
         for i, fruit in enumerate(fruit_images):
             text = f"x{nb[i]}"
             label = utils.render(text, pygame.font.SysFont("Arial", 15, bold=True), gfcolor=Color("white"),

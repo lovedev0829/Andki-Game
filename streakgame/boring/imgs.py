@@ -85,13 +85,9 @@ cross.fill((0, 0, 0, 255), special_flags=pygame.BLEND_RGBA_MULT)
 
 
 def load_tuxemon_imgs(name: str) -> dict[str, pygame.Surface]:
-    tuxemon_folder = os.path.join(cwd, "..", "assets", "sprites", "tuxemons")
-    res = {}
-    keys = ["front", "back", "menu01", "menu02"]
-    for k in keys:
-        file_name = f"{name}-{k}.png"
-        res[k] = load(os.path.join(tuxemon_folder, file_name))
-    return res
+    head = pygame.image.load(os.path.join(os.path.dirname(os.path.dirname(cwd)), "assets", "heads",f'{name}.png'))
+    front = pygame.image.load(os.path.join(os.path.dirname(os.path.dirname(cwd)), "assets", "front",f'{name}.png'))
+    return {'menu01':head, 'menu02':head, 'front':front}
 
 
 def scale(img, size):
