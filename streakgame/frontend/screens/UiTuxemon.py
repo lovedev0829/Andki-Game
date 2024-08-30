@@ -4,7 +4,7 @@ from typing import Optional
 import pygame
 from PygameUIKit import button
 from pygame import Color
-
+from functools import partial
 from streakgame.backend.tuxemons import Tuxemon, TuxemonInventory
 from streakgame.boring import imgs, config
 from streakgame.boring import utils
@@ -61,10 +61,10 @@ class TuxemonUI(UIElement):
         self.expanded = False
         self.focused_card: Optional[TuxemonCard] = None
         self.init_cards()
-
-        self.btn_feed = button.ButtonText("Feed", NotImplemented, Color("green"), border_radius=5,
+        self.btn_feed : list[button.ButtonText] = []
+        for i in range(3): self.btn_feed.append(button.ButtonText("Feed", NotImplemented, Color("green"), border_radius=5,
                                           font_color=Color("black"),
-                                          font=pygame.font.SysFont("Arial", 15))
+                                          font=pygame.font.SysFont("Arial", 15)))
 
         self.tuxemons_images_big = {}  # key is tuxemon name and value is the image
         self.fruits_images = {}
@@ -170,21 +170,30 @@ class TuxemonUI(UIElement):
                              ocolor=Color("black"), opx=1)
         win.blit(label, label.get_rect(midtop=(self.tuxemon_part_rect.centerx, self.tuxemon_part_rect.top + 10)))
         # Draw button to feed the big_tuxemon
-        surf = self.btn_feed.surface
-        pos = surf.get_rect(center=self.bottomright_rect.center).topleft
-        self.btn_feed.draw(win, *pos)
+        for i, btn in enumerate(self.btn_feed):
+            surf = btn.surface
+            pos = (740 + 90*i, 572)
+            btn.draw(win, *pos)
 
+        # for btn in self.btn_feed:
+        #     surf = btn.surface
+        #     pos = surf.get_rect(center=self.bottomright_rect.center).topleft
+        #     print(pos)
+        #     btn.draw(win, *pos)
+
+        fruits = ["fire fruit","water fruit","ice fruit"]
         # Draw big_tuxemon favorite fruit and number of fruits
-        fruit_image = self.fruits_images[big_tuxemon.favorite_fruit()]
-        win.blit(fruit_image, (pos[0] + surf.get_width() + 10, pos[1]))
-
+        fruit_images = [self.fruits_images[fruits[i]] for i in range(3)]
+        for i, fruit in enumerate(fruit_images):
+            win.blit(fruit, (740 + 90*i, 622))
         # Draw the number of fruits in the inventory
-        nb = self.tuxemons_inventory.inventory.get(big_tuxemon.favorite_fruit(), 0)
-        text = f"x{nb}"
-        label = utils.render(text, pygame.font.SysFont("Arial", 15, bold=True), gfcolor=Color("white"),
-                             ocolor=Color("black"), opx=1)
-        win.blit(label, label.get_rect(center=(
-            pos[0] + surf.get_width() + 10 + fruit_image.get_width() + 10, pos[1] + fruit_image.get_height() / 2)))
+        nb = [self.tuxemons_inventory.inventory.get(fruits[i], 0) for i in range(3)]
+        for i, fruit in enumerate(fruit_images):
+            text = f"x{nb[i]}"
+            label = utils.render(text, pygame.font.SysFont("Arial", 15, bold=True), gfcolor=Color("white"),
+                                ocolor=Color("black"), opx=1)
+            win.blit(label, label.get_rect(center=(
+                740+90*i + 10 + fruit.get_width() + 10, 632)))
 
     def _handle_event(self, event):
         for card in self.cards:
@@ -195,7 +204,9 @@ class TuxemonUI(UIElement):
                     self.expand(card)
 
         if self.expanded:
-            self.btn_feed.handle_event(event)
+            for button in self.btn_feed:
+                print(event)
+                button.handle_event(event)
 
     def expand(self, card: TuxemonCard):
         if card == self.focused_card:
@@ -216,7 +227,8 @@ class TuxemonUI(UIElement):
     def re_compute(self):
         if self.expanded:
             self.rect.width += self.second_part_rect.width
-            self.btn_feed.onclick_f = lambda: self.tuxemons_inventory.feed_tuxemon(self.focused_card.tuxemon.id)
+            for i, button in enumerate(self.btn_feed):
+                button.onclick_f = partial(self.tuxemons_inventory.feed_tuxemon, self.focused_card.tuxemon.id, i)
         else:
             self.rect.width -= self.second_part_rect.width
 

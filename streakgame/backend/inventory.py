@@ -24,7 +24,11 @@ class Inventory:
 
     def dump(self) -> dict:
         return self.items
-
+    
+    def get_food(self):
+        return {'fire fruit':self.items.get('fire fruit', 0), 
+         'water fruit':self.items.get('water fruit', 0),
+          'ice fruit': self.items.get('ice fruit', 0)}
     def load(self, items: dict):
         self.items = items
         for item_name in items:

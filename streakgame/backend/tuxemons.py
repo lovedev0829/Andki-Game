@@ -68,8 +68,8 @@ type_colors: dict[TuxemonType:Color] = {
 
 favorite_fruits: dict[TuxemonType:str] = {
     TuxemonType.fire: "fire fruit",
-    TuxemonType.water: "water fruit",
-    TuxemonType.ice: "ice fruit"
+    TuxemonType.water:"water fruit",
+    TuxemonType.ice:  "ice fruit"
 }
 
 
@@ -151,13 +151,15 @@ class TuxemonInventory:
         for name in default_tuxemons:
             self.add_tuxemon(Tuxemon(name))
 
-    def feed_tuxemon(self, tuxemon_id: int):
+    def feed_tuxemon(self, tuxemon_id: int, index):
         tuxemon = self.tuxemons.get(tuxemon_id)
         if tuxemon:
-            nb_remaining = self.inventory.get(tuxemon.favorite_fruit(), 0)
-            if nb_remaining > 0 and tuxemon.xp < tuxemon.max_xp() + 1:
-                self.inventory.consume_item(tuxemon.favorite_fruit(), 1)
-                tuxemon.add_xp(10)
+            nb_remaining = self.inventory.get_food()
+            name = list(nb_remaining.keys())[index]
+            nb_remaining = nb_remaining[name]
+            if  nb_remaining > 0 and tuxemon.xp < tuxemon.max_xp() + 1:
+                self.inventory.consume_item(name, 1)
+                tuxemon.add_xp(25 if index == 0 else 10 if index == 1 else 5)
 
         else:
             print(f"no tuxemon with id {tuxemon_id}")

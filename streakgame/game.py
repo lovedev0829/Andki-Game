@@ -154,8 +154,8 @@ class Game:
         to_review = due_tree.review_count + due_tree.learn_count + due_tree.new_count
         if to_review:
             self.create_popup("",f"You have {to_review} cards to learn today. Good luck !")
-        self.update_learned_cards()
         self.check_for_streak_earnings()
+        self.update_learned_cards()
             
     def check_for_streak_earnings(self):
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
