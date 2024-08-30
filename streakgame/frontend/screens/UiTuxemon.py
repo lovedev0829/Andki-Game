@@ -42,8 +42,8 @@ class TuxemonCard(Hoverable):
         draw_transparent_rect(surface, rect, self.color, 150, border_radius=10)
         imgs = self.tuxemon.imgs["menu01"], self.tuxemon.imgs["menu02"]
         img = imgs[self.frame_index]
-        img = pygame.transform.scale(img, (rect.width - self.offset * 2, rect.height - self.offset * 2))
-        surface.blit(img, rect.inflate(-self.offset * 2, -self.offset * 2))
+        img = pygame.transform.scale(img, (rect.width, rect.height))
+        surface.blit(img, rect.inflate(0,0))
 
     def handle_event(self, event):
         super().handle_event(event)
