@@ -215,11 +215,14 @@ class ankimon_selector(QMainWindow):
 		# Create a widget and a layout for the scroll area
 		# content_widget = QWidget()
 		# content_layout = QGridLayout(content_widget)
+		streak_data = json.load(open(streak_data_path, 'r'))
 		for i in range(len(self.Ankimons)):
 			if self.Ankimons[i] not in self.attribute.selected:
 				self.buttons.append(QPushButton(central_widget))
-				text=str(Ankimons[i])
-				labels.append(QLabel(parent=central_widget,text=text))
+				level= streak_data.get(Ankimons[i], '')
+				if level: level = level.get('level', 1)
+				else:level = 1
+				labels.append(QLabel(parent=central_widget,text=f'Level {level}'))
 				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
 				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
 				labels[index].adjustSize()
