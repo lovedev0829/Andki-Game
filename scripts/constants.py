@@ -2,6 +2,7 @@ import os
 import json
 cwd = os.path.dirname(__file__)
 anki_data_path = os.path.join(os.path.dirname(cwd) ,"anki_data.json")
+streak_data_path = os.path.join(os.path.dirname(cwd) ,"streakgame", "game_data", 'tuxemon.json')
 cwd = os.path.dirname(cwd)
 
 DATA:dict = json.load(open(anki_data_path, 'r'))
