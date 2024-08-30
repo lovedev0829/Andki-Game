@@ -92,7 +92,7 @@ class Tuxemon:
         self.xp = 0
         self.name = name
         self.imgs = imgs.load_tuxemon_imgs(name)
-        self.favorite_color = (0, 0, 0)
+        self.favorite_color = (0, 60, 117)
 
     def max_xp(self):
         return 100 * self.level
