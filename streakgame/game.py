@@ -78,7 +78,7 @@ class Game:
 
         # _____________________Back___________________________________#
         self.inventory = Inventory()
-        self.wallet = Wallet(money=1000)
+        self.wallet = Wallet(money=100)
         self.shop = Shop(wallet=self.wallet, inventory=self.inventory)
         self.tuxemon_inventory = TuxemonInventory(inventory=self.inventory)
 
@@ -231,11 +231,12 @@ class Game:
         print(f"farms watered {streak - previous_streak}")
     
         for farm in self.ptmx.farms:
-            farm.water_all(streak - previous_streak)
+            farm.water_all(1)
         if  streak > previous_streak:
             self.create_popup("Good Job !",
                                 f"You have a {streak} day(s) streak !\n"
                                 f"Your plants have been watered accordingly !")
+
     def create_popup(self, title, text):
         popup = Popup(title=title, text=text, manager=self.ui_manager)
         self.ui_manager.add_popop(popup)

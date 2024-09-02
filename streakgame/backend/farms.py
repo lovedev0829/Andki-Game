@@ -385,7 +385,6 @@ class PlantSpot(objects.GameObjectNoImg):
 class Plant:
     def __init__(self, plant_type, spot, development_index=0):
         self.development_index = development_index
-        print(plant_type)
         self.max_development_index = len(imgs.plants[plant_type]) - 1
         self.type = plant_type  # Fire, Water, Ice
         self.imgs = imgs.plants[plant_type]
@@ -395,7 +394,7 @@ class Plant:
         for i in range(len(self.imgs)):
             if self.imgs[i].get_width() > max_widht:
                 self.imgs[i] = imgs.scale_by(self.imgs[i], max_widht / self.imgs[i].get_width())
-        self.zoom_buffer = self.imgs[self.development_index]
+        self.zoom_buffer = self.imgs[int(self.development_index)]
         self.last_zoom = 1
         self.requires_update = True
 
@@ -403,9 +402,12 @@ class Plant:
         return self.development_index == self.max_development_index
 
     def water(self, n):
-        water_amount = len(self.imgs)/growing_speed[self.type] * n
+        water_amount = (len(self.imgs)-1)/growing_speed[self.type] * n
         if self.development_index + water_amount < len(self.imgs) - 1 and self.development_index + water_amount >=0:
-            self.development_index += n
+            self.development_index += water_amount
+            self.requires_update = True
+        elif self.development_index + water_amount >= len(self.imgs) - 1:
+            self.development_index = len(self.imgs) - 1
             self.requires_update = True
 
     def update_camera(self, camera_rect):
@@ -414,7 +416,7 @@ class Plant:
         if not self.requires_update and zoom == self.last_zoom:
             return
 
-        self.zoom_buffer = imgs.scale_by(self.imgs[self.development_index], zoom)
+        self.zoom_buffer = imgs.scale_by(self.imgs[int(self.development_index)], zoom)
         self.last_zoom = zoom
         self.requires_update = False
 

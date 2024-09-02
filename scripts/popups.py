@@ -1,7 +1,7 @@
 from scripts.utils import center_widget, get_data, change_data
 import pickle
 from aqt.qt import *
-
+import webbrowser
 import threading
 from aqt import mw
 from aqt import utils
@@ -316,43 +316,50 @@ class trainer_selector(QMainWindow):
 		self.counter += 1
 
 class LoginHandler:
-	def __init__(self, main_window:QMainWindow):
+	def __init__(self, main_window: QMainWindow):
 		self.main_window = main_window
 		self.initUI()
 
 	def initUI(self):
 		# Set the main window properties
 		self.main_window.setWindowTitle('Login')
-		self.main_window.setFixedSize(280, 150)
-		center_widget(self.main_window)
+		self.main_window.setFixedSize(280, 200)  # Increased height to accommodate the new button
+		self.center_widget(self.main_window)
+
 		# Create central widget
 		self.central_widget = QWidget(self.main_window)
 		self.main_window.setCentralWidget(self.central_widget)
-		
+
 		# Create layout
 		layout = QVBoxLayout()
-		
+
 		# Create and add widgets to the layout
 		self.label_username = QLabel('Username:', self.central_widget)
 		layout.addWidget(self.label_username)
-		
+
 		self.textbox_username = QLineEdit(self.central_widget)
 		layout.addWidget(self.textbox_username)
-		
+
 		self.label_password = QLabel('Password:', self.central_widget)
 		layout.addWidget(self.label_password)
-		
+
 		self.textbox_password = QLineEdit(self.central_widget)
+		self.textbox_password.setEchoMode(QLineEdit.EchoMode.Password)
 		layout.addWidget(self.textbox_password)
-		
+
 		self.button_login = QPushButton('Login', self.central_widget)
-		self.button_login.clicked.connect(lambda :self.handle_login())
+		self.button_login.clicked.connect(self.handle_login)
 		layout.addWidget(self.button_login)
-		
+
+		# Add "Create Account" button
+		self.button_create_account = QPushButton('Create Account', self.central_widget)
+		self.button_create_account.clicked.connect(lambda :self.open_create_account())
+		layout.addWidget(self.button_create_account)
+
 		# Set the layout on the central widget
 		self.central_widget.setLayout(layout)
 		self.main_window.show()
-        
+
 	def handle_login(self):
 		username = self.textbox_username.text()
 		password = self.textbox_password.text()
@@ -362,14 +369,22 @@ class LoginHandler:
 			QMessageBox.information(self.main_window, 'Login', 'Login successful!')
 			self.textbox_username.clear()
 			self.textbox_password.clear()
-			delete_win()
-			self.main_window = None
+			self.main_window.close()
+			# Proceed to the next window or action
 			from streakgame.main import main
 			main()
-			# Proceed to the next window or action
 		else:
 			QMessageBox.warning(self.main_window, 'Login', 'Incorrect username or password.')
 			self.textbox_password.clear()
+
+	def open_create_account(self):
+		# URL of the website where the user can create an account
+		webbrowser.open('https://play.typeracer.com/')
+	def center_widget(self, widget):
+		qr = widget.frameGeometry()
+		cp = widget.screen().availableGeometry().center()
+		qr.moveCenter(cp)
+		widget.move(qr.topLeft())
 
 class trainer_manager:
 	def __init__(self, win:QMainWindow):
