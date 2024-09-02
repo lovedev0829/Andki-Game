@@ -379,7 +379,7 @@ class LoginHandler:
 
 	def open_create_account(self):
 		# URL of the website where the user can create an account
-		webbrowser.open('https://play.typeracer.com/')
+		webbrowser.open('https://api.ankinick.org/register')
 	def center_widget(self, widget):
 		qr = widget.frameGeometry()
 		cp = widget.screen().availableGeometry().center()
