@@ -95,7 +95,7 @@ class Tuxemon:
         self.favorite_color = (0, 60, 117)
 
     def max_xp(self):
-        return 100 * self.level
+        return min(10 * (self.level//10+1),30)
 
     def __repr__(self):
         return f"Tuxemon({self.name})"
@@ -113,6 +113,9 @@ class Tuxemon:
         print(f"leveling up to level {self.level + 1}, no evolution")
         self.level += 1
         self.xp = 0
+
+    def max_level(self):
+        return 50
 
     def get_evolution_chain(self):
         return [self]
@@ -136,6 +139,9 @@ class TuxemonInventory:
     def feed_tuxemon(self, tuxemon_id: int, index):
         tuxemon = self.tuxemons.get(tuxemon_id)
         if tuxemon:
+            if tuxemon.level >= tuxemon.max_level():
+                print(f"{tuxemon.name} is already at max level")
+                return
             nb_remaining = self.inventory.get_food()
             name = list(nb_remaining.keys())[index]
             nb_remaining = nb_remaining[name]
