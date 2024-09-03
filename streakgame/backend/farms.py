@@ -204,6 +204,8 @@ class Farm(objects.GameObject, objects.Clickable):
         selected_tool = self.menu.selected_item
         for plant in self.plants_location.values():
             plant.draw(win)
+        for plant in self.plants_location.values():
+            plant.draw_water(win)
         objects.GameObject.draw(self, win)
         if self.menu.is_open:
             self.menu.draw(win)
@@ -374,6 +376,16 @@ class PlantSpot(objects.GameObjectNoImg):
     def draw(self, win):
         if self.plant is not None:
             win.blit(self.plant.zoom_buffer, self.plant.zoom_buffer.get_rect(midbottom=self.rect.midbottom))
+
+    def draw_water(self, win):
+        if self.plant:
+            if time.time() - self.plant.last_watered < 86400:
+                rect = self.plant.zoom_buffer.get_rect(midbottom=self.rect.midbottom)
+                margin = 50
+                s = pygame.Surface(rect.size, pygame.SRCALPHA)
+                pygame.draw.circle(s, (53,33,0), s.get_rect().center, s.get_width()/5)
+                s.set_alpha(65)
+                win.blit(s, (rect[0], rect[1]+margin))
 
     def dump(self):
         """

@@ -201,8 +201,8 @@
                 "id": 48,
                 "plant": {
                     "type": "fire",
-                    "development_index": 0,
-                    "last_watered": 1725269554.2365737
+                    "development_index": 0.7142857142857143,
+                    "last_watered": 1725372924.305135
                 }
             },
             {
@@ -405,8 +405,8 @@
                 "id": 90,
                 "plant": {
                     "type": "water",
-                    "development_index": 1.0,
-                    "last_watered": 1725355956.2854505
+                    "development_index": 2.0,
+                    "last_watered": 0.6355293
                 }
             },
             {

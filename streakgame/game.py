@@ -230,8 +230,6 @@ class Game:
         mw.col.conf["streak"] = streak, ordinal
         print(f"farms watered {streak - previous_streak}")
     
-        for farm in self.ptmx.farms:
-            farm.water_all(1)
         if  streak > previous_streak:
             self.create_popup("Good Job !",
                                 f"You have a {streak} day(s) streak !\n"
