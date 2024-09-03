@@ -370,6 +370,8 @@ class LoginHandler:
 		res = s.post('https://api.ankinick.org/login', json=data)
 		print(res.cookies.get_dict())
 		# Perform your login logic here (this is a simple example)
+		self.main_window.close()
+		mw.win = None
 		from streakgame import main
 		main.main()
 

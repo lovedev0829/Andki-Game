@@ -1,6 +1,6 @@
 import pygame
 from pygame import Vector2
-
+import time
 from streakgame.backend import objects
 from streakgame.backend.inventory import Inventory
 from streakgame.backend.items import Item
@@ -123,10 +123,9 @@ faux = FarmMenuItem("faux", imgs.faux, FarmMenuItem.recolter)
 
 class Farm(objects.GameObject, objects.Clickable):
     def __init__(self, pos, size, img, farm_zone, name="Farm", inventory=None):
-        if config.DEBUG:
-            menu_items = [ice_seeds, water_seeds, fire_seeds, faux, bucket]
-        else:
-            menu_items = [ice_seeds, water_seeds, fire_seeds, faux]
+
+        menu_items = [ice_seeds, water_seeds, fire_seeds, faux, bucket]
+
 
         objects.GameObject.__init__(self, pos, size, img)
         objects.Clickable.__init__(self, pos, size)
@@ -269,7 +268,7 @@ class Farm(objects.GameObject, objects.Clickable):
             return
         plant = self.plants_location[plant_id].plant
         if plant is not None:
-            plant.water()
+            plant.water(1)
 
     def on_recolt(self, pos):
         plantspot = self.get_plantspot_at_pos(pos)
@@ -311,7 +310,8 @@ class Farm(objects.GameObject, objects.Clickable):
             if plants_data["plant"]:
                 plant_type = plants_data["plant"]["type"]
                 img_index = plants_data["plant"]["development_index"]
-                plant = Plant(plant_type, self.plants_location[plant_id], development_index=img_index)
+                last_watered = plants_data["plant"].get('last_watered', time.time()-86400)
+                plant = Plant(plant_type, self.plants_location[plant_id], development_index=img_index, last_watered=last_watered)
                 self.add_plant_at_id(plant_id, plant)
 
 
@@ -383,13 +383,13 @@ class PlantSpot(objects.GameObjectNoImg):
 
 
 class Plant:
-    def __init__(self, plant_type, spot, development_index=0):
+    def __init__(self, plant_type, spot, development_index=0, last_watered=time.time()-86400):
         self.development_index = development_index
         self.max_development_index = len(imgs.plants[plant_type]) - 1
         self.type = plant_type  # Fire, Water, Ice
         self.imgs = imgs.plants[plant_type]
         self.spot = spot
-
+        self.last_watered = last_watered
         max_widht = config.TILE_SIZE * 1.5
         for i in range(len(self.imgs)):
             if self.imgs[i].get_width() > max_widht:
@@ -401,14 +401,17 @@ class Plant:
     def is_ready_to_harvest(self):
         return self.development_index == self.max_development_index
 
-    def water(self, n):
-        water_amount = (len(self.imgs)-1)/growing_speed[self.type] * n
-        if self.development_index + water_amount < len(self.imgs) - 1 and self.development_index + water_amount >=0:
-            self.development_index += water_amount
-            self.requires_update = True
-        elif self.development_index + water_amount >= len(self.imgs) - 1:
-            self.development_index = len(self.imgs) - 1
-            self.requires_update = True
+    def water(self, n=1):
+        if time.time() - self.last_watered >= 86400:
+            water_amount = (len(self.imgs)-1)/growing_speed[self.type] * n
+            if self.development_index + water_amount < len(self.imgs) - 1 and self.development_index + water_amount >=0:
+                self.development_index += water_amount
+                self.requires_update = True
+                self.last_watered = time.time()
+            elif self.development_index + water_amount >= len(self.imgs) - 1:
+                self.development_index = len(self.imgs) - 1
+                self.requires_update = True
+                self.last_watered = time.time()
 
     def update_camera(self, camera_rect):
         w, h = pygame.display.get_surface().get_size()
@@ -422,7 +425,8 @@ class Plant:
 
     def dump(self):
         return {"type": self.type,
-                "development_index": self.development_index}
+                "development_index": self.development_index,
+                "last_watered": self.last_watered}
 
     def recolt(self):
         self.spot.plant = None
