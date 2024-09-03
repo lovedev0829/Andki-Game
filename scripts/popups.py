@@ -1,3 +1,4 @@
+import requests.cookies
 from scripts.utils import center_widget, get_data, change_data
 import pickle
 from aqt.qt import *
@@ -11,9 +12,9 @@ from enum import Enum
 import json
 from rpg.ankirpg import data_path, AnkiRPG
 import random
+import requests
 from scripts.utils import xp_to_lvl
 from scripts.constants import *
-
 
 def delete_win():
     mw.win = None
@@ -334,7 +335,7 @@ class LoginHandler:
 		layout = QVBoxLayout()
 
 		# Create and add widgets to the layout
-		self.label_username = QLabel('Username:', self.central_widget)
+		self.label_username = QLabel('Email:', self.central_widget)
 		layout.addWidget(self.label_username)
 
 		self.textbox_username = QLineEdit(self.central_widget)
@@ -364,18 +365,14 @@ class LoginHandler:
 		username = self.textbox_username.text()
 		password = self.textbox_password.text()
 		print(username, password)
+		data = {'email': username, 'password': password}
+		s = requests.session()
+		res = s.post('https://api.ankinick.org/login', json=data)
+		print(res.cookies.get_dict())
 		# Perform your login logic here (this is a simple example)
-		if username == "user" and password == "pass":
-			QMessageBox.information(self.main_window, 'Login', 'Login successful!')
-			self.textbox_username.clear()
-			self.textbox_password.clear()
-			self.main_window.close()
-			# Proceed to the next window or action
-			from streakgame.main import main
-			main()
-		else:
-			QMessageBox.warning(self.main_window, 'Login', 'Incorrect username or password.')
-			self.textbox_password.clear()
+		from streakgame import main
+		main.main()
+
 
 	def open_create_account(self):
 		# URL of the website where the user can create an account
