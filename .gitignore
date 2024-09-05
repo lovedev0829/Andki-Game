@@ -4,4 +4,4 @@ __pycache__/
 assets/temp/
 cython_debug/
 .save
-game_state.json
+streakgame/game_data/game_state.json

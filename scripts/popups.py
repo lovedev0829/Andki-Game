@@ -368,7 +368,7 @@ class LoginHandler:
 		data = {'email': username, 'password': password}
 		s = requests.session()
 		res = s.post('https://api.ankinick.org/login', json=data)
-		print(res.cookies.get_dict())
+		print(f"cookies recived: {res.cookies.get_dict()}")
 		# Perform your login logic here (this is a simple example)
 		self.main_window.close()
 		mw.win = None

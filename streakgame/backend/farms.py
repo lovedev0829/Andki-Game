@@ -1,6 +1,8 @@
 import pygame
 from pygame import Vector2
 import time
+import datetime
+
 from streakgame.backend import objects
 from streakgame.backend.inventory import Inventory
 from streakgame.backend.items import Item
@@ -312,7 +314,7 @@ class Farm(objects.GameObject, objects.Clickable):
             if plants_data["plant"]:
                 plant_type = plants_data["plant"]["type"]
                 img_index = plants_data["plant"]["development_index"]
-                last_watered = plants_data["plant"].get('last_watered', time.time()-86400)
+                last_watered = plants_data["plant"].get('last_watered', datetime.datetime.now().toordinal())
                 plant = Plant(plant_type, self.plants_location[plant_id], development_index=img_index, last_watered=last_watered)
                 self.add_plant_at_id(plant_id, plant)
 
@@ -379,7 +381,7 @@ class PlantSpot(objects.GameObjectNoImg):
 
     def draw_water(self, win):
         if self.plant:
-            if time.time() - self.plant.last_watered < 86400:
+            if self.plant.last_watered == datetime.datetime.now().toordinal():
                 rect = self.plant.zoom_buffer.get_rect(midbottom=self.rect.midbottom)
                 margin = 50
                 s = pygame.Surface(rect.size, pygame.SRCALPHA)
@@ -395,7 +397,7 @@ class PlantSpot(objects.GameObjectNoImg):
 
 
 class Plant:
-    def __init__(self, plant_type, spot, development_index=0, last_watered=time.time()-86400):
+    def __init__(self, plant_type, spot, development_index=0, last_watered=datetime.datetime.now().toordinal()-1):
         self.development_index = development_index
         self.max_development_index = len(imgs.plants[plant_type]) - 1
         self.type = plant_type  # Fire, Water, Ice
@@ -414,16 +416,17 @@ class Plant:
         return self.development_index == self.max_development_index
 
     def water(self, n=1):
-        if time.time() - self.last_watered >= 86400:
+        if self.last_watered != datetime.datetime.now().toordinal():
             water_amount = (len(self.imgs)-1)/growing_speed[self.type] * n
-            if self.development_index + water_amount < len(self.imgs) - 1 and self.development_index + water_amount >=0:
-                self.development_index += water_amount
-                self.requires_update = True
-                self.last_watered = time.time()
-            elif self.development_index + water_amount >= len(self.imgs) - 1:
+            if self.development_index + water_amount >= len(self.imgs) - 1:
                 self.development_index = len(self.imgs) - 1
                 self.requires_update = True
-                self.last_watered = time.time()
+                self.last_watered = datetime.datetime.now().toordinal()
+            elif self.development_index + water_amount < len(self.imgs) - 1 and self.development_index + water_amount >=0:
+                self.development_index += water_amount
+                self.requires_update = True
+                self.last_watered = datetime.datetime.now().toordinal()
+
 
     def update_camera(self, camera_rect):
         w, h = pygame.display.get_surface().get_size()
