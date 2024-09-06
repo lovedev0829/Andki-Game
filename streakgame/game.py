@@ -353,6 +353,7 @@ class Game:
 class Pytmx:
     def __init__(self, win):
         self.win = win
+        print(pytmx.pytmx.TiledMap(os.path.join(cwd, "assets", "map", "map_with_objects.tmx")))
         self.data_tmx = pytmx.load_pygame(os.path.join(cwd, "assets", "map", "map_with_objects.tmx"))
         pyscroll_data = pyscroll.data.TiledMapData(self.data_tmx)
         self.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.win.get_size(), clamp_camera=True)
