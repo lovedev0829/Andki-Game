@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 import images
 from rpg.ParticleSystem import EffectManager, Particle, Colors
+from rpg.utils import *
 import pygame
 from pygame import Color
 import logging
@@ -33,12 +34,13 @@ def fps_counter(clock, font:pygame.font.Font, screen:pygame.Surface):
     screen.blit(fps_t,(0,0))
 
 class Mob:
-    def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer, health=100):
+    def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer, engine, health=100):
         self.i = i
         self.j = j
         self.old_pos = [i, j]
+        self.engine = engine
         self.name = name
-        self.element = element
+        self.element:str = element
         self.trainer = trainer
         self.img = self.load_image()
         self.health = health
@@ -110,6 +112,13 @@ class Mob:
         if time.time() -  self.last_attacked < 1:
             if round((time.time() - self.last_attacked)%1*10) %2 == 0:
                 self.screen.blit(self.img, (x - 32, y - 24))
+            animation = self.engine.vfx[self.element.upper()][2]
+            if self.element.lower() in ['fire', 'ice']:
+                self.screen.blit(animation.img(), (x-170,y-190))
+            else:
+                self.screen.blit(animation.img(), (x-170,y-100))
+            animation.update()
+            print(animation.done)
             text = self.font.render(f"-{int(self.last_damaged)}", 1, (255, 0, 0))
             text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
             self.screen.blit(text, (x ,y- (time.time() -  self.last_attacked)*100))
@@ -149,14 +158,15 @@ class Engine:
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
+        self.vfx = load_dir(os.path.join(os.path.dirname(__file__), 'assets', 'VFX'))
         names = list(ankimons.keys())
         if ankimons:
-            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainer[0]))
-            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t, trainer[0]))
-            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t, trainer[0]))
-            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainer[1]))
-            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainer[1]))
-            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainer[1]))
+            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainer[0], self))
+            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t, trainer[0], self))
+            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t, trainer[0], self))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainer[1], self))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainer[1], self))
+            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainer[1], self))
         
         self.mode: Mode = Mode.Idle
         

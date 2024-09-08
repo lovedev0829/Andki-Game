@@ -1,93 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="45" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="31" nextobjectid="244">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="45" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="31" nextobjectid="244">
  <tileset firstgid="1" name="simple_pokemon" tilewidth="32" tileheight="32" tilecount="1424" columns="8">
   <image source="tilemaps_png/tile_pokemon.png" width="256" height="5697"/>
  </tileset>
  <tileset firstgid="1425" name="objects" tilewidth="232" tileheight="719" tilecount="28" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
-   <image width="82" height="111" source="assets/house2.png"/>
+   <image source="assets/house2.png" width="82" height="111"/>
   </tile>
   <tile id="1">
-   <image width="89" height="118" source="assets/house1.png"/>
+   <image source="assets/house1.png" width="89" height="118"/>
   </tile>
   <tile id="6">
-   <image width="120" height="174" source="assets/building1.png"/>
+   <image source="assets/building1.png" width="120" height="174"/>
   </tile>
   <tile id="7">
-   <image width="120" height="167" source="assets/building2.png"/>
+   <image source="assets/building2.png" width="120" height="167"/>
   </tile>
   <tile id="8">
-   <image width="176" height="177" source="assets/building3.png"/>
+   <image source="assets/building3.png" width="176" height="177"/>
   </tile>
   <tile id="9">
-   <image width="98" height="120" source="assets/building4.png"/>
+   <image source="assets/building4.png" width="98" height="120"/>
   </tile>
   <tile id="10">
-   <image width="126" height="155" source="assets/healthcare.png"/>
+   <image source="assets/healthcare.png" width="126" height="155"/>
   </tile>
   <tile id="11">
-   <image width="68" height="140" source="assets/stairs2.png"/>
+   <image source="assets/stairs2.png" width="68" height="140"/>
   </tile>
   <tile id="12">
-   <image width="68" height="140" source="assets/stairs.png"/>
+   <image source="assets/stairs.png" width="68" height="140"/>
   </tile>
   <tile id="13">
-   <image width="43" height="54" source="assets/bridge.png"/>
+   <image source="assets/bridge.png" width="43" height="54"/>
   </tile>
   <tile id="14">
-   <image width="232" height="719" source="assets/fire_house.png"/>
+   <image source="assets/fire_house.png" width="232" height="719"/>
   </tile>
   <tile id="15">
-   <image width="99" height="136" source="assets/arbre dead.png"/>
+   <image source="assets/arbre dead.png" width="99" height="136"/>
   </tile>
   <tile id="16">
-   <image width="79" height="97" source="assets/arbre dead2.png"/>
+   <image source="assets/arbre dead2.png" width="79" height="97"/>
   </tile>
   <tile id="17">
-   <image width="177" height="186" source="assets/building_ice.png"/>
+   <image source="assets/building_ice.png" width="177" height="186"/>
   </tile>
   <tile id="18">
-   <image width="130" height="188" source="assets/building_jungle.png"/>
+   <image source="assets/building_jungle.png" width="130" height="188"/>
   </tile>
   <tile id="19">
-   <image width="92" height="243" source="assets/building_water.png"/>
+   <image source="assets/building_water.png" width="92" height="243"/>
   </tile>
   <tile id="20">
-   <image width="83" height="126" source="assets/tree_jungle1.png"/>
+   <image source="assets/tree_jungle1.png" width="83" height="126"/>
   </tile>
   <tile id="21">
-   <image width="82" height="126" source="assets/tree_jungle2.png"/>
+   <image source="assets/tree_jungle2.png" width="82" height="126"/>
   </tile>
   <tile id="22">
-   <image width="47" height="56" source="assets/fire_tree.png"/>
+   <image source="assets/fire_tree.png" width="47" height="56"/>
   </tile>
   <tile id="23">
-   <image width="47" height="56" source="assets/fire_tree_half.png"/>
+   <image source="assets/fire_tree_half.png" width="47" height="56"/>
   </tile>
   <tile id="24">
-   <image width="47" height="56" source="assets/fire_tree_quarter.png"/>
+   <image source="assets/fire_tree_quarter.png" width="47" height="56"/>
   </tile>
   <tile id="25">
-   <image width="52" height="56" source="assets/Sans titre.png"/>
+   <image source="assets/Sans titre.png" width="52" height="56"/>
   </tile>
   <tile id="26">
-   <image width="53" height="69" source="assets/sapin_snow.png"/>
+   <image source="assets/sapin_snow.png" width="53" height="69"/>
   </tile>
   <tile id="27">
-   <image width="48" height="58" source="assets/snow_tree.png"/>
+   <image source="assets/snow_tree.png" width="48" height="58"/>
   </tile>
   <tile id="28">
-   <image width="36" height="45" source="assets/tree.png"/>
+   <image source="assets/tree.png" width="36" height="45"/>
   </tile>
   <tile id="29">
-   <image width="53" height="69" source="assets/tree_sapin.png"/>
+   <image source="assets/tree_sapin.png" width="53" height="69"/>
   </tile>
   <tile id="30">
-   <image width="36" height="45" source="assets/tree2.png"/>
+   <image source="assets/tree2.png" width="36" height="45"/>
   </tile>
   <tile id="31">
-   <image width="40" height="43" source="assets/grotte_eau.png"/>
+   <image source="assets/grotte_eau.png" width="40" height="43"/>
   </tile>
  </tileset>
  <tileset firstgid="1457" source="tilemaps/Pokemon_complex.tsx"/>
@@ -563,56 +563,56 @@
  <objectgroup id="2" name="Objects">
   <object id="28" name="Farm1" type="Farm" gid="1425" x="146" y="660" width="130" height="163"/>
   <object id="34" name="Farm2" type="Farm" gid="1433" x="359.25" y="653.583" width="240" height="238.333"/>
-  <object id="68" type="Building" gid="1439" x="1233.67" y="967.833" width="131.833" height="371.334"/>
-  <object id="82" type="Tree" gid="1440" x="1152" y="672" width="99" height="136"/>
-  <object id="89" type="Building" gid="1444" x="1001.5" y="375.5" width="179.833" height="372.667"/>
-  <object id="90" type="Building" gid="1442" x="1230.33" y="453.5" width="248" height="256"/>
-  <object id="93" type="Tree" gid="1445" x="668.009" y="962" width="106.38" height="161.493"/>
-  <object id="96" type="Tree" gid="1446" x="566.479" y="960.718" width="105.099" height="161.493"/>
-  <object id="97" type="Tree" gid="1446" x="355" y="960.718" width="105.099" height="161.493"/>
-  <object id="98" type="Tree" gid="1445" x="458.817" y="959.437" width="106.38" height="161.493"/>
-  <object id="100" type="Building" gid="1443" x="320.167" y="252.333" width="206.5" height="268"/>
-  <object id="105" type="Tree" gid="1445" x="308.956" y="255.723" width="90.1644" height="136.876"/>
-  <object id="106" type="Tree" gid="1446" x="444.672" y="255.476" width="93.4233" height="139.773"/>
-  <object id="119" type="Tree" gid="1440" x="1152" y="608" width="99" height="136"/>
-  <object id="121" type="Tree" gid="1453" x="0" y="96" width="62.6364" height="83.6667"/>
-  <object id="122" type="Tree" gid="1453" x="64" y="96" width="62.6364" height="83.6667"/>
-  <object id="123" type="Tree" gid="1453" x="0" y="224" width="62.6364" height="83.6667"/>
-  <object id="124" type="Tree" gid="1453" x="64" y="224" width="62.6364" height="83.6667"/>
-  <object id="125" type="Tree" gid="1453" x="0" y="160" width="62.6364" height="83.6667"/>
-  <object id="126" type="Tree" gid="1453" x="64" y="160" width="62.6364" height="83.6667"/>
-  <object id="127" type="Tree" gid="1453" x="0" y="32" width="62.6364" height="83.6667"/>
-  <object id="128" type="Tree" gid="1453" x="64" y="32" width="62.6364" height="83.6667"/>
-  <object id="129" type="Tree" gid="1453" x="128" y="352" width="62.6364" height="83.6667"/>
-  <object id="130" type="Tree" gid="1453" x="192" y="352" width="62.6364" height="83.6667"/>
-  <object id="131" type="Tree" gid="1453" x="0" y="352" width="62.6364" height="83.6667"/>
-  <object id="132" type="Tree" gid="1453" x="64" y="352" width="62.6364" height="83.6667"/>
-  <object id="133" type="Tree" gid="1453" x="0" y="288" width="62.6364" height="83.6667"/>
-  <object id="134" type="Tree" gid="1453" x="64" y="288" width="62.6364" height="83.6667"/>
-  <object id="137" type="Tree" gid="1453" x="256" y="352" width="62.6364" height="83.6667"/>
-  <object id="143" type="Tree" gid="1452" x="1193" y="243" width="93.0417" height="116.292"/>
-  <object id="148" type="Tree" gid="1451" x="1152" y="544" width="110.333" height="141"/>
-  <object id="149" type="Tree" gid="1451" x="1061.33" y="522.667" width="110.333" height="141"/>
-  <object id="156" type="Tree" gid="1451" x="1033.33" y="613.5" width="110.333" height="141"/>
-  <object id="158" type="Tree" gid="1454" x="960" y="608" width="96.5" height="121.5"/>
-  <object id="159" type="Tree" gid="1454" x="864" y="608" width="96.5" height="121.5"/>
-  <object id="161" type="Tree" gid="1446" x="231" y="172.657" width="89.0781" height="136.876"/>
-  <object id="162" type="Tree" gid="1446" x="514.922" y="193.1" width="89.0781" height="136.876"/>
-  <object id="163" type="Tree" gid="1446" x="484.184" y="85.135" width="89.0781" height="136.876"/>
-  <object id="164" type="Tree" gid="1446" x="242.53" y="93.2094" width="89.0781" height="136.876"/>
-  <object id="166" type="Tree" gid="1447" x="961" y="963" width="93" height="115"/>
-  <object id="168" type="Tree" gid="1449" x="865" y="709" width="90" height="110"/>
-  <object id="169" type="Tree" gid="1449" x="865" y="806" width="90" height="110"/>
-  <object id="172" type="Tree" gid="1448" x="961.5" y="713" width="91" height="116"/>
-  <object id="173" type="Tree" gid="1440" x="1050" y="708" width="99" height="136"/>
-  <object id="174" type="Tree" gid="1440" x="1056" y="800" width="99" height="136"/>
-  <object id="175" type="Tree" gid="1455" x="192" y="32" width="60" height="77.6667"/>
-  <object id="176" type="Tree" gid="1455" x="192" y="96" width="60" height="77.6667"/>
-  <object id="179" type="Tree" gid="1455" x="192" y="160" width="60" height="77.6667"/>
-  <object id="180" type="Tree" gid="1455" x="192" y="224" width="60" height="77.6667"/>
-  <object id="181" type="Tree" gid="1455" x="256" y="224" width="60" height="77.6667"/>
-  <object id="182" type="Tree" gid="1447" x="962" y="812" width="93" height="115"/>
-  <object id="185" gid="1456" x="1346" y="40.6667" width="62.6667" height="70.3333"/>
+  <object id="68" name="fire_house" type="Building" gid="1439" x="1233.67" y="967.833" width="131.833" height="371.334"/>
+  <object id="82" name="arbre dead" type="Tree" gid="1440" x="1152" y="672" width="99" height="136"/>
+  <object id="89" name="building_water" type="Building" gid="1444" x="1001.5" y="375.5" width="179.833" height="372.667"/>
+  <object id="90" name="building_ice" type="Building" gid="1442" x="1230.33" y="453.5" width="248" height="256"/>
+  <object id="93" name="tree_jungle1" type="Tree" gid="1445" x="668.009" y="962" width="106.38" height="161.493"/>
+  <object id="96" name="tree_jungle2" type="Tree" gid="1446" x="566.479" y="960.718" width="105.099" height="161.493"/>
+  <object id="97" name="tree_jungle2" type="Tree" gid="1446" x="355" y="960.718" width="105.099" height="161.493"/>
+  <object id="98" name="tree_jungle1" type="Tree" gid="1445" x="458.817" y="959.437" width="106.38" height="161.493"/>
+  <object id="100" name="building_jungle" type="Building" gid="1443" x="320.167" y="252.333" width="206.5" height="268"/>
+  <object id="105" name="tree_jungle1" type="Tree" gid="1445" x="308.956" y="255.723" width="90.1644" height="136.876"/>
+  <object id="106" name="tree_jungle2" type="Tree" gid="1446" x="444.672" y="255.476" width="93.4233" height="139.773"/>
+  <object id="119" name="arbre dead" type="Tree" gid="1440" x="1152" y="608" width="99" height="136"/>
+  <object id="121" name="tree" type="Tree" gid="1453" x="0" y="96" width="62.6364" height="83.6667"/>
+  <object id="122" name="tree" type="Tree" gid="1453" x="64" y="96" width="62.6364" height="83.6667"/>
+  <object id="123" name="tree" type="Tree" gid="1453" x="0" y="224" width="62.6364" height="83.6667"/>
+  <object id="124" name="tree" type="Tree" gid="1453" x="64" y="224" width="62.6364" height="83.6667"/>
+  <object id="125" name="tree" type="Tree" gid="1453" x="0" y="160" width="62.6364" height="83.6667"/>
+  <object id="126" name="tree" type="Tree" gid="1453" x="64" y="160" width="62.6364" height="83.6667"/>
+  <object id="127" name="tree" type="Tree" gid="1453" x="0" y="32" width="62.6364" height="83.6667"/>
+  <object id="128" name="tree" type="Tree" gid="1453" x="64" y="32" width="62.6364" height="83.6667"/>
+  <object id="129" name="tree" type="Tree" gid="1453" x="128" y="352" width="62.6364" height="83.6667"/>
+  <object id="130" name="tree" type="Tree" gid="1453" x="192" y="352" width="62.6364" height="83.6667"/>
+  <object id="131" name="tree" type="Tree" gid="1453" x="0" y="352" width="62.6364" height="83.6667"/>
+  <object id="132" name="tree" type="Tree" gid="1453" x="64" y="352" width="62.6364" height="83.6667"/>
+  <object id="133" name="tree" type="Tree" gid="1453" x="0" y="288" width="62.6364" height="83.6667"/>
+  <object id="134" name="tree" type="Tree" gid="1453" x="64" y="288" width="62.6364" height="83.6667"/>
+  <object id="137" name="tree" type="Tree" gid="1453" x="256" y="352" width="62.6364" height="83.6667"/>
+  <object id="143" name="snow_tree" type="Tree" gid="1452" x="1193" y="243" width="93.0417" height="116.292"/>
+  <object id="148" name="sapin_snow" type="Tree" gid="1451" x="1152" y="544" width="110.333" height="141"/>
+  <object id="149" name="sapin_snow" type="Tree" gid="1451" x="1061.33" y="522.667" width="110.333" height="141"/>
+  <object id="156" name="sapin_snow" type="Tree" gid="1451" x="1033.33" y="613.5" width="110.333" height="141"/>
+  <object id="158" name="tree_sapin" type="Tree" gid="1454" x="960" y="608" width="96.5" height="121.5"/>
+  <object id="159" name="tree_sapin" type="Tree" gid="1454" x="864" y="608" width="96.5" height="121.5"/>
+  <object id="161" name="tree_jungle2" type="Tree" gid="1446" x="231" y="172.657" width="89.0781" height="136.876"/>
+  <object id="162" name="tree_jungle2" type="Tree" gid="1446" x="514.922" y="193.1" width="89.0781" height="136.876"/>
+  <object id="163" name="tree_jungle2" type="Tree" gid="1446" x="484.184" y="85.135" width="89.0781" height="136.876"/>
+  <object id="164" name="tree_jungle2" type="Tree" gid="1446" x="242.53" y="93.2094" width="89.0781" height="136.876"/>
+  <object id="166" name="fire_tree" type="Tree" gid="1447" x="961" y="963" width="93" height="115"/>
+  <object id="168" name="fire_tree_quarter" type="Tree" gid="1449" x="865" y="709" width="90" height="110"/>
+  <object id="169" name="fire_tree_quarter" type="Tree" gid="1449" x="865" y="806" width="90" height="110"/>
+  <object id="172" name="fire_tree_half" type="Tree" gid="1448" x="961.5" y="713" width="91" height="116"/>
+  <object id="173" name="arbre dead" type="Tree" gid="1440" x="1050" y="708" width="99" height="136"/>
+  <object id="174" name="arbre dead" type="Tree" gid="1440" x="1056" y="800" width="99" height="136"/>
+  <object id="175" name="tree2" type="Tree" gid="1455" x="192" y="32" width="60" height="77.6667"/>
+  <object id="176" name="tree2" type="Tree" gid="1455" x="192" y="96" width="60" height="77.6667"/>
+  <object id="179" name="tree2" type="Tree" gid="1455" x="192" y="160" width="60" height="77.6667"/>
+  <object id="180" name="tree2" type="Tree" gid="1455" x="192" y="224" width="60" height="77.6667"/>
+  <object id="181" name="tree2" type="Tree" gid="1455" x="256" y="224" width="60" height="77.6667"/>
+  <object id="182" name="fire_tree" type="Tree" gid="1447" x="962" y="812" width="93" height="115"/>
+  <object id="185" name="grotte_eau" gid="1456" x="1346" y="40.6667" width="62.6667" height="70.3333"/>
  </objectgroup>
  <objectgroup id="29" name="PathPoints">
   <object id="211" x="156" y="19">

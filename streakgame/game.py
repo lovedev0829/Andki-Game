@@ -28,6 +28,8 @@ from streakgame.boring.imgs import load_font
 from streakgame.frontend.npc import NPC
 from streakgame.frontend.screens.UiShop import ShopUI
 import datetime
+import xml.etree.ElementTree as ET
+
 if not DEBUG:
     import aqt.utils
 from aqt import gui_hooks, mw
@@ -81,7 +83,6 @@ class Game:
         self.wallet = Wallet(money=100)
         self.shop = Shop(wallet=self.wallet, inventory=self.inventory)
         self.tuxemon_inventory = TuxemonInventory(inventory=self.inventory)
-
         # ______________________TMX and pyscroll_____________________________________#
         self.ptmx = Pytmx(win)
         for farm in self.ptmx.farms:
@@ -90,8 +91,8 @@ class Game:
         # _____________________UI Manager___________________________________#
         self.ui_manager = UIManager()
         self.inventoryUI = InventoryUI(self.inventory, manager=self.ui_manager)
-        self.shopUI = ShopUI(self.shop, manager=self.ui_manager)
         self.tuxemonUI = TuxemonUI(self.tuxemon_inventory, manager=self.ui_manager)
+        self.shopUI = ShopUI(self.shop, manager=self.ui_manager)
 
         self.learning_indicator = CardIndicators(manager=self.ui_manager)
         self.coin_indicator = CoinsIndicator(manager=self.ui_manager)
@@ -140,6 +141,20 @@ class Game:
     def start_learning(self):
         self.running = False
 
+    def check_levels(self):
+        if self.initial_ankimons != [anki.level for anki in self.tuxemon_inventory.tuxemons.values()]:
+            for level in [anki.level for anki in self.tuxemon_inventory.tuxemons.values()]:
+                leveld = {
+                    10 : 'Novice', 
+                    20 : 'Intermediate',
+                    30 : 'Master',
+                    40 : 'Expert',
+                    50 : 'Legend'
+                    }
+                if level in leveld.keys():
+                    self.create_popup('Ankimon Upgraded',  f'Congratulations! Your ankimon has became a {leveld[level]} Ankimon')
+            
+
     def load_anki_data(self):
         # if not os.path.exists(anki_data_path):
         #     self.anki_data_json = {"time_ordinal": datetime.today().toordinal(),
@@ -176,6 +191,8 @@ class Game:
     def run(self):
         clock = pygame.time.Clock()
         self.play_audio()
+        self.initial_ankimons = [anki.level for anki in self.tuxemon_inventory.tuxemons.values()]
+
         while self.running:
             dt = clock.tick(FPS) / 1000
             self.time_since_last_late_update += dt
@@ -228,12 +245,7 @@ class Game:
         previous_streak, _ = mw.col.conf.get("streak", (-float('inf'), 0))
         streak, ordinal = get_new_streak()
         mw.col.conf["streak"] = streak, ordinal
-        print(f"farms watered {streak - previous_streak}")
     
-        if  streak > previous_streak:
-            self.create_popup("Good Job !",
-                                f"You have a {streak} day(s) streak !\n"
-                                f"Your plants have been watered accordingly !")
 
     def create_popup(self, title, text):
         popup = Popup(title=title, text=text, manager=self.ui_manager)
@@ -353,15 +365,37 @@ class Game:
 class Pytmx:
     def __init__(self, win):
         self.win = win
-        print(pytmx.pytmx.TiledMap(os.path.join(cwd, "assets", "map", "map_with_objects.tmx")))
-        self.data_tmx = pytmx.load_pygame(os.path.join(cwd, "assets", "map", "map_with_objects.tmx"))
+        self.path = os.path.join(cwd, "assets", "map", "map_with_objects.tmx")
+        self.data_tmx = pytmx.load_pygame(self.path)
+        tree = ET.parse(self.path)
+        self.root = tree.getroot()
+        
         pyscroll_data = pyscroll.data.TiledMapData(self.data_tmx)
         self.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.win.get_size(), clamp_camera=True)
         self.farms: list[Farm] = []
         self.interactable_objects = []
         self.objects = SortedGroup()
         self.objects_under_npc = SortedGroup()
-        
+        self.unique_objects = {}
+        for obj_layer in self.data_tmx:
+            if obj_layer.name == "Objects":
+                for obj in obj_layer.copy():
+                    if obj.type == "Farm":
+                        pass
+                    else:
+                        self.unique_objects[obj.name] = obj.image
+                        obj.gid += 0
+
+        for obj_layer in self.root.findall('Objects'):
+            obj_layer = obj_layer.find('data').text.strip().split()
+            if obj_layer.name == "Objects":
+                for obj in obj_layer.copy():
+                    if obj.type == "Farm":
+                        pass
+                    else:
+                        self.unique_objects[obj.name] = obj.image
+                        obj.gid += 5
+  
         self.PATH_POINTS = []
         self.load_objects()
         self.load_special_tiles()
@@ -489,3 +523,13 @@ class Pytmx:
         self.objects_under_npc.draw(win)
         
         self.objects.draw(win)
+        last_img = None
+        for obj_layer in self.data_tmx:
+            if obj_layer.name == "Objects":
+                for obj in obj_layer.copy():
+                    if obj.type == "Farm":
+                        pass
+                    else:
+                        obj.gid = 2
+                        win.blit(obj.image, (0,0))
+                        

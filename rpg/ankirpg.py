@@ -264,6 +264,7 @@ class AnkiRPG:
             mob.font = None
             mob.smallfont = None
             mob.manager = None
+            mob.engine = None
         self.learned_card_checker()
         data = {
             "turn": self.engine.turn,
@@ -306,6 +307,7 @@ class AnkiRPG:
             mob.manager = EffectManager(self.win, self.map)
             mob.font = pygame.font.SysFont("Comicsans", 26)
             mob.smallfont = pygame.font.SysFont("Comicsans", 16)
+            mob.engine = self.engine
 
     def bot_event(self):    
         if self.players.get(self.engine.turn) != PlayerType.Bot:
