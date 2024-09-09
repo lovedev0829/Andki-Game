@@ -1,5 +1,16 @@
 import pygame
 import os
+import math
+
+
+def throw(p1, p2, ratio, heigth=0):
+    x_dist = p1[0] - p2[0]
+    y_dist = p1[1] - p2[1]
+    offsets = []
+    offsets.append(-x_dist*ratio)
+    
+    offsets.append(-y_dist*ratio+math.sin(ratio*math.pi)*heigth)
+    return offsets
 
 def load_image(path,size=None):
     if size:
@@ -14,6 +25,19 @@ def load_images(path,size=None):
         images.append(load_image(path + '/' + img_name,size=size))
     return images
 
+def get_enclosing_rect(rect_list):
+    if not rect_list:
+        raise ValueError("The list of rectangles is empty.")
+    
+    # Use the first rectangle as the base
+    enclosing_rect = rect_list[0].copy()
+    
+    # Union the remaining rectangles with the base
+    for rect in rect_list[1:]:
+        enclosing_rect.union_ip(rect)
+    
+    return enclosing_rect
+
 class Animation:
     def __init__(self, images, dur=5, loop=True):
         self.images = images
@@ -24,6 +48,7 @@ class Animation:
 
     def reset(self):
         self.frame = 0
+        self.done = False
 
     def copy(self):
         return Animation(self.images, self.dur, self.loop)
@@ -45,5 +70,5 @@ class Animation:
 def load_dir(path, size=None):
     dirs = {}
     for dire in sorted(os.listdir(path)):
-        dirs[dire] = [Animation(load_images(os.path.join(path ,dire, child_dir),size=size), dur=4) for child_dir in os.listdir(os.path.join(path ,dire))]
+        dirs[dire] = [Animation(load_images(os.path.join(path ,dire, child_dir),size=size), dur=30//len(load_images(os.path.join(path ,dire, child_dir),size=size)), loop=i==1) for i, child_dir in enumerate(os.listdir(os.path.join(path ,dire)))]
     return dirs

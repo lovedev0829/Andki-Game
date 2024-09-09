@@ -1,6 +1,8 @@
 import json
 import logging
 import os.path
+import xml.etree
+import xml.etree.ElementTree
 import pygame.sprite
 import pyscroll
 import pytmx
@@ -28,6 +30,7 @@ from streakgame.boring.imgs import load_font
 from streakgame.frontend.npc import NPC
 from streakgame.frontend.screens.UiShop import ShopUI
 import datetime
+import xml
 import xml.etree.ElementTree as ET
 
 if not DEBUG:
@@ -366,9 +369,15 @@ class Pytmx:
     def __init__(self, win):
         self.win = win
         self.path = os.path.join(cwd, "assets", "map", "map_with_objects.tmx")
-        self.data_tmx = pytmx.load_pygame(self.path)
         tree = ET.parse(self.path)
         self.root = tree.getroot()
+        # for objectgroup in self.root.findall('objectgroup'):
+        #     for obj in objectgroup.findall('object'):
+        #         if 'gid' in obj.attrib and 'type' in obj.attrib and obj.attrib['type'] != 'Farm':
+        #             print(obj.attrib)
+        #             obj.attrib['gid'] = str(int(obj.attrib['gid'])+5)
+        tree.write(self.path)
+        self.data_tmx = pytmx.load_pygame(self.path)
         
         pyscroll_data = pyscroll.data.TiledMapData(self.data_tmx)
         self.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.win.get_size(), clamp_camera=True)
@@ -386,15 +395,7 @@ class Pytmx:
                         self.unique_objects[obj.name] = obj.image
                         obj.gid += 0
 
-        for obj_layer in self.root.findall('Objects'):
-            obj_layer = obj_layer.find('data').text.strip().split()
-            if obj_layer.name == "Objects":
-                for obj in obj_layer.copy():
-                    if obj.type == "Farm":
-                        pass
-                    else:
-                        self.unique_objects[obj.name] = obj.image
-                        obj.gid += 5
+
   
         self.PATH_POINTS = []
         self.load_objects()

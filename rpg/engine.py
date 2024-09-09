@@ -3,10 +3,13 @@ from typing import Optional
 import images
 from rpg.ParticleSystem import EffectManager, Particle, Colors
 from rpg.utils import *
+from scripts.constants import streak_data_path
 import pygame
 from pygame import Color
 import logging
 import time
+import json
+import random
 # from rpg.ankirpg import Pytmx
 logging.basicConfig()
 
@@ -47,17 +50,20 @@ class Mob:
         self.maxhealth = self.health
         self.defense = 1
         self.dmg = 10
+        self.last_attack = time.time() -2
         self.last_damaged = 0
         self.screen = screen
         self.blocked = False
         self.last_attacked = time.time() -2
-        self.time = time.time()
+        self.time = time.time()-2
         self.manager = EffectManager(self.screen, map_t)
         self.owner = owner
         self.defense *= trainer.defense
         self.dmg *= trainer.attack
+        self.attacking_ankimon = None
         self.font = pygame.font.SysFont("Comicsans", 26)
         self.smallfont = pygame.font.SysFont("Comicsans", 16)
+        self.attacked_ankimon = None
         
     
     def load_image(self):
@@ -82,10 +88,14 @@ class Mob:
         elif self.element.lower() == 'water' and mob.element.lower() == 'ice':
             multiplier = 0.8
         print(f"element:{self.element}, defender:{mob.element}, multiplier:{multiplier}")
-        mob.lost_health(self.dmg*multiplier)
-        
-
-    def lost_health(self, dmg):
+        self.last_attack = time.time()
+        self.attacked_ankimon = mob
+        mob.lost_health(self.dmg*multiplier, self)
+        self.engine.vfx[self.element.upper()][0].reset()
+        self.engine.vfx[self.element.upper()][1].reset()
+        self.engine.vfx[self.element.upper()][2].reset()    
+    
+    def lost_health(self, dmg, ankimon):
         dmg/=self.defense
         if self.health > dmg:
             self.last_damaged = dmg
@@ -96,6 +106,14 @@ class Mob:
         print(dmg)
         if self.health == 0:
             self.owner = None
+        self.attacking_ankimon = ankimon
+        self.engine.vfx[self.element.upper()][0].reset()
+        self.engine.vfx[self.element.upper()][1].reset()
+        self.engine.vfx[self.element.upper()][2].reset()
+        print(self.engine.vfx[self.element.upper()][1])
+        print(self.engine.vfx[self.element.upper()][1].frame)
+        print(self.engine.vfx[self.element.upper()][1].dur)
+        print(self.engine.vfx[self.element.upper()][1].done)
 
     def draw(self, map_t):
         x, y = map_t.ortho_to_iso(self.j, self.i)
@@ -112,13 +130,6 @@ class Mob:
         if time.time() -  self.last_attacked < 1:
             if round((time.time() - self.last_attacked)%1*10) %2 == 0:
                 self.screen.blit(self.img, (x - 32, y - 24))
-            animation = self.engine.vfx[self.element.upper()][2]
-            if self.element.lower() in ['fire', 'ice']:
-                self.screen.blit(animation.img(), (x-170,y-190))
-            else:
-                self.screen.blit(animation.img(), (x-170,y-100))
-            animation.update()
-            print(animation.done)
             text = self.font.render(f"-{int(self.last_damaged)}", 1, (255, 0, 0))
             text.set_alpha(255*(1-(time.time() -  self.last_attacked)))
             self.screen.blit(text, (x ,y- (time.time() -  self.last_attacked)*100))
@@ -131,8 +142,51 @@ class Mob:
             self.old_pos[0] += (self.i - self.old_pos[0])/4
             self.old_pos[1] += (self.j - self.old_pos[1])/4
             self.screen.blit(self.img, ((x - 32 + old_pos[0]-32)/2, (y - 24 + old_pos[1]-24)/2))
+        if time.time() -  self.last_attack < 0.5 and self.attacked_ankimon:
+            animation = self.engine.vfx[self.element.upper()][1]
+            # anim is for the animation for starting the attack
+            anim = self.engine.vfx[self.element.upper()][0]
+            if self.element.lower() == 'ice':
+                offset = throw((x,y), map_t.ortho_to_iso(self.attacked_ankimon.j, self.attacked_ankimon.i), (time.time() - self.last_attack)*2,-120)
+                self.screen.blit(animation.img(), (x+offset[0]-190,y+offset[1]-175))
+                self.screen.blit(anim.img(), (x-150,y-195))
+                
+            elif self.element.lower() == 'fire':
+                pos = map_t.ortho_to_iso(self.attacked_ankimon.j, self.attacked_ankimon.i)
+                angle = math.degrees(math.atan2(pos[1]-y, x-pos[0])+math.pi)-90
+                offset = throw((x,y), pos, (time.time() - self.last_attack)*2)
+                self.screen.blit(pygame.transform.rotate(animation.img(), angle), (x+offset[0]-animation.img().get_rect().centerx,y+offset[1]-animation.img().get_rect().centery))
+                self.screen.blit(anim.img(), (x-10,y-100))
+            else:
+                pos = map_t.ortho_to_iso(self.attacked_ankimon.j, self.attacked_ankimon.i)
+                angle = math.degrees(math.atan2(pos[1]-y, x-pos[0])+math.pi)-90
+                offset = throw((x,y), pos, (time.time() - self.last_attack)*2)
+                self.screen.blit(pygame.transform.rotate(animation.img(), angle), (x+offset[0]-animation.img().get_rect().centerx,y+offset[1]-animation.img().get_rect().centery))
+                self.screen.blit(anim.img(), (x,y))
             
-
+            anim.update()
+            animation.update()
+            print(anim.frame)
+        if time.time() - self.last_attacked > 0.5 and time.time() - self.last_attacked < 1 and self.attacking_ankimon:
+            animation = self.engine.vfx[self.attacking_ankimon.element.upper()][2]
+            animation.dur = 3
+            if self.attacking_ankimon.element.lower() == 'fire':
+                self.screen.blit(animation.img(), (x-45, y-70))
+            elif self.attacking_ankimon.element.lower() == 'water':
+                self.screen.blit(animation.img(), (x-65, y-90))
+            else:self.screen.blit(animation.img(), (x-165, y-190))
+            animation.update()
+        #### Lines below used for testing animations
+        # for i, image in enumerate(self.engine.vfx['FIRE'][2].images):
+        #     self.screen.blit(image, (i*50,0))
+        # if self.attacked_ankimon:
+        #     points = []
+        #     for i in [0.1* i for i in range(11)]:
+        #         p=throw((x,y), map_t.ortho_to_iso(self.attacked_ankimon.j, self.attacked_ankimon.i), i,1)
+        #         points.append([p[0]+x, p[1]+y])
+        #     for i, point in enumerate(points):
+        #         self.screen.blit(self.engine.vfx['FIRE'][1].images[i%len(self.engine.vfx['FIRE'][1].images)],point)
+        #     pygame.draw.lines(self.screen, (0,0,0), False, points)
         # Health bar ally
         if self.owner == Player.Player1:
             pygame.draw.rect(self.screen, Color("red"), (x - 16, y - 16, 32, 4))
@@ -159,6 +213,19 @@ class Engine:
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
         self.vfx = load_dir(os.path.join(os.path.dirname(__file__), 'assets', 'VFX'))
+        for element in self.vfx.keys():
+            if element == 'ICE':continue
+            for animation in self.vfx[element]:
+                for i, image in enumerate(animation.images):
+                    biggest_rect = None
+                    rects = pygame.mask.from_surface(image).get_bounding_rects()
+                    if rects:
+                        biggest_rect=get_enclosing_rect(pygame.mask.from_surface(image).get_bounding_rects())
+                    if biggest_rect:
+                        s = pygame.Surface(biggest_rect.size)
+                        s.set_colorkey((0,0,0))
+                        s.blit(image, (0,0), biggest_rect)
+                        animation.images[i] = s
         names = list(ankimons.keys())
         if ankimons:
             self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainer[0], self))
@@ -167,7 +234,15 @@ class Engine:
             self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainer[1], self))
             self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainer[1], self))
             self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainer[1], self))
-        
+        ankimon_data = json.load(open(streak_data_path, 'r'))
+        levels = [ankimon_data[anki].get('level') for anki in ankimon_data.keys()]
+        enemy_levels = [max(1, level + random.randint(-3,3)) for level in levels]
+        for i, mob in enumerate(self.player1_mobs):
+            mob.defense += 0.2*levels[i]
+            mob.dmg += 0.2*levels[i]
+        for i, mob in enumerate(self.player2_mobs):
+            mob.defense += 0.2*enemy_levels[i]
+            mob.dmg += 0.2*enemy_levels[i]            
         self.mode: Mode = Mode.Idle
         
         

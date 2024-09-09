@@ -265,6 +265,7 @@ class AnkiRPG:
             mob.smallfont = None
             mob.manager = None
             mob.engine = None
+            mob.attacked_ankimon = None
         self.learned_card_checker()
         data = {
             "turn": self.engine.turn,

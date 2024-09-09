@@ -21,7 +21,6 @@ def mainloop(ankimons, loadsave=False):
     size = info.current_w,info.current_h
     yoffset = 27
     from rpg.ankirpg import AnkiRPG, data_path
-    ankimon_data = json.load(open(streak_data_path, 'r'))
     trainer_name = json.load(open(data_path, 'r'))['default_trainer']
     for i in range(10):
         bot_trainer = random.choice(list(STATS.keys()))
@@ -34,7 +33,7 @@ def mainloop(ankimons, loadsave=False):
     
     trainers = [Trainer(trainer_name, *default_stats), Trainer(bot_trainer ,*STATS[bot_trainer])]
     if not difficulty:
-        trainers = [Trainer(trainer_name, *[i*0.1 +1 for i in range(1,3)], 0), Trainer(bot_trainer ,*STATS[bot_trainer])]
+        trainers = [Trainer(trainer_name, 1,15,15), Trainer(bot_trainer ,*STATS[bot_trainer])]
     mw.window().setGeometry(0,yoffset,size[0]/2,size[1]-yoffset*2.3)
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (size[0]/2,yoffset)
     
