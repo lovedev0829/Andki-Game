@@ -366,8 +366,8 @@ class LoginHandler:
 		password = self.textbox_password.text()
 		print(username, password)
 		data = {'email': username, 'password': password}
-		s = requests.session()
-		# res = s.post('https://api.ankinick.org/login', json=data)
+		res = requests.post('https://api.ankinick.org/login', json=data)
+		# print(res.json())
 		# print(f"cookies recived: {res.cookies.get_dict()}")
 		# Perform your login logic here (this is a simple example)
 		self.main_window.close()
