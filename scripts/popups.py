@@ -365,7 +365,7 @@ class LoginHandler:
 		username = self.textbox_username.text()
 		password = self.textbox_password.text()
 		print(username, password)
-		data = {'email': username, 'password': password}
+		data = {'email': username, 'password': password, 'device_name': 'python game'}
 		res = requests.post('https://api.ankinick.org/login', json=data)
 		# print(res.json())
 		# print(f"cookies recived: {res.cookies.get_dict()}")

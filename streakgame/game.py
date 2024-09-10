@@ -375,7 +375,7 @@ class Pytmx:
         #     for obj in objectgroup.findall('object'):
         #         if 'gid' in obj.attrib and 'type' in obj.attrib and obj.attrib['type'] != 'Farm':
         #             print(obj.attrib)
-        #             obj.attrib['gid'] = str(int(obj.attrib['gid'])+5)
+        #             obj.attrib['gid'] = str(int(obj.attrib['gid'])-5)
         tree.write(self.path)
         self.data_tmx = pytmx.load_pygame(self.path)
         

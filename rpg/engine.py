@@ -162,7 +162,7 @@ class Mob:
                 angle = math.degrees(math.atan2(pos[1]-y, x-pos[0])+math.pi)-90
                 offset = throw((x,y), pos, (time.time() - self.last_attack)*2)
                 self.screen.blit(pygame.transform.rotate(animation.img(), angle), (x+offset[0]-animation.img().get_rect().centerx,y+offset[1]-animation.img().get_rect().centery))
-                # self.screen.blit(anim.img(), (x,y))
+                self.screen.blit(anim.img(), (x,y))
             
             anim.update()
             animation.update()
@@ -213,6 +213,7 @@ class Engine:
         self.player1_mobs: list[Mob] = []
         self.player2_mobs: list[Mob] = []
         self.vfx = load_dir(os.path.join(os.path.dirname(__file__), 'assets', 'VFX'))
+        self.vfx['FIRE'][0].dur += 1
         for element in self.vfx.keys():
             if element == 'ICE':continue
             for animation in self.vfx[element]:
