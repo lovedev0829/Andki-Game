@@ -41,7 +41,7 @@ def mainloop(ankimons, loadsave=False):
     pygame.mixer.music.stop()
     pygame.display.set_caption("AnkiRPG")
     
-    win = pygame.display.set_mode((size[0]/2,size[1]-yoffset*2.3), pygame.DOUBLEBUF | pygame.HWSURFACE|pygame.RESIZABLE)
+    win = pygame.display.set_mode((size[0]/2,size[1]-yoffset*2.3), pygame.DOUBLEBUF | pygame.HWSURFACE|pygame.RESIZABLE|pygame.SRCALPHA)
     chess = AnkiRPG(win, ankimons, trainers, loadsave).run()
     
 

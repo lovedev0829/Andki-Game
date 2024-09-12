@@ -378,7 +378,9 @@ class Pytmx:
         #             obj.attrib['gid'] = str(int(obj.attrib['gid'])-5)
         tree.write(self.path)
         self.data_tmx = pytmx.load_pygame(self.path)
-        
+        self.data_tmx.allow_duplicate_names = True
+        self.data_tmx.background_color=(0,255,0)
+        self.data_tmx.renderorder
         pyscroll_data = pyscroll.data.TiledMapData(self.data_tmx)
         self.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.win.get_size(), clamp_camera=True)
         self.farms: list[Farm] = []
