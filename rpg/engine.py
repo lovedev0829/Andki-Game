@@ -156,13 +156,13 @@ class Mob:
                 angle = math.degrees(math.atan2(pos[1]-y, x-pos[0])+math.pi)-90
                 offset = throw((x,y), pos, (time.time() - self.last_attack)*2)
                 self.screen.blit(pygame.transform.rotate(animation.img(), angle), (x+offset[0]-animation.img().get_rect().centerx,y+offset[1]-animation.img().get_rect().centery))
-                self.screen.blit(anim.img(), (x-30,y-100))
+                # self.screen.blit(anim.img(), (x-30,y-100))
             else:
                 pos = map_t.ortho_to_iso(self.attacked_ankimon.j, self.attacked_ankimon.i)
                 angle = math.degrees(math.atan2(pos[1]-y, x-pos[0])+math.pi)-90
                 offset = throw((x,y), pos, (time.time() - self.last_attack)*2)
                 self.screen.blit(pygame.transform.rotate(animation.img(), angle), (x+offset[0]-animation.img().get_rect().centerx,y+offset[1]-animation.img().get_rect().centery))
-                self.screen.blit(anim.img(), (x,y))
+                # self.screen.blit(anim.img(), (x,y))
             
             anim.update()
             animation.update()
