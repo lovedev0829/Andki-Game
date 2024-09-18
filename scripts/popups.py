@@ -365,20 +365,19 @@ class LoginHandler:
 		username = self.textbox_username.text()
 		password = self.textbox_password.text()
 		
-		headers = {'Content-Type': 'application/json'}
+		headers = {"Content-Type": "application/json"}
 		data = {'email': username, 'password': password, 'device_name': 'python'}
 		try:
 			response = requests.post('https://api.ankinick.org/api/sanctum/token', json=data, headers=headers)
 			print(response.status_code)
-		except requests.exceptions.ConnectionError:
-			print('correct')
-		# print(response.json())
-		# print(f"cookies recived: {res.cookies.get_dict()}")
-		# Perform your login logic here (this is a simple example)
-		self.main_window.close()
-		mw.win = None
-		from streakgame import main
-		main.main()
+			token = response.json()['token']
+			change_data('token', token)
+			self.main_window.close()
+			mw.win = None
+			from streakgame import main
+			main.main()
+		except requests.exceptions.JSONDecodeError or requests.exceptions.ConnectionError:
+			utils.show_info("your email or password is incorrect")
 
 	def open_create_account(self):
 		# URL of the website where the user can create an account
