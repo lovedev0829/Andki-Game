@@ -13,6 +13,7 @@ from pygame import Color, Vector2
 
 from PygameUIKit.slider import Slider
 from backend.farms import Farm, PlantSpot
+from backend.buildings import BuildingsMenu, Building
 from backend.inventory import Inventory
 from backend.objects import GameObject, SortedGroup, PointWithZoom
 from backend.shop import Wallet, Shop
@@ -86,8 +87,11 @@ class Game:
         self.wallet = Wallet(money=100)
         self.shop = Shop(wallet=self.wallet, inventory=self.inventory)
         self.tuxemon_inventory = TuxemonInventory(inventory=self.inventory)
-        # ______________________TMX and pyscroll_____________________________________#
         self.ptmx = Pytmx(win)
+        building = Building(list(self.ptmx.data_tmx.objects_by_name.keys())[2] ,self.ptmx.data_tmx.images[2], self.ptmx.data_tmx.gidmap[2])
+        buildings_list = [building, building, building]
+        self.buildings_menu = BuildingsMenu(self, (66*len(buildings_list),75), buildings_list, self.ptmx)
+        # ______________________TMX and pyscroll_____________________________________#
         for farm in self.ptmx.farms:
             farm.link_inventory(self.inventory)
 
@@ -124,6 +128,11 @@ class Game:
         self.easy_ui.add(self.btn_menu)
         self.easy_ui.add(self.btn_shop)
         self.easy_ui.add(self.btn_tuxemon)
+        for obj_layer in self.ptmx.data_tmx:
+            if obj_layer.name == "Objects":
+                for obj in obj_layer.copy(): 
+                    print(pygame.mask.from_surface(pygame.transform.scale(obj.image, (obj.width, obj.height))).get_bounding_rects())
+        self.object_rects = {obj.name:pygame.mask.from_surface(pygame.transform.scale(obj.image, (obj.width, obj.height))).get_bounding_rects()[0]        for obj_layer in self.ptmx.data_tmx if obj_layer.name == "Objects" for obj in obj_layer.copy()}
 
         self.ui_elements = [self.easy_ui]
         self.special_ui = []
@@ -234,6 +243,35 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
                 self.dump_save()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                1
+        
+        
+    
+    def get_object_collisions(self):
+        mpos = pygame.mouse.get_pos()
+        
+        for obj_layer in self.ptmx.data_tmx:
+            if obj_layer.name == "Objects":
+                for obj in obj_layer.copy():
+                    if obj.type == "Farm":
+                        pass
+                    elif 'building' in obj.name or 'house' in obj.name:
+                        # points = [PointWithZoom((p.x, p.y)) for p in obj.points]
+                        # points = [p.coords for p in points]
+                        # is_point_inside_polygon(points)
+                        factor = self.ptmx.zoom_target
+                        rect = pygame.Rect(obj.x*factor-self.ptmx.map_layer.view_rect.x*factor, obj.y*factor-self.ptmx.map_layer.view_rect.y*factor, self.object_rects[obj.name].width*factor, self.object_rects[obj.name].height *factor)
+                        pygame.draw.rect(self.win, (0,255,0), rect, 2)
+                        # print(dir(obj))
+                        # print(factor, rect)
+                        pos = (mpos[0], mpos[1])
+                        if rect.collidepoint(pos):
+                            print(self.ptmx.map_layer.view_rect)
+                            print(obj.name)
+                        # print(pos, (obj.x, obj.y))
+                        
+
 
     def update(self, dt):
         self.ptmx.update(dt)
@@ -257,7 +295,9 @@ class Game:
     def draw(self, win):
         self.win.fill(Color("black"))
         self.ptmx.draw(win)
+        self.buildings_menu.draw(win)
         self.draw_ui(win)
+        self.get_object_collisions()
 
 
     def draw_ui(self, win):

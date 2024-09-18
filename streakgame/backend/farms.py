@@ -134,6 +134,7 @@ class Farm(objects.GameObject, objects.Clickable):
         self.menu = Menu(self, (66 * len(menu_items), 75), menu_items)
         self.plants_location: dict[int, PlantSpot] = {}
         self.farm_zone: list[objects.PointWithZoom] = farm_zone
+        
         self.name = name
         self.farm_inventory: Inventory = inventory
 

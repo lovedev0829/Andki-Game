@@ -21,6 +21,13 @@ class Inventory:
                 del self.items[item.name]
         else:
             raise Exception("Item not found in inventory")
+        
+    def get_buildings(self):
+        buildings = []
+        for key, value in self.items.items():
+            if 'building' in key:
+                buildings.append(key)
+        return buildings
 
     def dump(self) -> dict:
         return self.items

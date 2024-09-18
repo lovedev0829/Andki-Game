@@ -364,17 +364,21 @@ class LoginHandler:
 	def handle_login(self):
 		username = self.textbox_username.text()
 		password = self.textbox_password.text()
-		print(username, password)
-		data = {'email': username, 'password': password, 'device_name': 'python game'}
-		res = requests.post('https://api.ankinick.org/login', json=data)
-		# print(res.json())
+		
+		headers = {'Content-Type': 'application/json'}
+		data = {'email': username, 'password': password, 'device_name': 'python'}
+		try:
+			response = requests.post('https://api.ankinick.org/api/sanctum/token', json=data, headers=headers)
+			print(response.status_code)
+		except requests.exceptions.ConnectionError:
+			print('correct')
+		# print(response.json())
 		# print(f"cookies recived: {res.cookies.get_dict()}")
 		# Perform your login logic here (this is a simple example)
 		self.main_window.close()
 		mw.win = None
 		from streakgame import main
 		main.main()
-
 
 	def open_create_account(self):
 		# URL of the website where the user can create an account
