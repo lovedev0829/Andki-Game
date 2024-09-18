@@ -14,7 +14,7 @@ from aqt import gui_hooks, mw
 from aqt.qt import * 
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, xp_to_lvl, manager
+from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, xp_to_lvl, get_data, manager
 import asyncio, time
 from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyChoosingWindow
 from aqt.deckbrowser import DeckBrowser
@@ -51,8 +51,11 @@ def bridge(handled, message: str, context):
 
 def start_game():
     mw.win = win = QMainWindow() 
-    LoginHandler(win)
-
+    if not get_data().get('token', None):
+        LoginHandler(win)
+    else:
+        from streakgame import main
+        main.main()
 
 def start_rpg():
     mw.win = win = QMainWindow()
