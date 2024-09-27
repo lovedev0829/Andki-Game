@@ -80,17 +80,17 @@ class Game:
         self.time_since_last_late_update = 1000  # 1000 for late update now
         self.win = pygame.Surface((WIDTH,HEIGHT))
         self.display = win
+        # pygame.display.set_icon(pygame.image.load(os.path.join(cwd, 'assets','sprites','tuxemons','aardart-back.png')))
         self.running = True
 
-        # _____________________Back___________________________________#
+       # _____________________Back___________________________________#
         self.inventory = Inventory()
         self.wallet = Wallet(money=100)
         self.shop = Shop(wallet=self.wallet, inventory=self.inventory)
         self.tuxemon_inventory = TuxemonInventory(inventory=self.inventory)
         self.ptmx = Pytmx(win)
-        building = Building(list(self.ptmx.data_tmx.objects_by_name.keys())[2] ,self.ptmx.data_tmx.images[2], self.ptmx.data_tmx.gidmap[2])
-        buildings_list = [building, building, building]
-        self.buildings_menu = BuildingsMenu(self, (66*len(buildings_list),75), buildings_list, self.ptmx)
+
+        self.buildings_menu = None
         # ______________________TMX and pyscroll_____________________________________#
         for farm in self.ptmx.farms:
             farm.link_inventory(self.inventory)
@@ -128,10 +128,6 @@ class Game:
         self.easy_ui.add(self.btn_menu)
         self.easy_ui.add(self.btn_shop)
         self.easy_ui.add(self.btn_tuxemon)
-        for obj_layer in self.ptmx.data_tmx:
-            if obj_layer.name == "Objects":
-                for obj in obj_layer.copy(): 
-                    print(pygame.mask.from_surface(pygame.transform.scale(obj.image, (obj.width, obj.height))).get_bounding_rects())
         self.object_rects = {obj.name:pygame.mask.from_surface(pygame.transform.scale(obj.image, (obj.width, obj.height))).get_bounding_rects()[0]        for obj_layer in self.ptmx.data_tmx if obj_layer.name == "Objects" for obj in obj_layer.copy()}
 
         self.ui_elements = [self.easy_ui]
@@ -202,7 +198,7 @@ class Game:
 
     def run(self):
         clock = pygame.time.Clock()
-        self.play_audio()
+        # self.play_audio()
         self.initial_ankimons = [anki.level for anki in self.tuxemon_inventory.tuxemons.values()]
 
         while self.running:
@@ -224,7 +220,10 @@ class Game:
         except Exception:
             events = []
 
-            
+        if self.buildings_menu:
+            # try:
+                self.buildings_menu.handle_events(events)
+            # except Exception:pass
             
         # If no game window is open, we handle basic game events
         if not self.ui_manager.active_element:
@@ -244,7 +243,7 @@ class Game:
                 self.running = False
                 self.dump_save()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                1
+                self.get_object_collisions()
         
         
     
@@ -267,10 +266,9 @@ class Game:
                         # print(factor, rect)
                         pos = (mpos[0], mpos[1])
                         if rect.collidepoint(pos):
-                            print(self.ptmx.map_layer.view_rect)
-                            print(obj.name)
-                        # print(pos, (obj.x, obj.y))
-                        
+                            building = Building(list(self.ptmx.data_tmx.objects_by_name.keys())[2] ,self.ptmx.data_tmx.images[2], self.ptmx.data_tmx.gidmap[2])
+                            buildings_list = [building, building, building]
+                            self.buildings_menu = BuildingsMenu(self, (66*len(buildings_list),75), buildings_list, self.ptmx, obj)
 
 
     def update(self, dt):
@@ -295,9 +293,15 @@ class Game:
     def draw(self, win):
         self.win.fill(Color("black"))
         self.ptmx.draw(win)
-        self.buildings_menu.draw(win)
+        if self.buildings_menu:
+            self.buildings_menu.draw(win)
+            if self.buildings_menu.finished:
+                self.buildings_menu = None
+                
+        
         self.draw_ui(win)
-        self.get_object_collisions()
+        
+        
 
 
     def draw_ui(self, win):
@@ -411,20 +415,20 @@ class Pytmx:
         self.path = os.path.join(cwd, "assets", "map", "map_with_objects.tmx")
         tree = ET.parse(self.path)
         self.root = tree.getroot()
-        # for objectgroup in self.root.findall('objectgroup'):
-        #     for obj in objectgroup.findall('object'):
-        #         if 'gid' in obj.attrib and 'type' in obj.attrib and obj.attrib['type'] != 'Farm':
-        #             print(obj.attrib)
-        #             obj.attrib['gid'] = str(int(obj.attrib['gid'])-5)
-        tree.write(self.path)
+        for objectgroup in self.root.findall('objectgroup'):
+            for obj in objectgroup.findall('object'):
+                if 'gid' in obj.attrib and 'type' in obj.attrib and obj.attrib['type'] != 'Farm':
+                    obj.attrib['gid'] = str(int(obj.attrib['gid'])-0)
+        
+        # tree.write(self.path)
         self.data_tmx = pytmx.load_pygame(self.path)
         self.data_tmx.allow_duplicate_names = True
         self.data_tmx.background_color=(0,255,0)
-        self.data_tmx.renderorder
         pyscroll_data = pyscroll.data.TiledMapData(self.data_tmx)
         self.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.win.get_size(), clamp_camera=True)
         self.farms: list[Farm] = []
         self.interactable_objects = []
+
         self.objects = SortedGroup()
         self.objects_under_npc = SortedGroup()
         self.unique_objects = {}
@@ -435,8 +439,7 @@ class Pytmx:
                         pass
                     else:
                         self.unique_objects[obj.name] = obj.image
-                        obj.gid += 0
-
+        
 
   
         self.PATH_POINTS = []
@@ -516,6 +519,7 @@ class Pytmx:
         self.handle_camera_events(events)
         for obj in self.interactable_objects:
             obj.handle_events(events)
+        
 
     def handle_camera_events(self, events):
         for event in events:
@@ -567,12 +571,4 @@ class Pytmx:
         
         self.objects.draw(win)
         last_img = None
-        for obj_layer in self.data_tmx:
-            if obj_layer.name == "Objects":
-                for obj in obj_layer.copy():
-                    if obj.type == "Farm":
-                        pass
-                    else:
-                        obj.gid = 2
-                        win.blit(obj.image, (0,0))
-                        
+        

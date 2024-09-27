@@ -2,6 +2,7 @@ import requests.cookies
 from scripts.utils import center_widget, get_data, change_data
 import pickle
 from aqt.qt import *
+
 import webbrowser
 import threading
 from aqt import mw
@@ -364,9 +365,10 @@ class LoginHandler:
 	def handle_login(self):
 		username = self.textbox_username.text()
 		password = self.textbox_password.text()
+
 		
 		headers = {"Content-Type": "application/json"}
-		data = {'email': username, 'password': password, 'device_name': 'python'}
+		data = {'email': "test3@test.de", 'password': "12345678", 'device_name': 'python'}
 		try:
 			response = requests.post('https://api.ankinick.org/api/sanctum/token', json=data, headers=headers)
 			print(response.status_code)

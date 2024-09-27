@@ -92,7 +92,10 @@ def xp_to_lvl(xp):
     while area_until_x(x) < xp:
         x += 0.01  # Increase x by small increments for better precision
     return x
-
+def convert_float_to_int_if_possible(value):
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
 
 def prize():
     xp = get_data().get('trainer_xp', 1)
