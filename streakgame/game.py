@@ -265,10 +265,12 @@ class Game:
                         # print(dir(obj))
                         # print(factor, rect)
                         pos = (mpos[0], mpos[1])
+                        self.ptmx.load_objects
+                        print(self.ptmx.object_images)
+
                         if rect.collidepoint(pos):
-                            building = Building(list(self.ptmx.data_tmx.objects_by_name.keys())[2] ,self.ptmx.data_tmx.images[2], self.ptmx.data_tmx.gidmap[2])
-                            buildings_list = [building, building, building]
-                            self.buildings_menu = BuildingsMenu(self, (66*len(buildings_list),75), buildings_list, self.ptmx, obj)
+                            buildings_list = [Building('fire_house', 1439, self.ptmx.object_images['fire_house']) for i in range(3)]
+                            self.buildings_menu = BuildingsMenu(self, (86*len(buildings_list),95), buildings_list, self.ptmx, obj)
 
 
     def update(self, dt):
@@ -429,6 +431,7 @@ class Pytmx:
         self.farms: list[Farm] = []
         self.interactable_objects = []
 
+        self.object_images = {}
         self.objects = SortedGroup()
         self.objects_under_npc = SortedGroup()
         self.unique_objects = {}
@@ -451,7 +454,6 @@ class Pytmx:
         self.zoom_target = self.map_layer.zoom
         self.is_scrolling = False
         self.requires_update = False
-
         # ______________________NPCs_____________________________________#
         self.npcs: list[NPC] = []
         for name in ['healer_f', 'healer_m', 'mage_f', 'mage_m', 'ninja_f', 'ninja_m', 'ranger_f', 'ranger_m',
@@ -508,6 +510,7 @@ class Pytmx:
                         elif obj.name == "Farm2":
                             self.farms.append(farm)
                     else:
+                        self.object_images[obj.name] = obj.image
                         self.objects.add(GameObject(Vector2(obj.x, obj.y), (obj.width, obj.height), obj.image))
 
             elif obj_layer.name == "UnderNpcObjects":

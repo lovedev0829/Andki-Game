@@ -96,7 +96,25 @@ def convert_float_to_int_if_possible(value):
     if isinstance(value, float) and value.is_integer():
         return int(value)
     return value
-
+def scale_down_surface(surface, target_width, target_height):
+    # Get the original width and height of the surface
+    original_width, original_height = surface.get_size()
+    
+    # Calculate the scaling factors for both width and height
+    width_scale = target_width / original_width
+    height_scale = target_height / original_height
+    
+    # Use the smaller scale to preserve aspect ratio and fit within target dimensions
+    scale_factor = min(width_scale, height_scale)
+    
+    # Calculate the new dimensions
+    new_width = int(original_width * scale_factor)
+    new_height = int(original_height * scale_factor)
+    
+    # Scale the surface to the new dimensions
+    scaled_surface = pygame.transform.scale(surface, (new_width, new_height))
+    
+    return scaled_surface
 def prize():
     xp = get_data().get('trainer_xp', 1)
     if xp_to_lvl(xp) % 1 == 0:
