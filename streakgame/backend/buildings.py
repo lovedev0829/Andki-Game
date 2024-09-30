@@ -17,14 +17,17 @@ from streakgame.boring.config import ratio
 cwd = os.path.dirname(os.path.dirname(__file__))
 
 class Building(Item):
-    def __init__(self, name,  gid, img=pygame.Surface((32,32)), size=None):
+    def __init__(self, object, img=pygame.Surface((32,32)), size=None):
         img = img.copy()
         if size:
             img.blit(img ,(0,0),img.get_bounding_rect())
             # img = scale_down_surface(img, *size)
             img = pygame.transform.scale(img, size)
-        super().__init__(name, img)
-        self.gid = gid
+        super().__init__(object.name, img)
+        self.id = object.id
+        self.name = object.name
+        self.gid = object.gid
+        self.object = object
         self.img_gray_scale = utils.grayscale(img)
 
         self.cache = {}
@@ -79,7 +82,7 @@ class BuildingsMenu(objects.GameObjectNoImg):
             self.buildings_rects.append(
                 pygame.Rect((self.rect.x + self.item_padding + i * (self.item_size[0] + self.item_padding), y),(self.item_size[0], self.item_size[1])))
                 
-            self.buildings[i] = Building(item.name, item.gid, item.img, size=self.item_size)
+            self.buildings[i] = Building(item.object, item.img, size=self.item_size)
 
     def add_item(self, item):
         self.buildings.append(item)
@@ -107,9 +110,11 @@ class BuildingsMenu(objects.GameObjectNoImg):
                                 diff = {key:(attrib[key], obj_dict[key])  for key in attrib if attrib[key] != obj_dict[key]}
                                 if 'building'.lower() in attrib['type'].lower():
                                     print(attrib)
-                                if len(list(diff.keys())) < 3:
-                                    
-                                    obj.attrib['gid'] = str(int(obj.attrib['gid'])-0)
+                                if len(list(diff.keys())) < 2:
+                                    for object in objectgroup.findall('object'):
+                                        if object.name == self.selected_building.name:gid=object.gid
+                                    obj.attrib['name'] = self.selected_building.name
+                                    obj.attrib['gid'] = str(gid)
                                     # obj.attrib['gid'] = str(self.selected_building.gid)
                                 
         tree.write(self.pytmx.path)
@@ -119,11 +124,12 @@ class BuildingsMenu(objects.GameObjectNoImg):
                     if obj.type == "Farm":
                         pass
                     else:
-                        obj.gid -= 0
+                        obj.id = self.selected_building.id
         self.data_tmx = pytmx.load_pygame(self.pytmx.path)
         pyscroll_data = pyscroll.data.TiledMapData(self.pytmx.data_tmx)
         self.pytmx.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.pytmx.win.get_size(), clamp_camera=True, zoom=self.pytmx.zoom_target)
         self.pytmx.update(0)
+        self.pytmx.handle_events([])
         
         
                         

@@ -1,6 +1,7 @@
 import json
 import logging
 import os.path
+import os.path
 import xml.etree
 import xml.etree.ElementTree
 import pygame.sprite
@@ -80,7 +81,8 @@ class Game:
         self.time_since_last_late_update = 1000  # 1000 for late update now
         self.win = pygame.Surface((WIDTH,HEIGHT))
         self.display = win
-        # pygame.display.set_icon(pygame.image.load(os.path.join(cwd, 'assets','sprites','tuxemons','aardart-back.png')))
+        pygame.display.set_caption('AnkiNick-Mon Farm')
+        pygame.display.set_icon(pygame.image.load(os.path.join(os.path.dirname(cwd), 'assets','ui','icon_farm.png')))
         self.running = True
 
        # _____________________Back___________________________________#
@@ -265,11 +267,9 @@ class Game:
                         # print(dir(obj))
                         # print(factor, rect)
                         pos = (mpos[0], mpos[1])
-                        self.ptmx.load_objects
-                        print(self.ptmx.object_images)
-
                         if rect.collidepoint(pos):
-                            buildings_list = [Building('fire_house', 1439, self.ptmx.object_images['fire_house']) for i in range(3)]
+                            objects = [self.ptmx.data_tmx.get_object_by_name('fire_house'), self.ptmx.data_tmx.get_object_by_name('building_water'), self.ptmx.data_tmx.get_object_by_name('building_ice')]
+                            buildings_list = [Building(object, object.image) for object in objects]
                             self.buildings_menu = BuildingsMenu(self, (86*len(buildings_list),95), buildings_list, self.ptmx, obj)
 
 
