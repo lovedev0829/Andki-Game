@@ -19,7 +19,7 @@ def main():
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (info.current_w/2 - WIDTH/2,34)
     
     win = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=True)
-    pygame.display.set_caption("AnkiStreak")
+    pygame.display.set_caption('AnkiNick-Mon Farm')
     from streakgame.game import Game
     game = Game(win)
     from streakgame.game import PlantSpot

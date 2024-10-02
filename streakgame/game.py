@@ -81,7 +81,6 @@ class Game:
         self.time_since_last_late_update = 1000  # 1000 for late update now
         self.win = pygame.Surface((WIDTH,HEIGHT))
         self.display = win
-        pygame.display.set_caption('AnkiNick-Mon Farm')
         icon = pygame.image.load(os.path.join(os.path.dirname(cwd), 'assets','heads','AnkiNick.png'))
         s = pygame.Surface(icon.get_bounding_rect().size)
         s.blit(icon, (0,0), icon.get_bounding_rect())
