@@ -82,7 +82,11 @@ class Game:
         self.win = pygame.Surface((WIDTH,HEIGHT))
         self.display = win
         pygame.display.set_caption('AnkiNick-Mon Farm')
-        pygame.display.set_icon(pygame.image.load(os.path.join(os.path.dirname(cwd), 'assets','ui','icon_farm.png')))
+        icon = pygame.image.load(os.path.join(os.path.dirname(cwd), 'assets','heads','AnkiNick.png'))
+        s = pygame.Surface(icon.get_bounding_rect().size)
+        s.blit(icon, (0,0), icon.get_bounding_rect())
+        s.set_colorkey((0,0,0))
+        pygame.display.set_icon(s)
         self.running = True
 
        # _____________________Back___________________________________#
@@ -268,7 +272,7 @@ class Game:
                         # print(factor, rect)
                         pos = (mpos[0], mpos[1])
                         if rect.collidepoint(pos):
-                            objects = [self.ptmx.data_tmx.get_object_by_name('fire_house'), self.ptmx.data_tmx.get_object_by_name('building_water'), self.ptmx.data_tmx.get_object_by_name('building_ice')]
+                            objects = [self.ptmx.data_tmx.get_object_by_name('fire_house'), self.ptmx.data_tmx.get_object_by_name('building_water'), self.ptmx.data_tmx.get_object_by_name('building_jungle')]
                             buildings_list = [Building(object, object.image) for object in objects]
                             self.buildings_menu = BuildingsMenu(self, (86*len(buildings_list),95), buildings_list, self.ptmx, obj)
 

@@ -112,25 +112,30 @@ class BuildingsMenu(objects.GameObjectNoImg):
                                     print(attrib)
                                 if len(list(diff.keys())) < 2:
                                     for object in objectgroup.findall('object'):
-                                        if object.name == self.selected_building.name:gid=object.gid
+                                        if object.attrib['name'] == self.selected_building.name:gid=object.attrib['gid']
+                                    print(obj.attrib)
                                     obj.attrib['name'] = self.selected_building.name
                                     obj.attrib['gid'] = str(gid)
+                                    obj.attrib['width'] = str(self.selected_building.object.width)
+                                    obj.attrib['height'] = str(self.selected_building.object.height)
                                     # obj.attrib['gid'] = str(self.selected_building.gid)
-                                
+                                        
         tree.write(self.pytmx.path)
-        for obj_layer in self.pytmx.data_tmx:
-            if obj_layer.name == "Objects":
-                for obj in obj_layer:
-                    if obj.type == "Farm":
-                        pass
-                    else:
-                        obj.id = self.selected_building.id
-        self.data_tmx = pytmx.load_pygame(self.pytmx.path)
-        pyscroll_data = pyscroll.data.TiledMapData(self.pytmx.data_tmx)
-        self.pytmx.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.pytmx.win.get_size(), clamp_camera=True, zoom=self.pytmx.zoom_target)
-        self.pytmx.update(0)
-        self.pytmx.handle_events([])
-        
+        # for obj_layer in self.pytmx.data_tmx:
+        #     if obj_layer.name == "Objects":
+        #         for obj in obj_layer:
+        #             if obj.type == "Farm":
+        #                 pass
+        #             else:
+        #                 obj.id = self.selected_building.id
+        # self.data_tmx = pytmx.load_pygame(self.pytmx.path)
+        # pyscroll_data = pyscroll.data.TiledMapData(self.pytmx.data_tmx)
+        # self.pytmx.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.pytmx.win.get_size(), clamp_camera=True, zoom=self.pytmx.zoom_target)
+        # self.pytmx.update(0)
+        # self.pytmx.handle_events([])
+        # index = self.buildings.index(self.selected_building)
+        # self.buildings[index] = Building(self.pytmx.data_tmx.get_object_by_name(self.obj.name))
+
         
                         
 
