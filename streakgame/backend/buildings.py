@@ -17,7 +17,7 @@ from streakgame.boring.config import ratio
 cwd = os.path.dirname(os.path.dirname(__file__))
 
 class Building(Item):
-    def __init__(self, object, img=pygame.Surface((32,32)), size=None):
+    def __init__(self, object:pytmx.TiledObject, img=pygame.Surface((32,32)), size=None):
         img = img.copy()
         if size:
             img.blit(img ,(0,0),img.get_bounding_rect())
@@ -29,7 +29,6 @@ class Building(Item):
         self.gid = object.gid
         self.object = object
         self.img_gray_scale = utils.grayscale(img)
-
         self.cache = {}
 
     def update_camera(self, camera_rect):
@@ -108,32 +107,25 @@ class BuildingsMenu(objects.GameObjectNoImg):
                                 del attrib['x']
                                 del attrib['y']
                                 diff = {key:(attrib[key], obj_dict[key])  for key in attrib if attrib[key] != obj_dict[key]}
-                                if 'building'.lower() in attrib['type'].lower():
-                                    print(attrib)
-                                if len(list(diff.keys())) < 2:
+                                # print(sorted(diff, key=lambda x:len(diff[x])))
+                                # print(sorted(list(diff.values()), key=lambda x:len(x), reverse=True))
+                                
+                                if 'x' in obj.attrib and 'y' in obj.attrib and float(obj.attrib['x']) == self.obj.x:
                                     for object in objectgroup.findall('object'):
                                         if object.attrib['name'] == self.selected_building.name:gid=object.attrib['gid']
-                                    print(obj.attrib)
+                                    building_to_be_replaced = self.pytmx.data_tmx.get_object_by_name(obj.attrib['name'])
                                     obj.attrib['name'] = self.selected_building.name
                                     obj.attrib['gid'] = str(gid)
+                                    
+                                    obj.attrib['x'] = str(float(obj.attrib['x']) - (building_to_be_replaced.image.get_bounding_rect(255).width - self.selected_building.object.image.get_bounding_rect(255).width)/2)
+                                    # obj.attrib['y'] = str(float(obj.attrib['y']) + (building_to_be_replaced.image.get_bounding_rect(255).height - self.selected_building.object.image.get_bounding_rect(255).height)/2)
                                     obj.attrib['width'] = str(self.selected_building.object.width)
                                     obj.attrib['height'] = str(self.selected_building.object.height)
-                                    # obj.attrib['gid'] = str(self.selected_building.gid)
+
                                         
-        tree.write(self.pytmx.path)
-        # for obj_layer in self.pytmx.data_tmx:
-        #     if obj_layer.name == "Objects":
-        #         for obj in obj_layer:
-        #             if obj.type == "Farm":
-        #                 pass
-        #             else:
-        #                 obj.id = self.selected_building.id
-        # self.data_tmx = pytmx.load_pygame(self.pytmx.path)
-        # pyscroll_data = pyscroll.data.TiledMapData(self.pytmx.data_tmx)
-        # self.pytmx.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.pytmx.win.get_size(), clamp_camera=True, zoom=self.pytmx.zoom_target)
-        # self.pytmx.update(0)
-        # self.pytmx.handle_events([])
-        self.game.building_names[self.game.building_names.index(self.selected_building.name)] = self.obj.name
+                                    tree.write(self.pytmx.path)
+                                    self.game.building_names[self.game.building_names.index(self.selected_building.name)] = self.obj.name
+                                    return
 
         
                         

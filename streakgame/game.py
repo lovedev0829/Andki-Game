@@ -262,14 +262,9 @@ class Game:
                     if obj.type == "Farm":
                         pass
                     elif 'building' in obj.name or 'house' in obj.name:
-                        # points = [PointWithZoom((p.x, p.y)) for p in obj.points]
-                        # points = [p.coords for p in points]
-                        # is_point_inside_polygon(points)
                         factor = self.ptmx.zoom_target
                         rect = pygame.Rect(obj.x*factor-self.ptmx.map_layer.view_rect.x*factor, obj.y*factor-self.ptmx.map_layer.view_rect.y*factor, self.object_rects[obj.name].width*factor, self.object_rects[obj.name].height *factor)
                         pygame.draw.rect(self.win, (0,255,0), rect, 2)
-                        # print(dir(obj))
-                        # print(factor, rect)
                         pos = (mpos[0], mpos[1])
                         if rect.collidepoint(pos):
                             if not self.building_names:self.building_names = ['fire_house', 'building_jungle', 'building_water']
