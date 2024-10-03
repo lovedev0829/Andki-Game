@@ -272,7 +272,7 @@ class Game:
                         # print(factor, rect)
                         pos = (mpos[0], mpos[1])
                         if rect.collidepoint(pos):
-                            self.building_names = ['fire_house', 'building_jungle', 'building_water']
+                            if not self.building_names:self.building_names = ['fire_house', 'building_jungle', 'building_water']
                             objects = [self.ptmx.data_tmx.get_object_by_name(name) for name in self.building_names]
                             buildings_list = [Building(object, object.image) for object in objects]
                             self.buildings_menu = BuildingsMenu(self, (86*len(buildings_list),95), buildings_list, self.ptmx, obj)

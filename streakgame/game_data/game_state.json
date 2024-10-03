@@ -588,8 +588,8 @@
     "time": 739162,
     "wallet": 100,
     "buildings": [
-        "fire_house",
         "building_jungle",
-        "building_water"
+        "fire_house",
+        "building_ice"
     ]
 }

@@ -42,10 +42,10 @@ class Building(Item):
             self.img_gray_scale = self.cache[zoom]
 
 class BuildingsMenu(objects.GameObjectNoImg):
-    def __init__(self, linked_bat, size, buildings, pytmx, obj):
-        x_menu = linked_bat.win.get_width()/2
-        y_menu = linked_bat.win.get_height()/2
-        maxratio = 1.8
+    def __init__(self, game, size, buildings, pytmx, obj, maxratio=1.8):
+        x_menu = game.win.get_width()/2
+        y_menu = game.win.get_height()/2
+        self.game = game
         self.buildings: list[Building] = buildings
         mratio = 0
         for building in self.buildings:
@@ -133,8 +133,7 @@ class BuildingsMenu(objects.GameObjectNoImg):
         # self.pytmx.map_layer = pyscroll.BufferedRenderer(pyscroll_data, self.pytmx.win.get_size(), clamp_camera=True, zoom=self.pytmx.zoom_target)
         # self.pytmx.update(0)
         # self.pytmx.handle_events([])
-        # index = self.buildings.index(self.selected_building)
-        # self.buildings[index] = Building(self.pytmx.data_tmx.get_object_by_name(self.obj.name))
+        self.game.building_names[self.game.building_names.index(self.selected_building.name)] = self.obj.name
 
         
                         

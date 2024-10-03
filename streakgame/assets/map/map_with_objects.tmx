@@ -1,4 +1,4 @@
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="45" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="33" nextobjectid="253">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="45" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="33" nextobjectid="256">
  <tileset firstgid="1" name="simple_pokemon" tilewidth="32" tileheight="32" tilecount="1424" columns="8">
   <image source="tilemaps_png/tile_pokemon.png" width="256" height="5697" />
  </tileset>
@@ -597,15 +597,15 @@
  <objectgroup id="2" name="Objects">
   <object id="28" name="Farm1" type="Farm" gid="1425" x="146" y="660" width="130" height="163" />
   <object id="34" name="Farm2" type="Farm" gid="1433" x="359.25" y="653.583" width="240" height="238.333" />
-  <object id="68" name="fire_house" type="Building" gid="1439" x="1234.67" y="969.833" width="131.833" height="358.334" />
+  <object id="68" name="building_water" type="Building" gid="1444" x="1001.67" y="381.833" width="179.833" height="372.667" />
   <object id="252" name="fire_house" type="Building" gid="1439" x="1627.67" y="968.833" width="131.833" height="358.334" />
   <object id="82" name="arbre dead" type="Tree" gid="1440" x="1152" y="672" width="99" height="136" />
-  <object id="89" name="building_jungle" type="Building" gid="1443" x="1016.5" y="382.5" width="202.833" height="326.334" />
   <object id="249" name="building_water" type="Building" gid="1444" x="1489.5" y="298.5" width="179.833" height="372.667" />
-  <object id="248" name="fire_house" type="Building" gid="1439" x="317.5" y="236.5" width="131.833" height="358.334" />
+  <object id="254" name="building_ice" type="Building" gid="1442" x="1218.5" y="518.5" width="248.0" height="256.0" />
   <object id="251" name="building_jungle" type="Building" gid="1443" x="88.5" y="-8.5" width="202.833" height="326.334" />
-  <object id="90" name="building_ice" type="Building" gid="1442" x="1230.33" y="453.5" width="248" height="256" />
+  <object id="255" name="building_jungle" type="Building" gid="1443" x="315.5" y="228.5" width="202.833" height="326.334" />
   <object id="250" name="building_ice" type="Building" gid="1442" x="1512.33" y="510.5" width="248" height="256" />
+  <object id="253" name="fire_house" type="Building" gid="1439" x="1236.33" y="969.5" width="131.833" height="358.334" />
   <object id="93" name="tree_jungle1" type="Tree" gid="1445" x="668.009" y="962" width="106.38" height="161.493" />
   <object id="96" name="tree_jungle2" type="Tree" gid="1446" x="566.479" y="960.718" width="105.099" height="161.493" />
   <object id="97" name="tree_jungle2" type="Tree" gid="1446" x="355" y="960.718" width="105.099" height="161.493" />
@@ -651,8 +651,7 @@
   <object id="181" name="tree2" type="Tree" gid="1455" x="256" y="224" width="60" height="77.6667" />
   <object id="182" name="fire_tree" type="Tree" gid="1447" x="962" y="812" width="93" height="115" />
   <object id="185" name="grotte_eau" gid="1456" x="1346" y="40.6667" width="62.6667" height="70.3333" />
-  <object id="245" name="building_water" type="Building" gid="1444" x="1037.08" y="-3.3335" width="179.833" height="372.667" />
-  <object id="246" name="building_water" type="Building" gid="1444" x="1030.08" y="-9.3335" width="179.833" height="372.667" />
+  <object id="246" name="building_water" type="Building" gid="1444" x="1150.08" y="-73.3335" width="179.833" height="372.667" />
  </objectgroup>
  <objectgroup id="29" name="PathPoints">
   <object id="211" x="156" y="19">
