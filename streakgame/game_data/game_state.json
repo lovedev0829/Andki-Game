@@ -583,10 +583,13 @@
             }
         ]
     },
-    "inventory": {
-        "ice fruit": 27
-    },
+    "inventory": {},
     "cards_learned_today": 0,
-    "time": 739161,
-    "wallet": 1099
+    "time": 739162,
+    "wallet": 100,
+    "buildings": [
+        "fire_house",
+        "building_jungle",
+        "building_water"
+    ]
 }

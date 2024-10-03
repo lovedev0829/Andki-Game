@@ -8,6 +8,7 @@ import pygame.sprite
 import pyscroll
 import pytmx
 import sys
+import pickle
 from PygameUIKit import Group
 from PygameUIKit.button import ButtonPngIcon, ButtonText
 from pygame import Color, Vector2
@@ -137,7 +138,7 @@ class Game:
 
         self.ui_elements = [self.easy_ui]
         self.special_ui = []
-
+        self.building_names = []
         self.anki_data_json = None
         self.load_save()
         self.load_anki_data()
@@ -271,7 +272,8 @@ class Game:
                         # print(factor, rect)
                         pos = (mpos[0], mpos[1])
                         if rect.collidepoint(pos):
-                            objects = [self.ptmx.data_tmx.get_object_by_name('fire_house'), self.ptmx.data_tmx.get_object_by_name('building_water'), self.ptmx.data_tmx.get_object_by_name('building_jungle')]
+                            self.building_names = ['fire_house', 'building_jungle', 'building_water']
+                            objects = [self.ptmx.data_tmx.get_object_by_name(name) for name in self.building_names]
                             buildings_list = [Building(object, object.image) for object in objects]
                             self.buildings_menu = BuildingsMenu(self, (86*len(buildings_list),95), buildings_list, self.ptmx, obj)
 
@@ -354,6 +356,13 @@ class Game:
             except Exception as e:
                 raise RuntimeError(f"Error while dumping wallet assets: {str(e)}")
 
+            # save wallet
+            try:
+                data["buildings"] = self.building_names
+            except Exception as e:
+                raise RuntimeError(f"Error while dumping wallet assets: {str(e)}")
+
+
             # Save assets to JSON file
             try:
                 with open(os.path.join(save_folder, "game_state.json"), "w") as f:
@@ -399,6 +408,9 @@ class Game:
         # load wallet
         if "wallet" in data.keys():
             self.wallet.load(data["wallet"])
+
+        if 'buildings' in data.keys():
+            self.building_names = data['buildings']
 
         # load tuxemon
         self.load_tuxemon()
