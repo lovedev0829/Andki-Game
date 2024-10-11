@@ -85,7 +85,6 @@ def update_streak_btn_js(
     web_content: WebContent, context: object | None) -> None:
     if not isinstance(context, DeckBrowser):
         return
-    addon_name = mw.addonManager.addonFromModule(__name__)
     cwd = os.path.dirname(__file__)
     path = os.path.join(cwd, "assets", "ui","Farm.gif")
     base64_image = image_to_base64(path)
