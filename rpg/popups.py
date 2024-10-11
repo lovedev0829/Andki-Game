@@ -333,7 +333,7 @@ class captured_ankimon(QMainWindow):
 
 
 class trainer_xp_window(QMainWindow):
-    def __init__(self, game):
+    def __init__(self, game, callfrommain=False, startingxp=0):
         super().__init__()
         self.counter = 0
         self.setWindowTitle("AnkiNick-mon")        
@@ -348,8 +348,12 @@ class trainer_xp_window(QMainWindow):
         self.level = xp_to_lvl(data.get('trainer_xp', 0))
         self.set_ratio(self.level%1)
         self.label = QLabel(self)
-        self.label.setText(f"""you have gained {(get_data().get('trainer_xp',0)-self.game.trainer_xp)*2}xp for your trainer
-                           lvl{int(self.level)}""")
+        if not callfrommain:
+            self.label.setText(f"""you have gained {(get_data().get('trainer_xp',0)-self.game.trainer_xp)*2}xp for your trainer
+                            lvl{int(self.level)}""")
+        else:
+            self.label.setText(f"""you have gained {data.get('trainer_xp', 0)- startingxp}xp for your trainer
+                            lvl{int(self.level)}""")
         self.label.setFont(QFont(self.label.font().toString(),15))
         self.label.adjustSize()
         self.label.move(self.width()/2-self.label.width()/2,5)

@@ -22,7 +22,6 @@ def process_file(a:aqt.reviewer.Reviewer, b, c):
     if hasattr(mw, 'win'):
         if hasattr(mw.win, 'update'):
             mw.win.update()
-        print( hasattr(mw.win, 'required_cards') , hasattr(mw.win, 'completed_cards'))
         if hasattr(mw.win, 'required_cards') and hasattr(mw.win, 'completed_cards'):
             encouragement = ""
             html = f"""\
@@ -118,7 +117,7 @@ def scale_down_surface(surface, target_width, target_height):
 def prize():
     xp = get_data().get('trainer_xp', 1)
     if xp_to_lvl(xp) % 1 == 0:
-        1
+        return 1
 def change_data(data, value):
     anki_data = json.load(open(anki_data_path))
     anki_data[data] = value
@@ -182,7 +181,7 @@ def add_btn(
         deck_browser: "aqt.overview.Overview", 
         content: "aqt.overview.OverviewContent",
 ) -> None:
-    mw.web.eval('x=2;')
+
     path = os.path.join(cwd, f"assets", "ui","Chess.gif")
     content.table += get_html(image_to_base64(path), "start_rpg")
     

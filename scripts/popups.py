@@ -452,11 +452,11 @@ class trainer_manager:
 		current_height = 20
 		# Draw a border around the health bar
 		painter.setPen(QColor(0, 0, 0))
-		painter.drawRect(current_width*1.2, 40, current_width-1, current_height-1)
+		painter.drawRect(int(current_width*1.2), 40, int(current_width)-1, current_height-1)
 		# Draw foreground (filled part of the health bar based on ratio)
 		painter.setBrush(QBrush(Qt.GlobalColor.green))
 		filled_width = current_width * self.ratio
-		painter.drawRect(current_width*1.2, 40, filled_width, current_height)
+		painter.drawRect(int(current_width*1.2), 40, int(filled_width), current_height)
 
 
 	def ok(self):
