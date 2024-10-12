@@ -2,15 +2,17 @@ import requests.cookies
 from scripts.utils import center_widget, get_data, change_data
 import pickle
 from aqt.qt import *
-
+import base64
 import webbrowser
 import threading
+from PIL import Image
 from aqt import mw
 from aqt import utils
 from rpg.main import mainloop
 from functools import partial
 from enum import Enum
 import json
+import pygame
 from rpg.ankirpg import data_path, AnkiRPG
 import random
 import requests
@@ -27,16 +29,91 @@ def start_chess(ankimons:dict, load_save=False):
 started = False
 
 Ankimons = UNLOCKED_ANKIMONS
-def load_sheet(i, folder='heads', names:list[str]=Ankimons):
+def load_sheet(i, folders='heads', names:list[str]=Ankimons):
 	cwd = os.getcwd()+os.sep[0]
-	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
-	print(path)
+	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",*folders,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
 	return	f'''border-image : url({path});
 				
 				height: 100%;
 				width: 100%;                             
 				background-position: center;
 				background-REPEAT: no-repeat;                           '''
+
+
+class TrainerCustomizationWindow(QMainWindow):
+
+	def __init__(self):
+		super().__init__()
+
+		# Window setup
+		self.setWindowTitle("Character Customization")
+		self.setFixedSize(840, 580)
+		self.cwd = os.path.dirname(os.path.dirname(__file__))
+		self.basepath = os.path.join(self.cwd, 'assets', 'Chars and Equips')
+		# Available options for each attribute
+		self.gender_button = QComboBox(self)
+		self.gender_button.addItems(['Male', 'Female'])
+		self.gender_button.move(330, 40)
+		self.gender_button.activated.connect(self.update_clothes)
+		self.gender_button.setCurrentText(get_data().get('gender', 'Male'))
+		self.paths = [os.path.join(self.basepath, 'Char Body'),os.path.join(self.basepath, 'Clothes'),os.path.join(self.basepath, 'Feet'),os.path.join(self.basepath, 'Left Hand'),os.path.join(self.basepath, 'Right Hand'),os.path.join(self.basepath, 'HeadWear')]
+		for path in os.listdir(os.path.join(self.basepath, self.gender_button.currentText())):
+			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
+		self.create_items()
+		self.indicies = get_data().get('indicies', []) or [0 for i in range(len(self.items))]
+		self.char_button = QPushButton(self)
+		self.char_button.setGeometry(300, 260, 100, 130)
+		self.update_char()
+		self.init_buttons()
+		self.show()
+
+	def init_buttons(self):
+		self.buttons: list[QPushButton] = []
+		for i in range(len(self.items)):
+			self.buttons.append(QPushButton(self))
+			self.buttons[i].setGeometry((i + (1 if i >3 else 0))%3*200+130, (i + (1 if i >3 else 0))//3*200+70, 60, 100)
+			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>5) ):], self.items[i]))
+			self.buttons[i].clicked.connect(partial(self.update_buttons, i))
+
+	def update_clothes(self):
+		self.paths.pop()
+		self.paths.pop()
+		for path in os.listdir(os.path.join(self.basepath, self.gender_button.currentText())):
+			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
+		self.create_items()
+		for i in range(len(self.items)):
+			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>5) ):], self.items[i]))
+			self.buttons[i].repaint()
+		self.update_char()		
+		change_data('gender', self.gender_button.currentText())
+
+	def update_char(self):
+		s = pygame.image.load(os.path.join(self.paths[0], self.items[0][self.indicies[0]]))
+		imgs = []
+		for i, path in enumerate(self.items):
+			imgs.append(pygame.image.load(os.path.join(self.paths[i], path[self.indicies[i]])))
+		for img in imgs[-2:][::-1]:s.blit(img)
+		for img in imgs[:-2]:s.blit(img)
+		r = random.random()
+		pygame.image.save(s, os.path.join(cwd, 'assets', f'trainer{r}.png'))
+		self.char_button.setStyleSheet(f'''border-image : url(assets/trainer{r}.png);
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-REPEAT: no-repeat;                           ''')
+		self.char_button.repaint()
+
+	def create_items(self):
+		self.items = [os.listdir(path) for path in self.paths]
+				
+
+	def update_buttons(self, button_index):
+		self.indicies[button_index] = (self.indicies[button_index] + 1) % len(self.items[button_index])
+		self.buttons[button_index].setStyleSheet(load_sheet(self.indicies[button_index], self.paths[button_index].split('\\')[-2-(1 if button_index >5 else 0):], self.items[button_index])) 
+		self.update_char()
+		change_data('indicies', self.indicies)
+
 
 class rpg_popup:
 	def __init__(self, choose_option) -> None:
@@ -125,7 +202,6 @@ class attribute_popup:
 		self.dropdows : list[QComboBox] = []
 		self.indexes = [2,2,2]
 		self.selected_dropdows = [False for i in range(3)]
-		print(self.Ankimons)
 		for i in range(3):
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
@@ -152,7 +228,6 @@ class attribute_popup:
 		self.okbutton.clicked.connect(self.ok)
 		for index, dropdown in enumerate(self.dropdows):
 			self.indexes[index] = dropdown.currentIndex()
-		print(self.selected)
 		win.show()
 	
 
@@ -409,7 +484,7 @@ class trainer_manager:
 		self.buttons : list[QPushButton] = []
 		self.indexes = [2,2,2]
 		self.item = data.get('item', None)
-		print(data.get('trainer_xp', 0))
+		customization = json.load(open(os.path.join(cwd, "trainer_customization.json")))
 		self.level = xp_to_lvl(data.get('trainer_xp', 0))
 		self.set_ratio(self.level%1)
 		for i in range(2):

@@ -6,6 +6,7 @@ streak_data_path = os.path.join(os.path.dirname(cwd) ,"streakgame", "game_data",
 cwd = os.path.dirname(cwd)
 
 DATA:dict = json.load(open(anki_data_path, 'r'))
+
 TRAINERS = [name.replace('.png','') for name in os.listdir(os.path.join(cwd,f'assets/trainers/'))]
 ITEMS = [name.replace('.png','') for name in os.listdir(os.path.join(cwd,f'assets/items/'))]
 SAVE_PATH = os.path.join(cwd, 'rpg','game.save')
