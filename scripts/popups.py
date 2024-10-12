@@ -53,16 +53,16 @@ class TrainerCustomizationWindow(QMainWindow):
 		# Available options for each attribute
 		self.gender_button = QComboBox(self)
 		self.gender_button.addItems(['Male', 'Female'])
-		self.gender_button.move(330, 40)
+		self.gender_button.move(330, 20)
 		self.gender_button.activated.connect(self.update_clothes)
 		self.gender_button.setCurrentText(get_data().get('gender', 'Male'))
-		self.paths = [os.path.join(self.basepath, 'Char Body'),os.path.join(self.basepath, 'Clothes'),os.path.join(self.basepath, 'Feet'),os.path.join(self.basepath, 'Left Hand'),os.path.join(self.basepath, 'Right Hand'),os.path.join(self.basepath, 'HeadWear')]
+		self.paths = [os.path.join(self.basepath, 'Char Body'), os.path.join(self.basepath, 'Equips'), os.path.join(self.basepath, 'Clothes'), os.path.join(self.basepath, 'Feet'),os.path.join(self.basepath, 'Left Hand'),os.path.join(self.basepath, 'Right Hand'),os.path.join(self.basepath, 'HeadWear')]
 		for path in os.listdir(os.path.join(self.basepath, self.gender_button.currentText())):
 			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
 		self.create_items()
 		self.indicies = get_data().get('indicies', []) or [0 for i in range(len(self.items))]
 		self.char_button = QPushButton(self)
-		self.char_button.setGeometry(300, 260, 100, 130)
+		self.char_button.setGeometry(600, 260, 100, 130)
 		self.update_char()
 		self.init_buttons()
 		self.show()
@@ -71,8 +71,8 @@ class TrainerCustomizationWindow(QMainWindow):
 		self.buttons: list[QPushButton] = []
 		for i in range(len(self.items)):
 			self.buttons.append(QPushButton(self))
-			self.buttons[i].setGeometry((i + (1 if i >3 else 0))%3*200+130, (i + (1 if i >3 else 0))//3*200+70, 60, 100)
-			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>5) ):], self.items[i]))
+			self.buttons[i].setGeometry(i%3*200+130, i//3*200+70, 60, 100)
+			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
 			self.buttons[i].clicked.connect(partial(self.update_buttons, i))
 
 	def update_clothes(self):
@@ -82,7 +82,7 @@ class TrainerCustomizationWindow(QMainWindow):
 			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
 		self.create_items()
 		for i in range(len(self.items)):
-			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>5) ):], self.items[i]))
+			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
 			self.buttons[i].repaint()
 		self.update_char()		
 		change_data('gender', self.gender_button.currentText())
@@ -95,8 +95,8 @@ class TrainerCustomizationWindow(QMainWindow):
 		for img in imgs[-2:][::-1]:s.blit(img)
 		for img in imgs[:-2]:s.blit(img)
 		r = random.random()
-		pygame.image.save(s, os.path.join(cwd, 'assets', f'trainer{r}.png'))
-		self.char_button.setStyleSheet(f'''border-image : url(assets/trainer{r}.png);
+		pygame.image.save(s, os.path.join(cwd, 'assets', f'trainer.png'))
+		self.char_button.setStyleSheet(f'''border-image : url(assets/trainer.png);
 				
 				height: 100%;
 				width: 100%;                             
@@ -110,7 +110,7 @@ class TrainerCustomizationWindow(QMainWindow):
 
 	def update_buttons(self, button_index):
 		self.indicies[button_index] = (self.indicies[button_index] + 1) % len(self.items[button_index])
-		self.buttons[button_index].setStyleSheet(load_sheet(self.indicies[button_index], self.paths[button_index].split('\\')[-2-(1 if button_index >5 else 0):], self.items[button_index])) 
+		self.buttons[button_index].setStyleSheet(load_sheet(self.indicies[button_index], self.paths[button_index].split('\\')[-2-(1 if button_index >6 else 0):], self.items[button_index])) 
 		self.update_char()
 		change_data('indicies', self.indicies)
 
