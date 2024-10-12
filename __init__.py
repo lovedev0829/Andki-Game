@@ -16,7 +16,6 @@ from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyC
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
 
-TrainerCustomizationWindow()
 #global vars
 cwd = os.path.dirname(__file__)
 
@@ -91,8 +90,8 @@ def update_streak_btn_js(
     web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, r"web/.*")
 menu = QMenu("AnkiNick", mw)
-action = menu.addAction("Change Difficulty")
-action.triggered.connect(change_difficulty)
+menu.addAction("Change Difficulty").triggered.connect(change_difficulty)
+menu.addAction("Customize Trainer").triggered.connect(lambda: TrainerCustomizationWindow())
 mw.form.menubar.addMenu(menu)
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
