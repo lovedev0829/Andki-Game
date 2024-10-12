@@ -55,7 +55,7 @@ class TrainerCustomizationWindow(QMainWindow):
 		self.gender_button.addItems(['Male', 'Female'])
 		self.gender_button.move(330, 20)
 		self.gender_button.activated.connect(self.update_clothes)
-		self.gender_button.setCurrentText(get_data().get('gender', 'Male'))
+		self.gender_button.setCurrentText(get_data().get('gender', 'Male')) 
 		self.paths = [os.path.join(self.basepath, 'Char Body'), os.path.join(self.basepath, 'Equips'), os.path.join(self.basepath, 'Clothes'), os.path.join(self.basepath, 'Feet'),os.path.join(self.basepath, 'Left Hand'),os.path.join(self.basepath, 'Right Hand'),os.path.join(self.basepath, 'HeadWear')]
 		for path in os.listdir(os.path.join(self.basepath, self.gender_button.currentText())):
 			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
