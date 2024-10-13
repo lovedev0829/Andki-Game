@@ -56,8 +56,11 @@ def start_game():
         main.main()
 
 def start_rpg():
-    mw.win = win = QMainWindow()
-    rpg_popup(win)
+    if get_data().get('indicies', None):
+        mw.win = win = QMainWindow()
+        rpg_popup(win)
+    else:
+        TrainerCustomizationWindow(start_rpg)
 
 screen_size = []
 

@@ -162,6 +162,7 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.cbHmMain)
         self.cbHmDeck = QtWidgets.QCheckBox(self.groupBox_3)
         self.cbHmDeck.setObjectName("cbHmDeck")
+        self.cbHmDeck.setChecked(False)
         self.horizontalLayout.addWidget(self.cbHmDeck)
         self.cbHmStats = QtWidgets.QCheckBox(self.groupBox_3)
         self.cbHmStats.setObjectName("cbHmStats")

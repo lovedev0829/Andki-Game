@@ -361,7 +361,12 @@ class trainer_xp_window(QMainWindow):
             self.buttons.append(QPushButton(self))
             self.buttons[i].animateClick()
             self.buttons[i].setGeometry(260+i*220,90+i*50,150-i*100,180-i*100+int(not i)*30)
-            self.buttons[i].setStyleSheet(load_sheet(self.trainers.index(get_data().get('default_trainer')), 'trainers', self.trainers))
+            self.buttons[i].setStyleSheet(f'''border-image : url(assets/trainer.png);
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-REPEAT: no-repeat;                           ''')
         if data.get('default_trainer', None):
             self.selected = [data['default_trainer']]
             self.update_ui()
@@ -440,7 +445,7 @@ class trainer_popup(QMainWindow):
         
  
         cwd = os.getcwd()+os.sep[0]        
-        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'trainers',f"{image_name}.png").replace(cwd, '').replace(os.sep[0],'/')
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'trainer.png').replace(cwd, '').replace(os.sep[0],'/')
         
         self.pixmap = QPixmap(path)        
         self.label.setPixmap(self.pixmap)

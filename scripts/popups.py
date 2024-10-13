@@ -42,7 +42,7 @@ def load_sheet(i, folders='heads', names:list[str]=Ankimons):
 
 class TrainerCustomizationWindow(QMainWindow):
 
-	def __init__(self):
+	def __init__(self, func=None):
 		super().__init__()
 
 		# Window setup
@@ -337,61 +337,6 @@ class ankimon_selector(QMainWindow):
 		self.counter += 1
 
 
-class trainer_selector(QMainWindow):
-	def __init__(self, attribute: attribute_popup, index):
-		super().__init__()
-		self.trainer_index = index
-		# set the title
-		self.attribute = attribute
-		self.setWindowTitle("AnkiNick-mon")        
-		# setting the geometry of window
-		self.setFixedSize(840,580)
-		center_widget(self)
-		central_widget = self
-		data = get_data()
-		self.trainers = list(filter(lambda x:x not in STATS.keys() ,TRAINERS))
-		self.buttons : list[QPushButton] = []
-		labels : list[QLabel] = []
-        # Create a scroll area
-		self.counter = 0
-		index = 0
-
-		# show all the widgets
-		self.completed = False
-		for i in range(len(self.trainers)):
-			if self.trainers[i] not in self.attribute.selected:
-				self.buttons.append(QPushButton(central_widget))
-				text=str(self.trainers[i])
-				labels.append(QLabel(parent=central_widget,text=text))
-				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
-				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),130,150)
-				labels[index].adjustSize()
-				self.buttons[index].animateClick()
-				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
-
-				self.buttons[index].setStyleSheet(load_sheet(i, 'trainers', self.trainers))
-				self.buttons[index].clicked.connect(partial(self.clicked,i))
-				index += 1
-		
-	
-		self.show()
-		if self.completed:
-			return
-
-	def clicked(self, i):
-		if self.counter > len(self.buttons)-1:
-			try:
-				self.attribute.selected[self.trainer_index] = self.trainers[i]
-			except IndexError as e:
-				print(e)
-				self.attribute.selected.append(self.trainers[i])
-			self.completed = True
-			self.attribute.update_ui()
-						
-			self.close()
-
-		self.counter += 1
-
 class LoginHandler:
 	def __init__(self, main_window: QMainWindow):
 		self.main_window = main_window
@@ -491,7 +436,7 @@ class trainer_manager:
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
 			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
-			self.buttons[i].setStyleSheet(f'''border-image : url(assets/ui/empty.PNG);
+			self.buttons[i].setStyleSheet(f'''border-image : url(assets/trainer.png);
 			
 			height: 100%;
 			width: 100%;                             
@@ -544,8 +489,6 @@ class trainer_manager:
 	def clicked(self, index):
 		self.counter += 1
 		if self.counter > len(self.buttons):	
-			if not get_data()['default_trainer']:
-				self.things.append(trainer_selector(self, index))
 			if index == 1:
 				self.things.append(item_selector(self, index))		
 			
