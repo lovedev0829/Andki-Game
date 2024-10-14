@@ -1,11 +1,7 @@
 import requests.cookies
 from scripts.utils import center_widget, get_data, change_data
-import pickle
 from aqt.qt import *
-import base64
 import webbrowser
-import threading
-from PIL import Image
 from aqt import mw
 from aqt import utils
 from rpg.main import mainloop
@@ -429,14 +425,13 @@ class trainer_manager:
 		self.buttons : list[QPushButton] = []
 		self.indexes = [2,2,2]
 		self.item = data.get('item', None)
-		customization = json.load(open(os.path.join(cwd, "trainer_customization.json")))
 		self.level = xp_to_lvl(data.get('trainer_xp', 0))
 		self.set_ratio(self.level%1)
 		for i in range(2):
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
 			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
-			self.buttons[i].setStyleSheet(f'''border-image : url(assets/trainer.png);
+			self.buttons[i].setStyleSheet(f'''border-image : url({os.path.join(cwd,'assets','trainer.png')});
 			
 			height: 100%;
 			width: 100%;                             
