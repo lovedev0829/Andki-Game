@@ -25,7 +25,7 @@ def start_chess(ankimons:dict, load_save=False):
 started = False
 
 Ankimons = UNLOCKED_ANKIMONS
-def load_sheet(i, folders='heads', names:list[str]=Ankimons):
+def load_sheet(i, folders=['heads'], names:list[str]=Ankimons):
 	cwd = os.getcwd()+os.sep[0]
 	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",*folders,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
 	return	f'''border-image : url({path});
@@ -91,8 +91,11 @@ class TrainerCustomizationWindow(QMainWindow):
 		for img in imgs[-2:][::-1]:s.blit(img)
 		for img in imgs[:-2]:s.blit(img)
 		r = random.random()
-		pygame.image.save(s, os.path.join(cwd, 'assets', f'trainer.png'))
-		self.char_button.setStyleSheet(f'''border-image : url(assets/trainer.png);
+		path = os.path.join(cwd, 'assets', f'trainer.png').replace(os.path.sep, '/')
+		pygame.image.save(s, path)
+		print(path)
+
+		self.char_button.setStyleSheet(f'''border-image : url({path});
 				
 				height: 100%;
 				width: 100%;                             
@@ -431,12 +434,15 @@ class trainer_manager:
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
 			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
-			self.buttons[i].setStyleSheet(f'''border-image : url({os.path.join(cwd,'assets','trainer.png')});
+			path = os.path.join(cwd, 'assets', 'trainer.png').replace(os.path.sep, '/')
+			print(path)
 			
-			height: 100%;
-			width: 100%;                             
-			background-position: center;
-			background-repeat: no-repeat;                           ''')
+			self.buttons[i].setStyleSheet(f'''border-image : url({path});
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-REPEAT: no-repeat;                           ''')
 			self.buttons[i].clicked.connect(partial(self.clicked,i))
 		if data.get('default_trainer', None):
 			self.selected = [data['default_trainer']]
