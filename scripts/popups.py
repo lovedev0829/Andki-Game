@@ -88,8 +88,8 @@ class TrainerCustomizationWindow(QMainWindow):
 		imgs = []
 		for i, path in enumerate(self.items):
 			imgs.append(pygame.image.load(os.path.join(self.paths[i], path[self.indicies[i]])))
-		for img in imgs[-2:][::-1]:s.blit(img)
-		for img in imgs[:-2]:s.blit(img)
+		for img in imgs[-2:][::-1]:s.blit(img, (0,0))
+		for img in imgs[:-2]:s.blit(img, (0,0))
 		r = random.random()
 		path = os.path.join(cwd, 'assets', f'trainer.png').replace(os.path.sep, '/')
 		pygame.image.save(s, path)
@@ -434,15 +434,16 @@ class trainer_manager:
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
 			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
-			path = os.path.join(cwd, 'assets', 'trainer.png').replace(os.path.sep, '/')
-			print(path)
 			
+			path = os.path.join(cwd, 'assets', f'trainer.png').replace(os.path.sep, '/').replace('C:', '')
+			print(path)
 			self.buttons[i].setStyleSheet(f'''border-image : url({path});
-				
-				height: 100%;
-				width: 100%;                             
-				background-position: center;
-				background-REPEAT: no-repeat;                           ''')
+					
+					height: 100%;
+					width: 100%;                             
+					background-position: center;
+					background-REPEAT: no-repeat;                           ''')
+
 			self.buttons[i].clicked.connect(partial(self.clicked,i))
 		if data.get('default_trainer', None):
 			self.selected = [data['default_trainer']]
