@@ -12,7 +12,7 @@ import pygame
 from rpg.ankirpg import data_path, AnkiRPG
 import random
 import requests
-from scripts.utils import xp_to_lvl
+from scripts.utils import xp_to_lvl, image_to_base64
 from scripts.constants import *
 
 def delete_win():
@@ -38,7 +38,7 @@ def load_sheet(i, folders=['heads'], names:list[str]=Ankimons):
 
 class TrainerCustomizationWindow(QMainWindow):
 
-	def __init__(self, func=None):
+	def __init__(self, func=lambda :0):
 		super().__init__()
 
 		# Window setup
@@ -58,18 +58,41 @@ class TrainerCustomizationWindow(QMainWindow):
 		self.create_items()
 		self.indicies = get_data().get('indicies', []) or [0 for i in range(len(self.items))]
 		self.char_button = QPushButton(self)
-		self.char_button.setGeometry(600, 260, 100, 130)
+		m = 1.5
+		self.char_button.setGeometry(600, 70, int(120*m), int(156*m))
+		self.okbutton = QPushButton(self)
+		self.okbutton.setGeometry(QRect(310, 470, 161, 51))
+		self.okbutton.setText('OK')
+		self.okbutton.clicked.connect(lambda : self.close() and func())
 		self.update_char()
 		self.init_buttons()
 		self.show()
+	@staticmethod
+	def load_sheet(i, folders=['heads'], names:list[str]=Ankimons):
+		cwd = os.getcwd()+os.sep[0]
+		path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",*folders,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
+		return	f'''border-image : url({path});
+					
+					height: 100%;
+					width: 100%;                             
+					background-position: center;
+					background-REPEAT: no-repeat;                           '''
 
 	def init_buttons(self):
 		self.buttons: list[QPushButton] = []
 		for i in range(len(self.items)):
 			self.buttons.append(QPushButton(self))
-			self.buttons[i].setGeometry(i%3*200+130, i//3*200+70, 60, 100)
-			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
+			
+			self.buttons[i].setStyleSheet(TrainerCustomizationWindow.load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
 			self.buttons[i].clicked.connect(partial(self.update_buttons, i))
+			n = i
+			if i >= 4: 
+				if i in [4,5]:
+					index = [4,5].index(i)
+					self.buttons[i].setGeometry(600+index*100, (index)//3*200+320, 80, 130)
+					continue
+				n -= 2
+			self.buttons[i].setGeometry(n%3*150+130, n//3*160+105, 80, 130)
 
 	def update_clothes(self):
 		self.paths.pop()
@@ -78,7 +101,7 @@ class TrainerCustomizationWindow(QMainWindow):
 			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
 		self.create_items()
 		for i in range(len(self.items)):
-			self.buttons[i].setStyleSheet(load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
+			self.buttons[i].setStyleSheet(TrainerCustomizationWindow.load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
 			self.buttons[i].repaint()
 		self.update_char()		
 		change_data('gender', self.gender_button.currentText())
@@ -93,7 +116,8 @@ class TrainerCustomizationWindow(QMainWindow):
 		r = random.random()
 		path = os.path.join(cwd, 'assets', f'trainer.png').replace(os.path.sep, '/')
 		pygame.image.save(s, path)
-		print(path)
+		path = os.path.join(cwd, 'assets', 'trainers', '0.png').replace(os.path.sep, '/')
+		pygame.image.save(s, path)
 
 		self.char_button.setStyleSheet(f'''border-image : url({path});
 				
@@ -109,9 +133,18 @@ class TrainerCustomizationWindow(QMainWindow):
 
 	def update_buttons(self, button_index):
 		self.indicies[button_index] = (self.indicies[button_index] + 1) % len(self.items[button_index])
-		self.buttons[button_index].setStyleSheet(load_sheet(self.indicies[button_index], self.paths[button_index].split('\\')[-2-(1 if button_index >6 else 0):], self.items[button_index])) 
+		self.buttons[button_index].setStyleSheet(TrainerCustomizationWindow.load_sheet(self.indicies[button_index], self.paths[button_index].split('\\')[-2-(1 if button_index >6 else 0):], self.items[button_index])) 
 		self.update_char()
 		change_data('indicies', self.indicies)
+def load_sheet(i, folders='heads', names:list[str]=Ankimons):
+	cwd = os.getcwd()+os.sep[0]
+	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folders,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
+	return	f'''border-image : url({path});
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-REPEAT: no-repeat;                           '''
 
 
 class rpg_popup:
@@ -430,24 +463,21 @@ class trainer_manager:
 		self.item = data.get('item', None)
 		self.level = xp_to_lvl(data.get('trainer_xp', 0))
 		self.set_ratio(self.level%1)
+		path = os.path.join(cwd, 'assets', f'trainer.png')
 		for i in range(2):
 			self.buttons.append(QPushButton(win))
-			self.buttons[i].animateClick()
 			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
-			
-			path = os.path.join(cwd, 'assets', f'trainer.png').replace(os.path.sep, '/').replace('C:', '')
-			print(path)
-			self.buttons[i].setStyleSheet(f'''border-image : url({path});
+			sheet = image_to_base64(path).replace('gif','png')
+			print(sheet)
+			self.buttons[i].setStyleSheet(f'''border-image : url({sheet});
 					
 					height: 100%;
 					width: 100%;                             
 					background-position: center;
 					background-REPEAT: no-repeat;                           ''')
-
-			self.buttons[i].clicked.connect(partial(self.clicked,i))
 		if data.get('default_trainer', None):
 			self.selected = [data['default_trainer']]
-			self.update_ui()
+		self.update_ui()
 
 		# show all the widgets
 		self.okbutton = QPushButton(win,text="OK")
@@ -498,13 +528,14 @@ class trainer_manager:
 	def update_ui(self):
 		for i, button in enumerate(self.buttons):
 			try:
-				if i == 1:
-					if self.item:
-						button.setStyleSheet(load_sheet(ITEMS.index(self.item), 'items', ITEMS))
-						change_data("item", self.item)				
-				else:
-					button.setStyleSheet(load_sheet(self.trainers.index(self.selected[i]), 'trainers', self.trainers))
-					change_data("default_trainer", self.selected[0])
+				path = os.path.join(cwd, 'assets', f'trainer.png')
+				sheet = image_to_base64(path).replace('gif','png')
+				button.setStyleSheet(f'''border-image : url({sheet});
+						
+						height: 100%;
+						width: 100%;                             
+						background-position: center;
+						background-REPEAT: no-repeat;                           ''')
 			except Exception as e:
 				print(e)
 		

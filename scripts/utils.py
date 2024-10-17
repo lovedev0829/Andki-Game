@@ -154,10 +154,10 @@ def get_html(image, message):
 
 def center_widget(widget):
     window_size = widget.geometry().size()
-    window_size = [window_size.width(), window_size.height()]    
+    window_size = [window_size.width(), window_size.height()]
     screen_size = mw.app.primaryScreen().size() 
     screen_size = [screen_size.width(), screen_size.height()]
-    widget.setGeometry(screen_size[0]//2-window_size[0]//2, screen_size[1]//2-window_size[1]//2, *window_size)
+    widget.setGeometry(int(screen_size[0]//2-window_size[0]//2), screen_size[1]//2-window_size[1]//2, *window_size)
 
 def add_msg_to_db(msg):
     if not os.path.exists(anki_data_path):
