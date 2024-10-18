@@ -111,6 +111,7 @@ class OptionsDialog(MappedDialog):
         """
         if hasattr(self.form, "htmlAbout"):
             about_string = getAboutString(showDebug=True)
+            about_string = ''
             self.form.htmlAbout.setHtml(about_string)
             self.form.htmlAbout.setOpenLinks(False)
             self.form.htmlAbout.anchorClicked.connect(self._linkHandler)
