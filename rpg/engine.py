@@ -207,7 +207,7 @@ class Mode(Enum):
 
 
 class Engine:
-    def __init__(self, free_places, ankimons: dict, screen, map_t, trainer:list[Trainer]):
+    def __init__(self, free_places, ankimons: dict, screen, map_t, trainers:list[Trainer]):
         self.turn: Player = Player.Player1
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
@@ -229,12 +229,12 @@ class Engine:
                         animation.images[i] = s
         names = list(ankimons.keys())
         if ankimons:
-            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainer[0], self))
-            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t, trainer[0], self))
-            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t, trainer[0], self))
-            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainer[1], self))
-            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainer[1], self))
-            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainer[1], self))
+            self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainers[0], self))
+            self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t, trainers[0], self))
+            self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t, trainers[0], self))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainers[1], self))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainers[1], self))
+            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainers[1], self))
         ankimon_data = json.load(open(streak_data_path, 'r'))
         levels = [ankimon_data[anki].get('level') for anki in ankimon_data.keys()]
         enemy_levels = [max(1, level + random.randint(-3,3)) for level in levels]
