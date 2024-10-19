@@ -190,7 +190,7 @@ class AnkiRPG:
                             self.ankiwin.skipbutton = QPushButton(self.ankiwin)
                             self.ankiwin.skipbutton.setText('Skip the Cards and get full damage')
                             self.ankiwin.skipbutton.adjustSize()
-                            self.ankiwin.skipbutton.move(self.ankiwin.width()/2,160)
+                            self.ankiwin.skipbutton.move(int(self.ankiwin.width()/2),int(160)   - int(self.ankiwin.height()/2))
                             self.ankiwin.skipbutton.clicked.connect(lambda : self.engine.perform_attack(self.ankiwin.coords[0], self.ankiwin.coords[1]) and self.ankiwin.close())
                             self.ankiwin.skipbutton.show()
                     elif self.ankiwin.action:
@@ -204,7 +204,6 @@ class AnkiRPG:
                         elif self.ankiwin.action == Actions.MOVE:
                             self.engine.perform_move(*self.ankiwin.coords)
                             coords = self.ankiwin.coords
-                            print(coords)
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()

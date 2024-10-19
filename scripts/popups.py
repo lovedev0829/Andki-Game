@@ -59,9 +59,9 @@ class TrainerCustomizationWindow(QMainWindow):
 		self.indicies = get_data().get('indicies', []) or [0 for i in range(len(self.items))]
 		self.char_button = QPushButton(self)
 		m = 1.5
-		self.char_button.setGeometry(600, 70, int(120*m), int(156*m))
+		self.char_button.setGeometry(int(600),int(70),int(int(120*m)),int(int(156*m)))
 		self.okbutton = QPushButton(self)
-		self.okbutton.setGeometry(QRect(310, 470, 161, 51))
+		self.okbutton.setGeometry(610,int(350),int(161),int(51))
 		self.okbutton.setText('OK')
 		self.okbutton.clicked.connect(lambda : self.close() and func())
 		self.update_char()
@@ -86,13 +86,11 @@ class TrainerCustomizationWindow(QMainWindow):
 			self.buttons[i].setStyleSheet(TrainerCustomizationWindow.load_sheet(self.indicies[i], self.paths[i].split('\\')[(-2-int(i>6) ):], self.items[i]))
 			self.buttons[i].clicked.connect(partial(self.update_buttons, i))
 			n = i
-			if i >= 4: 
-				if i in [4,5]:
-					index = [4,5].index(i)
-					self.buttons[i].setGeometry(600+index*100, (index)//3*200+320, 80, 130)
-					continue
-				n -= 2
-			self.buttons[i].setGeometry(n%3*150+130, n//3*160+105, 80, 130)
+			if i >= 1: 
+				if i == 1:
+					self.buttons[i].hide()
+				n -= 1
+			self.buttons[i].setGeometry(int(int(n%3*150+130)),int(int(n//3*160+105)),int(int(80)),int(int(130)))
 
 	def update_clothes(self):
 		self.paths.pop()
@@ -111,12 +109,11 @@ class TrainerCustomizationWindow(QMainWindow):
 		imgs = []
 		for i, path in enumerate(self.items):
 			imgs.append(pygame.image.load(os.path.join(self.paths[i], path[self.indicies[i]])))
-		for img in imgs[-2:][::-1]:s.blit(img, (0,0))
-		for img in imgs[:-2]:s.blit(img, (0,0))
-		r = random.random()
+		for i, img in enumerate(imgs[-2:][::-1]):s.blit(img, (0,0))
+		for i, img in enumerate(imgs[:-2]):
+			if i != 1:
+				s.blit(img, (0,0))
 		path = os.path.join(cwd, 'assets', f'trainer.png').replace(os.path.sep, '/')
-		pygame.image.save(s, path)
-		path = os.path.join(cwd, 'assets', 'trainers', '0.png').replace(os.path.sep, '/')
 		pygame.image.save(s, path)
 
 		self.char_button.setStyleSheet(f'''border-image : url({path});
@@ -155,17 +152,17 @@ class rpg_popup:
 		choose_option.setObjectName("choose_option")
 		choose_option.resize(598, 347)
 		self.pushButton = QPushButton(choose_option)
-		self.pushButton.setGeometry(QRect(90, 100, 161, 51))
+		self.pushButton.setGeometry(int(90),int(100),int(161),int(51))
 		self.pushButton.setObjectName("pushButton")
 		self.pushButton.clicked.connect(lambda: run_class(trainer_manager))
 		self.pushButton_2 = QPushButton(choose_option)
-		self.pushButton_2.setGeometry(QRect(350, 100, 161, 51))
+		self.pushButton_2.setGeometry(int(350),int(100),int(161),int(51))
 		self.pushButton_2.setSizeIncrement(QSize(0, 0))
 		self.pushButton_2.setBaseSize(QSize(0, 0))
 		self.pushButton_2.setObjectName("pushButton_2")
 		self.pushButton_2.setAutoDefault(True)
 		self.okbutton = QPushButton(choose_option)
-		self.okbutton.setGeometry(QRect(210, 240, 191, 51))
+		self.okbutton.setGeometry(int(210),int(240),int(191),int(51))
 		self.okbutton.setSizeIncrement(QSize(0, 0))
 		self.okbutton.setBaseSize(QSize(0, 0))
 		self.okbutton.setObjectName("okbutton")
@@ -182,17 +179,17 @@ class rpg_popup:
 			started = False
 			
 		if started:
-			self.pushButton.setGeometry(QRect(50, 100, 161, 51))
-			self.pushButton_2.setGeometry(QRect(390, 100, 161, 51))
+			self.pushButton.setGeometry(int(50),int(100),int(161),int(51))
+			self.pushButton_2.setGeometry(int(390),int(100),int(161),int(51))
 			self.continuebutton = QPushButton(choose_option,text="continue")
-			self.continuebutton.setGeometry(QRect(220, 100, 161, 51))
+			self.continuebutton.setGeometry(int(220),int(100),int(161),int(51))
 			self.continuebutton.setSizeIncrement(QSize(0, 0))
 			self.continuebutton.setBaseSize(QSize(0, 0))
 			self.continuebutton.setObjectName("continuebutton")
 			self.continuebutton.clicked.connect(lambda :start_chess({}, True))
 
 		self.menubar = QMenuBar(choose_option)
-		self.menubar.setGeometry(QRect(0, 0, 598, 21))
+		self.menubar.setGeometry(int(0),int(0),int(598),int(21))
 		self.menubar.setObjectName("menubar")
 		choose_option.setMenuBar(self.menubar)
 		self.statusbar = QStatusBar(choose_option)
@@ -237,7 +234,7 @@ class attribute_popup:
 		for i in range(3):
 			self.buttons.append(QPushButton(win))
 			self.buttons[i].animateClick()
-			self.buttons[i].setGeometry(70+i*200,70,150,150)
+			self.buttons[i].setGeometry(int(70+i*200),int(70),int(150),int(150))
 			self.dropdows.append(QComboBox(win))
 			self.dropdows[i].addItems(self.elements)
 			self.dropdows[i].setCurrentIndex(i)
@@ -256,7 +253,7 @@ class attribute_popup:
 		while len(self.selected) < 3:self.selected.append(None)
 		# show all the widgets
 		self.okbutton = QPushButton(win,text="OK")
-		self.okbutton.setGeometry(QRect(255, 320, 141, 51))
+		self.okbutton.setGeometry(int(255),int(320),int(141),int(51))
 		self.okbutton.clicked.connect(self.ok)
 		for index, dropdown in enumerate(self.dropdows):
 			self.indexes[index] = dropdown.currentIndex()
@@ -333,10 +330,10 @@ class ankimon_selector(QMainWindow):
 				else:level = 1
 				labels.append(QLabel(parent=central_widget,text=f'Level {level}'))
 				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
-				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
+				labels[index].setGeometry(int(110+(index%4)*200-width/2),int(175+180*(index//4)),int(150),int(150))
 				labels[index].adjustSize()
 				self.buttons[index].animateClick()
-				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
+				self.buttons[index].setGeometry(int(40+(index%4)*200),int(20+180*(index//4)),int(150),int(150))
 
 				self.buttons[index].setStyleSheet(load_sheet(i))
 				self.buttons[index].clicked.connect(partial(self.clicked,i))
@@ -466,7 +463,7 @@ class trainer_manager:
 		path = os.path.join(cwd, 'assets', f'trainer.png')
 		for i in range(2):
 			self.buttons.append(QPushButton(win))
-			self.buttons[i].setGeometry(220+i*220,90+i*50,150-i*100,150-i*100+int(not i)*30)
+			self.buttons[i].setGeometry(int(220+i*220),int(90+i*50),int(150-i*100),int(150-i*100+int(not i)*30))
 			sheet = image_to_base64(path).replace('gif','png')
 			print(sheet)
 			self.buttons[i].setStyleSheet(f'''border-image : url({sheet});
@@ -481,7 +478,7 @@ class trainer_manager:
 
 		# show all the widgets
 		self.okbutton = QPushButton(win,text="OK")
-		self.okbutton.setGeometry(QRect(265, 320, 141, 51))
+		self.okbutton.setGeometry(int(265),int(320),int(141),int(51))
 		self.okbutton.clicked.connect(self.ok)
 		self.win.paintEvent = self.paintEvent			
 		win.show()
@@ -566,10 +563,10 @@ class item_selector(QMainWindow):
 				text=str(self.items[i])
 				labels.append(QLabel(parent=central_widget,text=text))
 				width = labels[index].fontMetrics().boundingRect(labels[index].text()).width()
-				labels[index].setGeometry(110+(index%4)*200-width/2,175+180*(index//4),150,150)
+				labels[index].setGeometry(int(110+(index%4)*200-width/2),int(175+180*(index//4)),int(150),int(150))
 				labels[index].adjustSize()
 				self.buttons[index].animateClick()
-				self.buttons[index].setGeometry(40+(index%4)*200,20+180*(index//4),150,150)
+				self.buttons[index].setGeometry(int(40+(index%4)*200),int(20+180*(index//4)),int(150),int(150))
 
 				self.buttons[index].setStyleSheet(load_sheet(i, 'items', self.items))
 				self.buttons[index].clicked.connect(partial(self.clicked,i))
@@ -601,7 +598,7 @@ class DifficultyChoosingWindow(QMainWindow):
 		super().__init__()
 		
 		self.setWindowTitle('Choose Difficulty')
-		self.setGeometry(100, 100, 400, 300)
+		self.setGeometry(int(100),int(100),int(400),int(300))
 		center_widget(self)
 		self.initUI()
 		
