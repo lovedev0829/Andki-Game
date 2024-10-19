@@ -260,8 +260,6 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Review Heatmap Settings"))
         self.labHeading.setText(_translate("Dialog", "Review Heatmap Settings"))
-        self.btnHelp.setText(_translate("Dialog", "?"))
-        self.btnHelp.setShortcut(_translate("Dialog", "Ctrl+H"))
         self.fmtLabInfo.setText(_translate("Dialog", "<a href=\"action://changelog\">v{ADDON_VERSION}</a>"))
         self.fmtLabContrib.setText(_translate("Dialog", "Review Heatmap?"))
         self.groupBox.setTitle(_translate("Dialog", "Heatmap appearance"))

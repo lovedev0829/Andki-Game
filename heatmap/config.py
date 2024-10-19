@@ -93,5 +93,5 @@ config_defaults: Dict[str, Dict] = {
 }
 
 config: ConfigManager = ConfigManager(
-    mw, config_dict=config_defaults, conf_key="heatmap", reset_req=True
+    mw, config_dict=config_defaults, conf_key="ankimonheatmap", reset_req=True
 )

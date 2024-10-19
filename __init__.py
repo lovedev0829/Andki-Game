@@ -15,7 +15,7 @@ from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, cen
 from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyChoosingWindow, TrainerCustomizationWindow
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
-
+from scripts.menu import menusetup
 #global vars
 cwd = os.path.dirname(__file__)
 
@@ -77,8 +77,6 @@ def on_profile_open():
     json.dump(data, open(anki_data_path, "w"))
     
 
-def change_difficulty():
-    mw.win = DifficultyChoosingWindow()
 
 cwd = os.path.dirname(__file__)
 path = os.path.join(cwd, f"assets","image.png"    )
@@ -92,15 +90,9 @@ def update_streak_btn_js(
     base64_image = image_to_base64(path)
     web_content.body += get_html(base64_image, "start_streak")
 mw.addonManager.setWebExports(__name__, r"web/.*")
-menu = QMenu("AnkiNick", mw)
-menu.addAction("Change Difficulty").triggered.connect(change_difficulty)
-menu.addAction("Customize Trainer").triggered.connect(lambda: TrainerCustomizationWindow())
-mw.form.menubar.addMenu(menu)
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
-def _(x,y):
-    import heatmap
-gui_hooks.webview_will_set_content.append(_)
 gui_hooks.webview_will_set_content.append(update_streak_btn_js)
+import heatmap

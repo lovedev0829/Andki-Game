@@ -655,6 +655,7 @@ class ConfigManager(object):
         try:
             meta = json.load(
                 io.open(DEFAULT_LOCAL_META_PATH, encoding="utf-8"))
+            print(meta)
         except (IOError, OSError):
             meta = None
         except ValueError as e:

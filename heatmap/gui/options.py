@@ -35,7 +35,6 @@ Options dialog and associated components
 
 import time
 from typing import Optional
-
 from aqt.qt import QAction, QApplication, QWidget
 
 from anki.lang import _
@@ -47,6 +46,7 @@ from ..libaddon.gui.dialog_options import OptionsDialog
 from ..libaddon.platform import PLATFORM
 from ..times import daystart_epoch
 from .forms import options as qtform_options
+from scripts.menu import menusetup
 
 
 class RevHmOptions(OptionsDialog):
@@ -218,6 +218,4 @@ def invoke_options_dialog(parent: Optional[QWidget] = None) -> int:
 def initialize_options():
     config.setConfigAction(invoke_options_dialog)
     # Set up menu entry:
-    options_action = QAction("Review &Heatmap Options...", mw)
-    options_action.triggered.connect(lambda _: invoke_options_dialog())
-    mw.form.menuTools.addAction(options_action)
+    menusetup().addAction('Review &Heatmap Options...').triggered.connect(lambda _: invoke_options_dialog())
