@@ -89,6 +89,7 @@ class ConfigEditor(QDialog):
     def accept(self):
         txt = self.form.text.toPlainText()
         error = None
+        print(txt)
         try:
             new_conf = json.loads(txt)
         except ValueError as e:

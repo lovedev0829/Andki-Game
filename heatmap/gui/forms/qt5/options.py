@@ -83,6 +83,7 @@ class Ui_Dialog(object):
         spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem3, 0, 2, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+<<<<<<< HEAD
         self.gridLayout_3.addItem(spacerItem4, 0, 0, 1, 1)
         self.contribLayout.addLayout(self.gridLayout_3)
         self.label_5 = QtWidgets.QLabel(self.tab)
@@ -91,6 +92,12 @@ class Ui_Dialog(object):
         self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         self.label_5.setObjectName("label_5")
         self.contribLayout.addWidget(self.label_5)
+=======
+        self.gridLayout_3.addItem(spacerItem4, 0, 3, 1, 1)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("review_heatmap:icons/patreon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.contribLayout.addLayout(self.gridLayout_3)
+>>>>>>> b86aea5afbad61626476e5f9e39c6ff713681b2a
         self.verticalLayout_5.addLayout(self.contribLayout)
         spacerItem5 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.verticalLayout_5.addItem(spacerItem5)
@@ -157,7 +164,7 @@ class Ui_Dialog(object):
         self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.tab_2)
         self.label_4.setObjectName("label_4")
-        self.gridLayout_2.addWidget(self.label_4, 3, 0, 1, 1)
+        # self.gridLayout_2.addWidget(self.label_4, 3, 0, 1, 1)
         self.label_7 = QtWidgets.QLabel(self.tab_2)
         self.label_7.setToolTip("")
         self.label_7.setObjectName("label_7")
@@ -243,7 +250,10 @@ class Ui_Dialog(object):
         self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
         self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+<<<<<<< HEAD
         Dialog.setTabOrder(self.tabWidget, self.selHmColor)
+=======
+>>>>>>> b86aea5afbad61626476e5f9e39c6ff713681b2a
         Dialog.setTabOrder(self.selHmColor, self.selHmCalMode)
         Dialog.setTabOrder(self.selHmCalMode, self.cbHmMain)
         Dialog.setTabOrder(self.cbHmMain, self.cbHmDeck)
