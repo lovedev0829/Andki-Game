@@ -19,7 +19,6 @@ class Rewards(Enum):
 def load_sheet(i,folder='heads',names:list[str]=None):
 	cwd = os.getcwd()+os.sep[0]
 	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folder,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd,'').replace(os.sep[0],'/')
-	print(path)
 	return	f'''border-image : url({path});
 				
 				height: 100%;
@@ -202,8 +201,7 @@ class WildAnkimon(QMainWindow):
         self.label.setPixmap(self.pixmap)
         scaler = 0.6
         # Optional,resize label to image size
-        self.label.resize(self.pixmap.width()*scaler,
-                        self.pixmap.height()*scaler)
+        self.label.resize(int(self.pixmap.width()*scaler),int(self.pixmap.height()*scaler))
         self.label.setScaledContents(True)
         self.label.move(100,50)
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
@@ -224,13 +222,13 @@ class WildAnkimon(QMainWindow):
         current_height = 25
         # Draw a border around the health bar
         painter.setPen(QColor(0,0,0))
-        painter.drawRect(current_width/2,105,current_width-1,current_height-1)
+        painter.drawRect(int(current_width/2),int(105),int(current_width-1),int(current_height-1))
         # Draw foreground (filled part of the health bar based on ratio)
         painter.setBrush(QBrush(Qt.GlobalColor.red))
-        painter.drawRect(current_width/2,105,current_width,current_height)
+        painter.drawRect(int(current_width/2),int(105),int(current_width),int(current_height))
         painter.setBrush(QBrush(Qt.GlobalColor.green))
         filled_width = current_width * (1-self.ratio)
-        painter.drawRect(current_width/2,105,filled_width,current_height)
+        painter.drawRect(int(current_width/2),int(105),int(filled_width),int(current_height))
 
     def closeEvent(self,event):
         if self.completed_cards >= self.required_cards:
@@ -274,11 +272,9 @@ class captured_ankimon(QMainWindow):
         self.label.setPixmap(self.pixmap)
         scaler = 0.6
         # Optional,resize label to image size
-        self.label.resize(self.pixmap.width()*scaler,
-                        self.pixmap.height()*scaler)
+        self.label.resize(int(self.pixmap.width()*scaler),int(self.pixmap.height()*scaler))
         self.label.setScaledContents(True)
         self.label.move(100,30)
-
         if name in UNLOCKED_ANKIMONS:
             self.text_label = QLabel(f"""you have defeated the ankimon would you like to release it for xp """,self)
             self.text_label.move(25,15)
@@ -356,11 +352,11 @@ class trainer_xp_window(QMainWindow):
                             lvl{int(self.level)}""")
         self.label.setFont(QFont(self.label.font().toString(),15))
         self.label.adjustSize()
-        self.label.move(self.width()/2-self.label.width()/2,5)
+        self.label.move(int(self.width()/2-self.label.width()/2),int(5))
         for i in range(1):
             self.buttons.append(QPushButton(self))
             self.buttons[i].animateClick()
-            self.buttons[i].setGeometry(260+i*220,90+i*50,150-i*100,180-i*100+int(not i)*30)
+            self.buttons[i].setGeometry(int(260+i*220),int(90+i*50),int(150-i*100),int(180-i*100+int(not i)*30))
             self.buttons[i].setStyleSheet(f'''border-image : url(assets/trainer.png);
 				
 				height: 100%;
@@ -389,15 +385,16 @@ class trainer_xp_window(QMainWindow):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # Get current window size
-        current_width = self.width()//4
+        current_width = int(self.width()//4)
         current_height = 20
         # Draw a border around the health bar
         painter.setPen(QColor(0,0,0))
-        painter.drawRect(current_width*1.42,60,current_width-1,current_height-1)
+
+        painter.drawRect(int(current_width*1.42),int(60),int(current_width-1),current_height-1)
         # Draw foreground (filled part of the health bar based on ratio)
         painter.setBrush(QBrush(Qt.GlobalColor.green))
-        filled_width = current_width * self.ratio
-        painter.drawRect(current_width*1.42,60,filled_width,current_height)
+        filled_width = int(current_width * self.ratio)
+        painter.drawRect(int(current_width*1.42),60,filled_width,current_height)
 
     def update_ui(self):
         for i,button in enumerate(self.buttons):
@@ -407,7 +404,7 @@ class trainer_xp_window(QMainWindow):
                         button.setStyleSheet(load_sheet(ITEMS.index(self.item),'items',ITEMS))
                         change_data("item",self.item)				
                 else:
-                    button.setStyleSheet(load_sheet(self.trainers.index(self.selected[i]),'trainers',self.trainers))
+                    button.setStyleSheet(load_sheet(0,'',['trainer.png']))
                     change_data("default_trainer",self.selected[0])
             except Exception as e:
                 print(e)
@@ -416,7 +413,6 @@ class trainer_xp_window(QMainWindow):
         pygame.quit()
         self.game.ankiwin = None
         mw.window().showMaximized()
-        print(event)
 
         del self.game
 class trainer_popup(QMainWindow):
@@ -434,7 +430,6 @@ class trainer_popup(QMainWindow):
 
         # creating label
         self.label = QLabel(self)
-        print(cost)
         self.text_label = QLabel(f"",self)
         self.text_label.setFont(QFont(self.text_label.font().toString(),15))
         self.text_label.adjustSize()
@@ -484,7 +479,6 @@ class Win_popup(QMainWindow):
         trainer_xp = get_data().get('trainer_xp',0)
         if won:
             possible_winnings = [anki for anki in ANKIMONS if anki not in UNLOCKED_ANKIMONS]
-            print(possible_winnings)
             xp = trainer_xp - game.trainer_xp
             trainer_xp += xp
 
@@ -497,14 +491,12 @@ class Win_popup(QMainWindow):
                 change_data('Unlocked_Ankimons',UNLOCKED_ANKIMONS)
                 cwd = os.getcwd()+os.sep[0]        
                 path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'heads',f"{image_name}.png").replace(cwd,'').replace(os.sep[0],'/')
-                print(path)
                 self.label = QLabel(self)
                 self.pixmap = QPixmap(path)        
                 self.label.setPixmap(self.pixmap)
                 scaler = 0.6
                 # Optional,resize label to image size
-                self.label.resize(self.pixmap.width()*scaler,
-                                self.pixmap.height()*scaler)
+                self.label.resize(int(self.pixmap.width()*scaler),int(self.pixmap.height()*scaler))
                 self.label.setScaledContents(True)
                 self.label.move(100,30)
                 self.text_label.adjustSize()
@@ -518,9 +510,8 @@ class Win_popup(QMainWindow):
         else:
             self.text_label = QLabel(f"You have lost better luck next time!",self)
             self.text_label.move(165,10)                        
-        print(won)
         self.okbutton = QPushButton(parent=self,text="OK")
-        self.okbutton.move(self.width()/2-self.okbutton.width()/2,440)
+        self.okbutton.move(int(self.width()/2-self.okbutton.width()/2),int(440))
         self.okbutton.clicked.connect(self.close)
         self.okbutton.keyPressEvent = self.keyPressEvent
 
@@ -535,7 +526,6 @@ class Win_popup(QMainWindow):
 
     def closeEvent(self,event):
         self.game.ankiwin = trainer_xp_window(self.game)
-        print(event)
 
         
     def keyPressEvent(self,event):
