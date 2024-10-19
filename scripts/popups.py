@@ -51,10 +51,12 @@ class TrainerCustomizationWindow(QMainWindow):
 		self.gender_button.addItems(['Male', 'Female'])
 		self.gender_button.move(330, 20)
 		self.gender_button.activated.connect(self.update_clothes)
-		self.gender_button.setCurrentText(get_data().get('gender', 'Male')) 
+		self.gender_button.setCurrentText(get_data().get('gender', 'Male'))
 		self.paths = [os.path.join(self.basepath, 'Char Body'), os.path.join(self.basepath, 'Equips'), os.path.join(self.basepath, 'Clothes'), os.path.join(self.basepath, 'Feet'),os.path.join(self.basepath, 'Left Hand'),os.path.join(self.basepath, 'Right Hand'),os.path.join(self.basepath, 'HeadWear')]
 		for path in os.listdir(os.path.join(self.basepath, self.gender_button.currentText())):
 			self.paths.append(os.path.join(self.basepath, self.gender_button.currentText(), path))        
+		self.unlocked = get_data().get('unlocked_items', [[0] for path in self.paths])
+		change_data('unlocked_items', self.unlocked)
 		self.create_items()
 		self.indicies = get_data().get('indicies', []) or [0 for i in range(len(self.items))]
 		self.char_button = QPushButton(self)
@@ -129,10 +131,12 @@ class TrainerCustomizationWindow(QMainWindow):
 				
 
 	def update_buttons(self, button_index):
-		self.indicies[button_index] = (self.indicies[button_index] + 1) % len(self.items[button_index])
+		self.indicies[button_index] = (self.unlocked[button_index].index(self.indicies[button_index]) + 1) % len(self.unlocked[button_index])
 		self.buttons[button_index].setStyleSheet(TrainerCustomizationWindow.load_sheet(self.indicies[button_index], self.paths[button_index].split('\\')[-2-(1 if button_index >6 else 0):], self.items[button_index])) 
 		self.update_char()
 		change_data('indicies', self.indicies)
+
+
 def load_sheet(i, folders='heads', names:list[str]=Ankimons):
 	cwd = os.getcwd()+os.sep[0]
 	path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",folders,f"{names[i]}.png"if 'png' not in names[i].lower() else names[i]).replace(cwd, '').replace(os.sep[0],'/')
@@ -463,9 +467,8 @@ class trainer_manager:
 		path = os.path.join(cwd, 'assets', f'trainer.png')
 		for i in range(2):
 			self.buttons.append(QPushButton(win))
-			self.buttons[i].setGeometry(int(220+i*220),int(90+i*50),int(150-i*100),int(150-i*100+int(not i)*30))
+			self.buttons[i].setGeometry(int(220+i*220),int(90+i*50),int(150-i*70),int(150-i*70+int(not i)*30))
 			sheet = image_to_base64(path).replace('gif','png')
-			print(sheet)
 			self.buttons[i].setStyleSheet(f'''border-image : url({sheet});
 					
 					height: 100%;
@@ -525,14 +528,13 @@ class trainer_manager:
 	def update_ui(self):
 		for i, button in enumerate(self.buttons):
 			try:
-				path = os.path.join(cwd, 'assets', f'trainer.png')
-				sheet = image_to_base64(path).replace('gif','png')
-				button.setStyleSheet(f'''border-image : url({sheet});
-						
-						height: 100%;
-						width: 100%;                             
-						background-position: center;
-						background-REPEAT: no-repeat;                           ''')
+				if i:
+					index = get_data().get('indicies', [0 for i in range(8)])[1]
+					sheet = TrainerCustomizationWindow.load_sheet(index ,['Chars and Equips','Equips'],os.listdir(os.path.join(cwd, 'assets', 'Chars and Equips/Equips')))
+					button.setStyleSheet(sheet)
+					pass
+				else:button.setStyleSheet(load_sheet(0,'',['trainer.png']))
+
 			except Exception as e:
 				print(e)
 		
