@@ -475,8 +475,12 @@ class trainer_manager:
 					width: 100%;                             
 					background-position: center;
 					background-REPEAT: no-repeat;                           ''')
-		if data.get('default_trainer', None):
-			self.selected = [data['default_trainer']]
+			self.buttons[i].clicked.connect(partial(self.clicked, i))
+		self.ability_texts = [f"placeholder {i}" for i in range(len(get_data().get('indicies')))]
+		self.ability_label = QLabel(win, text=self.ability_texts[0])
+		self.ability_label.setFont(QFont('Arial', 10))
+		self.ability_label.adjustSize()
+		self.ability_label.move(443,235)
 		self.update_ui()
 
 		# show all the widgets
@@ -519,11 +523,14 @@ class trainer_manager:
 
 
 	def clicked(self, index):
-		self.counter += 1
-		if self.counter > len(self.buttons):	
-			if index == 1:
-				self.things.append(item_selector(self, index))		
-			
+		print(index)
+		if index == 1:
+			indicies = get_data().get('indicies')
+			unlocked_items = get_data().get('unlocked_items')[1]
+			indicies[1] = (unlocked_items.index(indicies[1]) + 1) % len(unlocked_items)
+			change_data('indicies', indicies)
+			self.ability_label.setText(self.ability_texts[indicies[1]])
+			self.update_ui()
 
 	def update_ui(self):
 		for i, button in enumerate(self.buttons):
