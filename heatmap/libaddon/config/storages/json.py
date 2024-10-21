@@ -102,7 +102,6 @@ class JSONConfigStorage(ConfigStorage):
         return path
 
     def _readData(self, path: Path) -> Optional[dict]:
-        print(path)
         try:
             with path.open(encoding="utf-8") as f:
                 return json.load(f)
