@@ -29,6 +29,7 @@ stats = manager()
 def bridge(handled, message: str, context):
     global started
     print(message)
+    print(mw.col.get_config('ankimonheatmap'))
     for message in message.split(' '):
         print(message)
         if message == "start_rpg":
@@ -40,7 +41,7 @@ def bridge(handled, message: str, context):
             from scripts import utils
             attribute_popup(mw.win, True if utils.started else False)
         if message.lower() == 'decks':
-            pass
+            print(get_cards_to_review())
 
         if message in ["ease1", "ease2", "ease3", "ease4"]:
             add_msg_to_db(message)
@@ -68,13 +69,13 @@ def get_cards_to_review():
     due_tree = mw.col.sched.deck_due_tree()
     return due_tree.review_count + due_tree.learn_count + due_tree.new_count
 
-
 def on_profile_open():
     center_widget(mw.window())
     mw.window().showMaximized()
     data = json.load(open(anki_data_path, 'r'))
     data['nb_cards_to_review_today'] = get_cards_to_review()
     json.dump(data, open(anki_data_path, "w"))
+    
     
 
 
