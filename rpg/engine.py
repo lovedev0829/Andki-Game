@@ -41,6 +41,7 @@ class Mob:
     def __init__(self, i, j, name, element, owner: "Player", screen, map_t, trainer:Trainer, engine, health=100):
         self.i = i
         self.j = j
+        print(trainer)
         self.old_pos = [i, j]
         self.engine = engine
         self.name = name

@@ -544,7 +544,7 @@ class trainer_manager:
 		path = os.path.join(cwd, 'assets', f'trainer.png')
 		for i in range(2):
 			self.buttons.append(QPushButton(win))
-			self.buttons[i].setGeometry(int(220+i*220),int(90+i*50),int(150-i*70),int(150-i*70+int(not i)*30))
+			self.buttons[i].setGeometry(int(220+i*270),int(90+i*50),int(150-i*70),int(150-i*70+int(not i)*30))
 			sheet = image_to_base64(path).replace('gif','png')
 			self.buttons[i].setStyleSheet(f'''border-image : url({sheet});
 					
@@ -553,11 +553,11 @@ class trainer_manager:
 					background-position: center;
 					background-REPEAT: no-repeat;                           ''')
 			self.buttons[i].clicked.connect(partial(self.clicked, i))
-		self.ability_texts = ["Dragon amulet: increase ankimon's attack by 10%%", "Shadow belt: increase ankimon's defense by 10%%", "Windfan: increases movement by a tile", "Steel bracelet: increase the damage of water ankimon's by 30%%", "Firestone: increase the damage of fire ankimon's by 30%%", "Frost crystal: increase the damage of ice ankimon's by 30%%", "Silver dagger: increas ankimon's attack by 20%%", "Shield: increas ankimon's defense by 25%%", "Eagle eye: increase chance for encountering wild ankimons by 25%%", "Lighting ring: increases movement by two tiles"] 
-		self.ability_label = QLabel(win, text=self.ability_texts[0])
+		self.ability_texts = ["Dragon amulet: increase ankimon's attack by 10%", "Shadow belt: increase ankimon's defense by 10%", "Windfan: increases movement by a tile", "Steel bracelet: increase the damage of water\n	    ankimon's by 30%", "Firestone: increase the damage of fire\n	 ankimon's by 30%", "Frost crystal: increase the damage of ice \n	 ankimon's by 30%", "Silver dagger: increas ankimon's attack by 20%", "Shield: increas ankimon's defense by 20%", "Eagle eye: increase chance for encountering wild \n	   ankimons by 25%", "Lighting ring: increases movement by two tiles"] 
+		self.ability_label = QLabel(win, text=self.ability_texts[get_data().get('indicies')[1]])
 		self.ability_label.setFont(QFont('Arial', 10))
 		self.ability_label.adjustSize()
-		self.ability_label.move(443,235)
+		self.ability_label.move(383,235)
 		self.update_ui()
 
 		# show all the widgets
@@ -565,6 +565,7 @@ class trainer_manager:
 		self.okbutton.setGeometry(int(265),int(320),int(141),int(51))
 		self.okbutton.clicked.connect(self.ok)
 		self.win.paintEvent = self.paintEvent			
+		self.center_text()
 		win.show()
 	
 
@@ -597,26 +598,27 @@ class trainer_manager:
 		mw.win = QMainWindow()
 		attribute_popup(mw.win)
 		
-
+	def center_text(self):
+		self.ability_label.move(int(540-self.ability_label.width()/2), 235)
 
 	def clicked(self, index):
-		print(index)
 		if index == 1:
 			indicies = get_data().get('indicies')
 			unlocked_items = get_data().get('unlocked_items')[1]
 			indicies[1] = (unlocked_items.index(indicies[1]) + 1) % len(unlocked_items)
 			change_data('indicies', indicies)
-			self.ability_label.setText(self.ability_texts[indicies[1]])
+			self.center_text()
 			self.update_ui()
 
 	def update_ui(self):
 		for i, button in enumerate(self.buttons):
 			try:
 				if i:
-					index = get_data().get('indicies', [0 for i in range(8)])[1]
+					index = get_data().get('indicies', [0 for i in range(10)])[1]
 					sheet = TrainerCustomizationWindow.load_sheet(index ,['Chars and Equips','Equips'],os.listdir(os.path.join(cwd, 'assets', 'Chars and Equips/Equips')))
 					button.setStyleSheet(sheet)
-					pass
+					self.ability_label.setText(self.ability_texts[index])
+					self.ability_label.adjustSize()
 				else:button.setStyleSheet(load_sheet(0,'',['trainer.png']))
 
 			except Exception as e:
