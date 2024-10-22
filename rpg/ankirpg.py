@@ -14,7 +14,7 @@ from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode, Trainer, fps_counter
 from rpg.popups import SaveWindow, ActionWindow, trainer_popup, Win_popup, WildAnkimon, learned_card_checker, center_win
-
+from rpg.utils import handle_item
 from pathlib import Path
 from aqt import mw
 from scripts.utils import center_widget, get_data, change_data
@@ -31,7 +31,6 @@ data_path = os.path.join(parent, 'anki_data.json')
 info = pygame.display.Info()
 size = info.current_w,info.current_h
 BOUNDING_RECT = pygame.Rect(-600+info.current_w/3, -700, 1000, 200)
-
 class PlayerType(Enum):
     Human = 1
     Bot = 2
@@ -57,6 +56,7 @@ class AnkiRPG:
         self.clock = pygame.time.Clock()
         self.running = False
         self.map = Pytmx(self.win)
+        self.wild_ankimon_chance = 0.1
         self.highlighted_tile = None
         self.ankimons = ankimons
         self.ankiwin = None
@@ -95,6 +95,7 @@ class AnkiRPG:
         self.game_over = False
         self.savewin = None
         self.completed_cards = self.learned_cards
+        handle_item(self, self.engine)
         if load_save:
             self.load()
 
@@ -207,7 +208,7 @@ class AnkiRPG:
                             self.ankiwin = None
                             self.completed_cards = self.learned_cards
                             self.last_move = time.time()
-                            if random.random() <= 0.2:
+                            if random.random() <= self.wild_ankimon_chance:
                                 self.ankiwin = WildAnkimon(int(Costs.WILD.value*self.MULTIPLIER), coords, self)
                                 # raise NotImplementedError('didnt implement wild ankimons')
                         elif self.ankiwin.action == Actions.ATTACK:

@@ -1,9 +1,8 @@
 from __future__ import annotations
 import datetime
-import json
 import os.path
 import sys
-
+import json
 import aqt.qt
 sys.path.append(os.path.dirname(__file__))
 import aqt.utils
@@ -12,7 +11,7 @@ from aqt.qt import *
 import streakgame.main
 from rpg.main import mainloop
 from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, xp_to_lvl, get_data, manager
-from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyChoosingWindow, TrainerCustomizationWindow
+from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyChoosingWindow, TrainerCustomizationWindow, trainer_xp_window
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
 from scripts.menu import menusetup
@@ -41,8 +40,10 @@ def bridge(handled, message: str, context):
             from scripts import utils
             attribute_popup(mw.win, True if utils.started else False)
         if message.lower() == 'decks':
-            print(get_cards_to_review())
-
+            cards_learned = get_data().get('nb_cards_to_review_today') - get_cards_to_review() 
+            if cards_learned:
+                mw.win = trainer_xp_window(cards_learned)
+            
         if message in ["ease1", "ease2", "ease3", "ease4"]:
             add_msg_to_db(message)
     return handled

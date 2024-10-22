@@ -216,6 +216,83 @@ def run_class(_class):
 	mw.win = QMainWindow()
 	_class(mw.win)
 
+class trainer_xp_window(QMainWindow):
+	def __init__(self, cards_learned):
+		super().__init__()
+		self.counter = 0
+		self.setWindowTitle("AnkiNick-mon")        
+		self.ratio = .6
+		self.setFixedSize(700,400)
+		center_widget(self)
+		data = get_data()
+		self.trainers = TRAINERS
+		self.buttons : list[QPushButton] = []
+		self.item = data.get('item',None)
+		self.level = xp_to_lvl(data.get('trainer_xp',0))
+		self.set_ratio(self.level%1)
+		self.label = QLabel(self)
+		self.label.setText(f"""you have learned {cards_learned} cards and gained {cards_learned*10}xp for your trainer
+			lvl{int(self.level)}""")
+		self.label.setFont(QFont(self.label.font().toString(),15))
+		self.label.adjustSize()
+		self.label.move(int(self.width()/2-self.label.width()/2),int(5))
+		for i in range(1):
+			self.buttons.append(QPushButton(self))
+			self.buttons[i].animateClick()
+			self.buttons[i].setGeometry(int(260+i*220),int(90+i*50),int(150-i*100),int(180-i*100+int(not i)*30))
+			self.buttons[i].setStyleSheet(f'''border-image : url(assets/trainer.png);
+				
+				height: 100%;
+				width: 100%;                             
+				background-position: center;
+				background-REPEAT: no-repeat;                           ''')
+		self.update_ui()
+		# show all the widgets
+		self.okbutton = QPushButton(self,text="OK")
+		self.okbutton.setGeometry(QRect(265,320,141,51))
+		self.okbutton.clicked.connect(self.close)
+		
+
+		self.show()
+		
+
+	def set_ratio(self,ratio):
+		"""Sets the health ratio and updates the display."""
+		self.ratio = max(0,min(1,ratio))  # Ensure ratio is between 0 and 1
+		self.update()  # Trigger a repaint
+
+	def paintEvent(self,event):
+		painter = QPainter(self)
+		painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+		# Get current window size
+		current_width = int(self.width()//4)
+		current_height = 20
+		# Draw a border around the health bar
+		painter.setPen(QColor(0,0,0))
+
+		painter.drawRect(int(current_width*1.42),int(60),int(current_width-1),current_height-1)
+		# Draw foreground (filled part of the health bar based on ratio)
+		painter.setBrush(QBrush(Qt.GlobalColor.green))
+		filled_width = int(current_width * self.ratio)
+		painter.drawRect(int(current_width*1.42),60,filled_width,current_height)
+
+	def update_ui(self):
+		for i,button in enumerate(self.buttons):
+			try:
+				if i == 1:
+					if self.item:
+						button.setStyleSheet(load_sheet(ITEMS.index(self.item),'items',ITEMS))
+						change_data("item",self.item)				
+				else:
+					button.setStyleSheet(load_sheet(0,'',['trainer.png']))
+					change_data("default_trainer",self.selected[0])
+			except Exception as e:
+				print(e)
+				
+	def close(self,event):
+		pygame.quit()
+		mw.window().showMaximized()
 
 class attribute_popup:
 	def __init__(self, win:QMainWindow):
@@ -476,7 +553,7 @@ class trainer_manager:
 					background-position: center;
 					background-REPEAT: no-repeat;                           ''')
 			self.buttons[i].clicked.connect(partial(self.clicked, i))
-		self.ability_texts = [f"placeholder {i}" for i in range(len(get_data().get('indicies')))]
+		self.ability_texts = ["Dragon amulet: increase ankimon's attack by 10%%", "Shadow belt: increase ankimon's defense by 10%%", "Windfan: increases movement by a tile", "Steel bracelet: increase the damage of water ankimon's by 30%%", "Firestone: increase the damage of fire ankimon's by 30%%", "Frost crystal: increase the damage of ice ankimon's by 30%%", "Silver dagger: increas ankimon's attack by 20%%", "Shield: increas ankimon's defense by 25%%", "Eagle eye: increase chance for encountering wild ankimons by 25%%", "Lighting ring: increases movement by two tiles"] 
 		self.ability_label = QLabel(win, text=self.ability_texts[0])
 		self.ability_label.setFont(QFont('Arial', 10))
 		self.ability_label.adjustSize()

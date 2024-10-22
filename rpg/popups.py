@@ -413,8 +413,8 @@ class trainer_xp_window(QMainWindow):
         pygame.quit()
         self.game.ankiwin = None
         mw.window().showMaximized()
-
         del self.game
+
 class trainer_popup(QMainWindow):
     def __init__(self,cost,image_name):      
         super().__init__()

@@ -1,7 +1,7 @@
 import pygame
 import os
 import math
-
+from scripts.utils import get_data
 
 def throw(p1, p2, ratio, heigth=0):
     x_dist = p1[0] - p2[0]
@@ -38,6 +38,36 @@ def get_enclosing_rect(rect_list):
     
     return enclosing_rect
 
+def handle_item(game, engine):
+    item = get_data().get('indicies')[1]
+    if item == 0:
+        for mob in engine.player1_mobs:
+            mob.dmg *= 1.1
+    if item == 1:
+        for mob in engine.player1_mobs:
+            mob.defense *= 1.1
+    if item == 2:
+        engine.player1_mobs[0].trainer.movement += 1
+    if item == 3:
+        for mob in engine.player1_mobs:
+            if mob.element.lower() == 'water':mob.dmg *= 1.3
+    if item == 4:
+        for mob in engine.player1_mobs:
+            if mob.element.lower() == 'fire':mob.dmg *= 1.3
+    if item == 5:
+        for mob in engine.player1_mobs:
+            if mob.element.lower() == 'ice':mob.dmg *= 1.3
+    if item == 6:
+        for mob in engine.player1_mobs:
+            mob.dmg *= 1.2
+    if item == 7:
+        for mob in engine.player1_mobs:
+            mob.defense *= 1.2
+    if item == 8:
+        game.wild_ankimon_chance += 0.1
+    if item == 9:
+        engine.player1_mobs[0].trainer.movement += 2
+    
 class Animation:
     def __init__(self, images, dur=5, loop=True):
         self.images = images
