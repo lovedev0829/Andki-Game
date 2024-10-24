@@ -156,7 +156,6 @@ class AnkiRPG:
         if self.ankiwin:
             if not self.game_over:
                 self.ankiwin.completed_cards = round((self.learned_cards - self.completed_cards) *10)
-
                 if isinstance(self.ankiwin, WildAnkimon):
                     self.ankiwin.text_label.setText(f"""   A wild ankimon has approached you, learn {self.ankiwin.required_cards} cards to capture it    
         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}""")

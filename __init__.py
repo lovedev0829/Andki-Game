@@ -41,6 +41,7 @@ def bridge(handled, message: str, context):
             attribute_popup(mw.win, True if utils.started else False)
         if message.lower() == 'decks':
             cards_learned = get_data().get('nb_cards_to_review_today') - get_cards_to_review() 
+            print(cards_learned)
             if cards_learned:
                 mw.win = trainer_xp_window(cards_learned)
             
