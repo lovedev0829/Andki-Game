@@ -46,8 +46,8 @@ PARENT_MODULE = 'AnkiNick-Mon'
 WEB_BASE = f"/_addons/{MODULE_ADDON}/web"
 WEB_BASE = f"/_addons/{PARENT_MODULE}/web"
 HTML_MAIN_ELEMENT: str = f"""
-<script type="text/javascript" src="{WEB_BASE}/d3.min.js"></script>
-<script type="text/javascript" src="{WEB_BASE}/anki-review-heatmap.js"></script>
+<script type="text/javascript" src="{WEB_BASE}/assets/d3.min.js"></script>
+<script type="text/javascript" src="{WEB_BASE}/assets/anki-review-heatmap.js"></script>
 
 <script>
 var rhPlatform = "{PLATFORM}";

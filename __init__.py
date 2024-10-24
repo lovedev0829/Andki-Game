@@ -27,7 +27,6 @@ stats = manager()
 
 def bridge(handled, message: str, context):
     global started
-    print(message)
     print(mw.col.get_config('ankimonheatmap'))
     for message in message.split(' '):
         print(message)
@@ -92,7 +91,7 @@ def update_streak_btn_js(
     path = os.path.join(cwd, "assets", "ui","Farm.gif")
     base64_image = image_to_base64(path)
     web_content.body += get_html(base64_image, "start_streak")
-mw.addonManager.setWebExports(__name__, r"web/.*")
+mw.addonManager.setWebExports(__name__, r"web/assets/.*")
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
