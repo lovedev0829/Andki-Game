@@ -27,7 +27,6 @@ stats = manager()
 
 def bridge(handled, message: str, context):
     global started
-    print(mw.col.get_config('ankimonheatmap'))
     for message in message.split(' '):
         print(message)
         if message == "start_rpg":
@@ -41,8 +40,8 @@ def bridge(handled, message: str, context):
         if message.lower() == 'decks':
             cards_learned = get_data().get('nb_cards_to_review_today') - get_cards_to_review() 
             print(get_data().get('nb_cards_to_review_today') , get_cards_to_review() )
-            if cards_learned:
-                mw.win = trainer_xp_window(cards_learned)
+            if cards_learned:0
+            mw.win = trainer_xp_window(cards_learned)
             
         if message in ["ease1", "ease2", "ease3", "ease4"]:
             add_msg_to_db(message)
