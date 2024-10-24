@@ -34,7 +34,7 @@ Static web components and templates
 """
 
 from .libaddon.platform import MODULE_ADDON, PLATFORM
-
+import os
 CSS_DISABLE_HEATMAP = "rh-disable-heatmap"
 CSS_DISABLE_STATS = "rh-disable-stats"
 CSS_PLATFORM_PREFIX = "rh-platform"
@@ -44,10 +44,10 @@ CSS_VIEW_PREFIX = "rh-view"
 PARENT_MODULE = 'AnkiNick-Mon'
 
 WEB_BASE = f"/_addons/{MODULE_ADDON}/web"
-WEB_BASE = f"/_addons/{PARENT_MODULE}/web"
+WEB_BASE = f"/_addons/{PARENT_MODULE}/assets/web"
 HTML_MAIN_ELEMENT: str = f"""
-<script type="text/javascript" src="{WEB_BASE}/assets/d3.min.js"></script>
-<script type="text/javascript" src="{WEB_BASE}/assets/anki-review-heatmap.js"></script>
+<script type="text/javascript" src="{os.path.join(WEB_BASE,'d3.min.js')}"></script>
+<script type="text/javascript" src="{os.path.join(WEB_BASE,'anki-review-heatmap.js')}"></script>
 
 <script>
 var rhPlatform = "{PLATFORM}";
@@ -67,21 +67,21 @@ HTML_HEATMAP: str = f"""
         </div>
         <div class="aligncenter">
             <div title="Go back\n(Shift-click for first year)" onclick="reviewHeatmap.onHmNavigate(event, this, 'prev');" class="hm-btn">
-                <img height="10px" src="{WEB_BASE}/assets/left.svg" />
+                <img height="10px" src="{os.path.join(WEB_BASE,"left.svg")}" />
             </div>
             <div title="Today" onclick="reviewHeatmap.onHmHome(event, this);" class="hm-btn">
-                <img height="10px" src="{WEB_BASE}/assets/circle.svg" />
+                <img height="10px" src="{os.path.join(WEB_BASE,"circle.svg")}" />
             </div>
             <div title="Go forward\n(Shift-click for last year)" onclick="reviewHeatmap.onHmNavigate(event, this, 'next');" class="hm-btn">
-                <img height="10px" src="{WEB_BASE}/assets/right.svg" />
+                <img height="10px" src="{os.path.join(WEB_BASE,"right.svg")}" />
             </div>
         </div>
         <div class="alignright">
             <div class="hm-btn opts-btn" title="Options" onclick="reviewHeatmap.onHmOpts(event, this);">
-                <img src="{WEB_BASE}/assets/options.svg" />
+                <img src="{os.path.join(WEB_BASE,"options.svg")}" />
             </div>
             <div class="hm-btn opts-btn" title="Support this add-on" onclick="reviewHeatmap.onHmContrib(event, this);">
-                <img src="{WEB_BASE}/assets/heart_bw.svg" />
+                <img src="{os.path.join(WEB_BASE,"heart_bw.svg")}" />
             </div>
         </div>
         <div style="clear: both;">&nbsp;</div>
