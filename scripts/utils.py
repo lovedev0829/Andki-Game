@@ -51,15 +51,10 @@ def process_file(a:aqt.reviewer.Reviewer, b, c):
     if 'trainer_xp' in anki_data:
         anki_data['trainer_xp'] += 1
         prize()
-
-        
     else:
         anki_data['trainer_xp'] = 1
     if "time_ordinal" not in anki_data or anki_data["time_ordinal"] != today_ordinal:
         anki_data["time_ordinal"] = today_ordinal
-        anki_data["nb_cards_learned_today"] = 1
-    else:
-        anki_data["nb_cards_learned_today"] += 1
     if 'moves' not in anki_data:
         anki_data['moves'] = anki_data['nb_cards_learned_today']
         json.dump(anki_data, open(anki_data_path, 'w'))

@@ -291,9 +291,7 @@ class trainer_xp_window(QMainWindow):
 				print(e)
 				
 	def close(self,event):
-		pygame.quit()
-		mw.window().showMaximized()
-
+		mw.win = None
 class attribute_popup:
 	def __init__(self, win:QMainWindow):
 		self.counter = 0

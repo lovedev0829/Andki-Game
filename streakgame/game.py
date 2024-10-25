@@ -171,11 +171,11 @@ class Game:
     def load_anki_data(self):
         if not os.path.exists(anki_data_path):
             self.anki_data_json = {"time_ordinal": datetime.today().toordinal(),
-                                   "nb_cards_to_review_today": 0,
+                                   "cards_to_review": 0,
                                    "nb_cards_learned_today": 0}
             json.dump(self.anki_data_json, open(anki_data_path, "w"))
         self.anki_data_json = json.load(open(anki_data_path, "r"))
-        self.learning_indicator.set_nb_cards_total(self.anki_data_json["nb_cards_to_review_today"])
+        self.learning_indicator.set_nb_cards_total(self.anki_data_json["cards_to_review"])
 
     
         due_tree = mw.col.sched.deck_due_tree()

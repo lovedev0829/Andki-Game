@@ -38,9 +38,9 @@ def bridge(handled, message: str, context):
             from scripts import utils
             attribute_popup(mw.win, True if utils.started else False)
         if message.lower() == 'decks':
-            cards_learned = get_data().get('nb_cards_to_review_today') - get_cards_to_review() 
-            print(get_data().get('nb_cards_to_review_today') , get_cards_to_review() )
-            if cards_learned:0
+            cards_learned = get_data().get('cards_to_review') - get_cards_to_review() 
+            print(get_data().get('cards_to_review') , get_cards_to_review() )
+            if cards_learned:change_data('cards_to_review', get_cards_to_review())
             mw.win = trainer_xp_window(cards_learned)
             
         if message in ["ease1", "ease2", "ease3", "ease4"]:
@@ -73,7 +73,7 @@ def on_profile_open():
     center_widget(mw.window())
     mw.window().showMaximized()
     data = json.load(open(anki_data_path, 'r'))
-    data['nb_cards_to_review_today'] = get_cards_to_review()
+    data['cards_to_review'] = get_cards_to_review()
     json.dump(data, open(anki_data_path, "w"))
     
     
