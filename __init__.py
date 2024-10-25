@@ -90,10 +90,12 @@ def update_streak_btn_js(
     path = os.path.join(cwd, "assets", "ui","Farm.gif")
     base64_image = image_to_base64(path)
     web_content.body += get_html(base64_image, "start_streak")
-mw.addonManager.setWebExports(__name__, r"assets/.*")
+def _(x, y):
+    mw.addonManager.setWebExports(__name__, r"assets/.*")
+    import heatmap
 gui_hooks.profile_did_open.append(on_profile_open)
 gui_hooks.reviewer_did_answer_card.append(process_file)
 aqt.gui_hooks.overview_will_render_content.append(add_btn)
 aqt.gui_hooks.webview_did_receive_js_message.append(bridge)
+gui_hooks.webview_will_set_content.append(_)
 gui_hooks.webview_will_set_content.append(update_streak_btn_js)
-import heatmap
