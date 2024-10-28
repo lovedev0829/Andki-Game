@@ -27,6 +27,7 @@ stats = manager()
 
 def bridge(handled, message: str, context):
     global started
+    print(get_cards_to_review())
     for message in message.split(' '):
         print(message)
         if message == "start_rpg":
