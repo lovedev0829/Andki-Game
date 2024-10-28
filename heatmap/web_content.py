@@ -45,6 +45,7 @@ PARENT_MODULE = 'AnkiNick-Mon'
 
 WEB_BASE = f"/_addons/{MODULE_ADDON}/web"
 WEB_BASE = f"/_addons/{PARENT_MODULE}/assets/web"
+print(f"{WEB_BASE}/d3.min.js")
 HTML_MAIN_ELEMENT: str = f"""
 <script type="text/javascript" src="{WEB_BASE}/d3.min.js"></script>
 <script type="text/javascript" src="{WEB_BASE}/anki-review-heatmap.js"></script>
