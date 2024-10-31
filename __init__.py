@@ -24,12 +24,10 @@ size = [300,300]
 
 started = False
 stats = manager()
-
 def bridge(handled, message: str, context):
     global started
     print(get_cards_to_review())
     for message in message.split(' '):
-        print(message)
         if message == "start_rpg":
             start_rpg()
         if message == "start_streak":
@@ -39,10 +37,10 @@ def bridge(handled, message: str, context):
             from scripts import utils
             attribute_popup(mw.win, True if utils.started else False)
         if message.lower() == 'decks':
-            cards_learned = get_data().get('cards_to_review') - get_cards_to_review() 
-            print(get_data().get('cards_to_review') , get_cards_to_review() )
-            if cards_learned:change_data('cards_to_review', get_cards_to_review())
-            mw.win = trainer_xp_window(cards_learned)
+            cards_learned = get_data().get('trainer_xp') - current_xp
+            if cards_learned:
+                change_data('cards_to_review', get_cards_to_review())
+                mw.win = trainer_xp_window(cards_learned)
             
         if message in ["ease1", "ease2", "ease3", "ease4"]:
             add_msg_to_db(message)
@@ -79,7 +77,7 @@ def on_profile_open():
     
     
 
-
+current_xp = get_data().get('trainer_xp')
 cwd = os.path.dirname(__file__)
 path = os.path.join(cwd, f"assets","image.png"    )
 # Inject a button in the deck view

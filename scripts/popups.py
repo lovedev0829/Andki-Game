@@ -231,7 +231,7 @@ class trainer_xp_window(QMainWindow):
 		self.level = xp_to_lvl(data.get('trainer_xp',0))
 		self.set_ratio(self.level%1)
 		self.label = QLabel(self)
-		self.label.setText(f"""you have learned {cards_learned} cards and gained {cards_learned*10}xp for your trainer
+		self.label.setText(f"""you have learned {cards_learned} cards and gained {cards_learned}xp for your trainer
 			lvl{int(self.level)}""")
 		self.label.setFont(QFont(self.label.font().toString(),15))
 		self.label.adjustSize()
