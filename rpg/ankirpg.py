@@ -183,16 +183,16 @@ class AnkiRPG:
                 else:
                     if self.ankiwin.action == Actions.DEFEND:
                         self.ankiwin.label.setText(f"""Damn, someone is attacking you! Defend yourself by learning {self.ankiwin.required_cards} cards!!!
-                        
-                                                                        
+                                
                                         {self.ankiwin.completed_cards}/{self.ankiwin.required_cards}                                       """)
                         if not hasattr(self.ankiwin, 'skipbutton'):
                             self.ankiwin.skipbutton = QPushButton(self.ankiwin)
-                            self.ankiwin.skipbutton.setText('Skip the Cards and get full damage')
+                            self.ankiwin.skipbutton.setText('Skip the Cards and take full damage')
                             self.ankiwin.skipbutton.adjustSize()
-                            self.ankiwin.skipbutton.move(int(self.ankiwin.width()/2),int(160)   - int(self.ankiwin.height()/2))
+                            self.ankiwin.skipbutton.move(int(self.ankiwin.width()/2),int(250) - int(self.ankiwin.height()/2))
                             self.ankiwin.skipbutton.clicked.connect(lambda : self.engine.perform_attack(self.ankiwin.coords[0], self.ankiwin.coords[1]) and self.ankiwin.close())
                             self.ankiwin.skipbutton.show()
+                            self.ankiwin.skipbutton.setChecked(False)
                     elif self.ankiwin.action:
                         self.ankiwin.label.setText(f"""You want to {self.ankiwin.action.value}, give me {self.ankiwin.required_cards} cards!!!
                         
