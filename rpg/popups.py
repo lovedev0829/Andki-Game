@@ -6,7 +6,7 @@ import aqt
 from aqt import mw
 import random
 from functools import partial
-from scripts.utils import get_data,change_data,anki_data_path,xp_to_lvl
+from scripts.utils import get_data,change_data,anki_data_path,xp_to_lvl, activate_full_screen
 from scripts.constants import *
 from scripts.constants import trainer_xp
 from scripts.popups import center_widget
@@ -510,6 +510,14 @@ class Win_popup(QMainWindow):
         else:
             self.text_label = QLabel(f"You have lost better luck next time!",self)
             self.text_label.move(165,10)                        
+            self.label = QLabel(self)
+            self.pixmap = QPixmap(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'trainers', f'{game.trainers[1].name}.png'))
+            self.label.setPixmap(self.pixmap)
+            scaler = 3.6
+            # Optional,resize label to image size
+            self.label.resize(int(self.pixmap.width()*scaler),int(self.pixmap.height()*scaler))
+            self.label.setScaledContents(True)
+            self.label.move(int(self.width()/2 - self.label.width()/2),int(self.height()/2 - self.label.height()/2))
         self.okbutton = QPushButton(parent=self,text="OK")
         self.okbutton.move(int(self.width()/2-self.okbutton.width()/2),int(440))
         self.okbutton.clicked.connect(self.close)
@@ -526,6 +534,7 @@ class Win_popup(QMainWindow):
 
     def closeEvent(self,event):
         self.game.ankiwin = trainer_xp_window(self.game)
+        activate_full_screen()
 
         
     def keyPressEvent(self,event):
