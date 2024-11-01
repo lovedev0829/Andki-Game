@@ -435,18 +435,18 @@ class trainer_popup(QMainWindow):
         self.text_label.adjustSize()
         self.text_label.move(10,15)
         # loading image
-        scaler = 1
+        scaler = 1.6
         
  
         cwd = os.getcwd()+os.sep[0]        
-        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets",'trainer.png').replace(cwd,'').replace(os.sep[0],'/')
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)),f"assets", "trainers" ,f'{image_name}').replace(cwd,'').replace(os.sep[0],'/')
         
         self.pixmap = QPixmap(path)        
         self.label.setPixmap(self.pixmap)
 
         # Optional,resize label to image size
-        self.label.resize(self.pixmap.width()*scaler,
-                        self.pixmap.height()*scaler)
+        self.label.resize(int(self.pixmap.width()*scaler),
+                          int(self.pixmap.height()*scaler))
         self.label.setScaledContents(True)
         self.label.move(380,20)
         if image_name.startswith('Scientist'):		
