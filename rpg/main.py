@@ -34,7 +34,7 @@ def mainloop(ankimons, loadsave=False):
 
 
     if not difficulty:
-        trainers = [Trainer(trainer_name, 1,1,0), Trainer(bot_trainer ,*STATS[bot_trainer])]
+        trainers = [Trainer(trainer_name, 1,1,0), Trainer(bot_trainer ,20,20,20)]
     mw.window().setGeometry(int(0),int(yoffset),int(size[0]/2),int(size[1]-yoffset*2.3))
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (size[0]/2,yoffset)
     
