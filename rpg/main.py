@@ -30,7 +30,7 @@ def mainloop(ankimons, loadsave=False):
     # default_stats[1] += num * 0.1
     difficulty = get_data().get('Difficulty', 1)
     lvl = xp_to_lvl(get_data().get('trainer_xp'))
-    trainers = [Trainer(trainer_name, *[stat+(lvl/10)  for stat in default_stats[:2]]), Trainer(bot_trainer ,42,40,31)]
+    trainers = [Trainer(trainer_name, *[stat+(lvl/10)  for stat in default_stats[:2]]), Trainer(bot_trainer ,*[stat+(random.randint(int(lvl-2), int(lvl+10))/10) for stat in STATS[bot_trainer][:2]], STATS[bot_trainer][-1])]
 
 
     if not difficulty:
