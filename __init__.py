@@ -19,7 +19,6 @@ from scripts.menu import menusetup
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
-reset_data()
 size = [300,300]
 started = False
 stats = manager()
