@@ -585,11 +585,7 @@
     },
     "inventory": {},
     "cards_learned_today": 0,
-    "time": 739181,
-    "wallet": 110,
-    "buildings": [
-        "building_ice",
-        "building_jungle",
-        "building_water"
-    ]
+    "time": 739194,
+    "wallet": 100,
+    "buildings": []
 }

@@ -10,7 +10,7 @@ from aqt import gui_hooks, mw
 from aqt.qt import * 
 import streakgame.main
 from rpg.main import mainloop
-from scripts.utils import change_data, process_file, add_msg_to_db, add_btn, center_widget, get_html, image_to_base64, xp_to_lvl, get_data, manager
+from scripts.utils import * 
 from scripts.popups import rpg_popup, attribute_popup, LoginHandler, DifficultyChoosingWindow, TrainerCustomizationWindow, trainer_xp_window
 from aqt.deckbrowser import DeckBrowser
 from aqt.webview import WebContent
@@ -19,9 +19,8 @@ from scripts.menu import menusetup
 cwd = os.path.dirname(__file__)
 
 anki_data_path = os.path.join(cwd, "anki_data.json")
-
+reset_data()
 size = [300,300]
-
 started = False
 stats = manager()
 def bridge(handled, message: str, context):

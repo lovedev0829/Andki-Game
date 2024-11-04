@@ -7,7 +7,7 @@ from aqt import mw
 import base64
 import aqt.overview
 import aqt.reviewer
-from scripts.constants import anki_data_path, SCREENSIZE
+from scripts.constants import *
 from scripts.notification import Notification
 import math
 import pygame
@@ -61,8 +61,8 @@ def process_file(a:aqt.reviewer.Reviewer, b, c):
     else:
         anki_data['moves'] += 0.1
     
-
     json.dump(anki_data, open(anki_data_path, "w"))
+
 def activate_full_screen():
     mw.window().setGeometry(0,10,SCREENSIZE[0], SCREENSIZE[1])
 
@@ -176,6 +176,8 @@ def add_btn(
     path = os.path.join(cwd, f"assets", "ui","Chess.gif")
     content.table += get_html(image_to_base64(path), "start_rpg")
     
+def reset_data():
+    json.dump({"cards_to_review": 88, "default_ankimon": [], "time_ordinal": 739191, "nb_cards_learned_today": 0, "Unlocked_Ankimons": ["AnkiNick", "Beekeeper Alder King", "Primus Nephritico"], "trainer_xp": 0, "Difficulty": 1, "gender": "Male", "indicies": [0, 0, 0, 0, 0, 0, 0, 0, 0], "unlocked_items": [[0, 1], [0], [0], [0], [0], [0], [0], [0, 1, 2, 3], [0, 1, 2, 3]]}, open(anki_data_path, 'w'))
 
 class manager:
     def __init__(self) -> None:

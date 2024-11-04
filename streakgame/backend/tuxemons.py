@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional
 from scripts.constants import *
+from scripts.utils import get_data
 from pygame import Color
 import pygame
 from streakgame.boring import imgs
@@ -36,7 +37,7 @@ all_tuxemons = {
     "noctula": TuxemonType.water,
     "noctalo": TuxemonType.water,
 }
-default_tuxemons = UNLOCKED_ANKIMONS
+default_tuxemons = get_data().get("Unlocked_Ankimons")
 [
     "snowrilla",
     "metesaur",
@@ -128,13 +129,15 @@ class TuxemonInventory:
     def __init__(self, inventory: Inventory):
         self.tuxemons: dict[int, Tuxemon] = {}
         self.inventory = inventory
+        self.add_default_tuxemons()
 
     def add_tuxemon(self, t: Tuxemon):
         self.tuxemons[t.id] = t
 
     def add_default_tuxemons(self):
         for name in default_tuxemons:
-            self.add_tuxemon(Tuxemon(name))
+            if name not in self.tuxemons:
+                self.add_tuxemon(Tuxemon(name))
 
     def feed_tuxemon(self, tuxemon_id: int, index):
         tuxemon = self.tuxemons.get(tuxemon_id)
