@@ -178,6 +178,8 @@ def add_btn(
     
 def reset_data():
     json.dump({"cards_to_review": 88, "default_ankimon": [], "time_ordinal": 739191, "nb_cards_learned_today": 0, "Unlocked_Ankimons": ["AnkiNick", "Beekeeper Alder King", "Primus Nephritico"], "trainer_xp": 0, "Difficulty": 1, "gender": "Male", "indicies": [0, 0, 0, 0, 0, 0, 0, 0, 0], "unlocked_items": [[0, 1], [0], [0], [0], [0], [0], [0], [0, 1, 2, 3], [0, 1, 2, 3]]}, open(anki_data_path, 'w'))
+    json.dump({}, open(streak_ankimon_path, 'w'))
+    json.dump({}, open(streak_data_path, 'w'))
 
 class manager:
     def __init__(self) -> None:
