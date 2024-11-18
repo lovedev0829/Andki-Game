@@ -18,10 +18,10 @@ from scripts.constants import *
 def delete_win():
     mw.win = None
 
-def start_chess(ankimons:dict, load_save=False):
+def start_chess(ankimons:dict, load_save=False, multiplayer=False):
 	delete_win()
 	mw.web.eval("pycmd('study');")
-	mainloop(ankimons, load_save)
+	mainloop(ankimons, load_save, multiplayer)
 started = False
 
 Ankimons = UNLOCKED_ANKIMONS
@@ -200,6 +200,7 @@ class rpg_popup:
 		self.statusbar.setObjectName("statusbar")
 		choose_option.setStatusBar(self.statusbar)
 
+		self.pushButton_2.clicked.connect(lambda: run_class(trainer_manager, True) )
 		self.retranslateUi(choose_option)
 		QMetaObject.connectSlotsByName(choose_option)
 		choose_option.show()
@@ -208,13 +209,13 @@ class rpg_popup:
 		_translate = QCoreApplication.translate
 		choose_option.setWindowTitle(_translate("choose_option", "AnkiNick-mon"))
 		self.pushButton.setText(_translate("choose_option", "solo Adventure"))
-		self.pushButton_2.setText(_translate("choose_option", "challenge a friend"))
+		self.pushButton_2.setText(_translate("choose_option", "Multiplayer"))
 		self.okbutton.setText(_translate("choose_option", "ok"))
 		
 
-def run_class(_class):
+def run_class(_class, *args):
 	mw.win = QMainWindow()
-	_class(mw.win)
+	_class(mw.win, args)
 
 class trainer_xp_window(QMainWindow):
 	def __init__(self, cards_learned):
@@ -293,7 +294,7 @@ class trainer_xp_window(QMainWindow):
 	def close(self,event):
 		mw.win = None
 class attribute_popup:
-	def __init__(self, win:QMainWindow):
+	def __init__(self, win:QMainWindow, multiplayer):
 		self.counter = 0
 		# set the title
 		self.things = []
@@ -304,6 +305,7 @@ class attribute_popup:
 		center_widget(win)
 		data = get_data()
 		self.Ankimons = Ankimons
+		self.multiplayer = multiplayer
 		self.elements = ["Ice","Water","Fire"]
 		self.tempwin = None
 		self.buttons : list[QPushButton] = []
@@ -353,7 +355,7 @@ class attribute_popup:
 		started = True
 		dic = {self.selected[i]:self.elements[i] for i in range(3)}
 		if all(dic.keys()):
-			start_chess(dic)
+			start_chess(dic, self.multiplayer)
 
 
 	def clicked(self, index):
@@ -519,12 +521,13 @@ class LoginHandler:
 		widget.move(qr.topLeft())
 
 class trainer_manager:
-	def __init__(self, win:QMainWindow):
+	def __init__(self, win:QMainWindow, multiplayer=False):
 		self.counter = 0
 		# set the title
 		self.things = []
 		self.selected = [None]
 		win.setWindowTitle("AnkiNick-mon")        
+		self.multiplayer = multiplayer
 		self.ratio = .6
 		# setting the geometry of window
 		self.win = win
@@ -594,7 +597,7 @@ class trainer_manager:
 	def ok(self):
 		self.win.close()
 		mw.win = QMainWindow()
-		attribute_popup(mw.win)
+		attribute_popup(mw.win, self.multiplayer)
 		
 	def center_text(self):
 		self.ability_label.move(int(540-self.ability_label.width()/2), 235)

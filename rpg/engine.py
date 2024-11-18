@@ -3,7 +3,7 @@ from typing import Optional
 import images
 from rpg.ParticleSystem import EffectManager, Particle, Colors
 from rpg.utils import *
-from scripts.constants import streak_data_path
+from scripts.constants import streak_data_path, anki_data_path, streak_ankimon_path
 import pygame
 from scripts.utils import get_data
 from pygame import Color
@@ -209,7 +209,7 @@ class Mode(Enum):
 
 
 class Engine:
-    def __init__(self, free_places, ankimons: dict, screen, map_t, trainers:list[Trainer]):
+    def __init__(self, free_places, ankimons: dict, screen, map_t, trainers:list[Trainer], enemy_levels: list[int] = None):
         self.turn: Player = Player.Player1
         self.free_places: list[tuple[int, int]] = free_places  # List of (i, j) tuples
         self.player1_mobs: list[Mob] = []
@@ -229,25 +229,28 @@ class Engine:
                         s.set_colorkey((0,0,0))
                         s.blit(image, (0,0), biggest_rect)
                         animation.images[i] = s
-        names = list(ankimons.keys())
+        names = list(ankimons.keys()) 
+        if len(ankimons.keys()) == 3:
+            names.extend(ankimons.keys())
         if ankimons:
             self.add_mob(Mob(24, 21, names[0], ankimons[names[0]], Player.Player1, screen, map_t, trainers[0], self))
             self.add_mob(Mob(25, 21, names[1], ankimons[names[1]], Player.Player1, screen, map_t, trainers[0], self))
             self.add_mob(Mob(26, 21, names[2], ankimons[names[2]], Player.Player1, screen, map_t, trainers[0], self))
-            self.add_mob(Mob(17, 24, names[0], ankimons[names[0]], Player.Player2, screen, map_t, trainers[1], self))
-            self.add_mob(Mob(18, 24, names[1], ankimons[names[1]], Player.Player2, screen, map_t, trainers[1], self))
-            self.add_mob(Mob(21, 24, names[2], ankimons[names[2]], Player.Player2, screen, map_t, trainers[1], self))
+            self.add_mob(Mob(17, 24, names[0], ankimons[names[3]], Player.Player2, screen, map_t, trainers[1], self))
+            self.add_mob(Mob(18, 24, names[1], ankimons[names[4]], Player.Player2, screen, map_t, trainers[1], self))
+            self.add_mob(Mob(21, 24, names[2], ankimons[names[5]], Player.Player2, screen, map_t, trainers[1], self))
         
 
-        ankimon_data = json.load(open(streak_data_path, 'r'))
+        ankimon_data = json.load(open(streak_ankimon_path, 'r'))
         levels = [ankimon_data[anki].get('level') for anki in ankimon_data.keys()]
-        enemy_levels = [max(1, level + random.randint(-3,3)) for level in levels]
         for i, mob in enumerate(self.player1_mobs):
             mob.defense += 0.2*levels[i]
             mob.dmg += 0.2*levels[i]
-        for i, mob in enumerate(self.player2_mobs):
-            mob.defense += 0.2*enemy_levels[i]
-            mob.dmg += 0.2*enemy_levels[i]            
+        if not enemy_levels:
+            enemy_levels = [max(1, level + random.randint(-3,3)) for level in levels]
+            for i, mob in enumerate(self.player2_mobs):
+                mob.defense += 0.2*enemy_levels[i]
+                mob.dmg += 0.2*enemy_levels[i]            
         self.mode: Mode = Mode.Idle
         
         

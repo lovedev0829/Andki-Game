@@ -1,10 +1,16 @@
 import json
+from aqt.qt import *
+import aqt.utils
+import aqt
+from aqt import mw
 import os
 import random
 import threading
 import time
 from enum import Enum
 from typing import Optional
+import aqt
+from aqt.qt import *
 
 import pygame
 import pytmx
@@ -15,8 +21,10 @@ from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode
 from rpg.popups import SaveWindow, ActionWindow
+from rpg.network import Network
+from rpg.game import Game
 from pathlib import Path
-from aqt import mw
+from aqt import *
 from scripts.utils import center_widget
 import pickle
 logging.basicConfig(level=logging.DEBUG)
@@ -35,7 +43,7 @@ class PlayerType(Enum):
     Bot = 2
 
 
-class AnkiRPG:
+class MultiPlayerRpg:
     def __init__(self, win:pygame.Surface, ankimons:dict, load_save:bool=False):
         self.win = win
         self.clock = pygame.time.Clock()
@@ -44,7 +52,12 @@ class AnkiRPG:
         self.highlighted_tile = None
         self.ankimons = ankimons
         self.ankiwin = None
-
+        self.network = Network()
+        self.p = self.network.getP()
+        
+        aqt.utils.showInfo("You're attacked Ankimon has been healed 10%, and you have gained 150xp")
+        
+        self.move = 0
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map)
         
         self.players = {
@@ -97,7 +110,6 @@ class AnkiRPG:
             if frame%10 == 0:
                 self.learned_card_checker()
             self.events()
-            self.bot_event()
             self.update()
             self.draw()
             # print(self.clock.get_fps())
@@ -136,26 +148,6 @@ class AnkiRPG:
             mob.img = mob.load_image()
             mob.screen = self.win
             mob.manager = EffectManager(self.win, self.map)
-
-    def bot_event(self):    
-        if self.players.get(self.engine.turn) != PlayerType.Bot:
-            return
-        if time.time() - self.last_move < 1.3:
-            return
-        # randomly move a mob
-        for mob in self.engine.player2_mobs:
-            i, j = mob.i, mob.j
-            accessible = self.engine.get_attackable_cases((i, j))
-            for move in random.choice([accessible]):
-                if self.engine.perform_attack((i, j), move):
-                    return True
-        if not mob:
-            return
-        mob = random.choice(self.engine.player2_mobs)
-        i, j = mob.i, mob.j
-        accessible = self.engine.get_moves((i, j))
-        move = random.choice(accessible)
-        self.engine.perform_move((i, j), move)
 
     def events(self):
         events = pygame.event.get()

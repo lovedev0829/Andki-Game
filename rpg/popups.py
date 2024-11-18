@@ -1,9 +1,9 @@
 import sys
 from aqt.qt import *
 import aqt.utils
-import pygame
 import aqt
 from aqt import mw
+import pygame
 import random
 from functools import partial
 from scripts.utils import get_data,change_data,anki_data_path,xp_to_lvl, activate_full_screen
