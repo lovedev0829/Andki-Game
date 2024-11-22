@@ -1,7 +1,10 @@
 import pygame
 import os
 import math
-from scripts.utils import get_data
+import json
+from scripts.constants import anki_data_path
+def get_data() -> dict:
+    return json.load(open(os.path.join(os.getcwd(),anki_data_path), 'r'))
 
 def throw(p1, p2, ratio, heigth=0):
     x_dist = p1[0] - p2[0]

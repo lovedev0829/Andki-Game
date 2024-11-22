@@ -21,7 +21,8 @@ def delete_win():
 def start_chess(ankimons:dict, load_save=False, multiplayer=False):
 	delete_win()
 	mw.web.eval("pycmd('study');")
-	mainloop(ankimons, load_save, multiplayer)
+	print(multiplayer)
+	mainloop(ankimons, load_save, multiplayer=multiplayer)
 started = False
 
 Ankimons = UNLOCKED_ANKIMONS
@@ -153,12 +154,32 @@ class rpg_popup:
 		self.setupUi(choose_option)
 
 	def setupUi(self, choose_option:QMainWindow):
+		global started
+		if  os.path.exists(q:=SAVE_PATH):
+			print('save path exists')
+			try:
+				AnkiRPG.check()
+				started = True
+			except Exception as e:
+				started = False
+		else:
+			started = False
+			
 		choose_option.setObjectName("choose_option")
 		choose_option.resize(598, 347)
 		self.pushButton = QPushButton(choose_option)
 		self.pushButton.setGeometry(int(90),int(100),int(161),int(51))
 		self.pushButton.setObjectName("pushButton")
 		self.pushButton.clicked.connect(lambda: run_class(trainer_manager))
+		if started:
+			self.pushButton.setGeometry(int(50),int(100),int(161),int(51))
+			self.pushButton_2.setGeometry(int(390),int(100),int(161),int(51))
+			self.continuebutton = QPushButton(choose_option,text="continue")
+			self.continuebutton.setGeometry(int(220),int(100),int(161),int(51))
+			self.continuebutton.setSizeIncrement(QSize(0, 0))
+			self.continuebutton.setBaseSize(QSize(0, 0))
+			self.continuebutton.setObjectName("continuebutton")
+			self.continuebutton.clicked.connect(lambda :start_chess({}, True))
 		self.pushButton_2 = QPushButton(choose_option)
 		self.pushButton_2.setGeometry(int(350),int(100),int(161),int(51))
 		self.pushButton_2.setSizeIncrement(QSize(0, 0))
@@ -171,26 +192,6 @@ class rpg_popup:
 		self.okbutton.setBaseSize(QSize(0, 0))
 		self.okbutton.setObjectName("okbutton")
 		self.okbutton.clicked.connect(delete_win)
-		global started
-		if  os.path.exists(q:=SAVE_PATH):
-			print('save path exists')
-			try:
-				AnkiRPG.check()
-				started = True
-			except Exception as e:
-				started = False
-		else:
-			started = False
-			
-		if started:
-			self.pushButton.setGeometry(int(50),int(100),int(161),int(51))
-			self.pushButton_2.setGeometry(int(390),int(100),int(161),int(51))
-			self.continuebutton = QPushButton(choose_option,text="continue")
-			self.continuebutton.setGeometry(int(220),int(100),int(161),int(51))
-			self.continuebutton.setSizeIncrement(QSize(0, 0))
-			self.continuebutton.setBaseSize(QSize(0, 0))
-			self.continuebutton.setObjectName("continuebutton")
-			self.continuebutton.clicked.connect(lambda :start_chess({}, True))
 
 		self.menubar = QMenuBar(choose_option)
 		self.menubar.setGeometry(int(0),int(0),int(598),int(21))
@@ -215,6 +216,8 @@ class rpg_popup:
 
 def run_class(_class, *args):
 	mw.win = QMainWindow()
+	print(args)
+	print(bool(args))
 	_class(mw.win, args)
 
 class trainer_xp_window(QMainWindow):
@@ -355,7 +358,8 @@ class attribute_popup:
 		started = True
 		dic = {self.selected[i]:self.elements[i] for i in range(3)}
 		if all(dic.keys()):
-			start_chess(dic, self.multiplayer)
+			print(f" multiplayer in attribute popup: {self.multiplayer}")
+			start_chess(dic, multiplayer=self.multiplayer)
 
 
 	def clicked(self, index):

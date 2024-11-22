@@ -5,7 +5,6 @@ from rpg.ParticleSystem import EffectManager, Particle, Colors
 from rpg.utils import *
 from scripts.constants import streak_data_path, anki_data_path, streak_ankimon_path
 import pygame
-from scripts.utils import get_data
 from pygame import Color
 import logging
 import time

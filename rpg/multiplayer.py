@@ -1,6 +1,7 @@
 import json
 from aqt.qt import *
 import aqt.utils
+from rpg.game import Game
 import aqt
 from aqt import mw
 import os
@@ -44,7 +45,7 @@ class PlayerType(Enum):
 
 
 class MultiPlayerRpg:
-    def __init__(self, win:pygame.Surface, ankimons:dict, load_save:bool=False):
+    def __init__(self, win:pygame.Surface, ankimons:dict, trainer):
         self.win = win
         self.clock = pygame.time.Clock()
         self.running = False
@@ -52,13 +53,8 @@ class MultiPlayerRpg:
         self.highlighted_tile = None
         self.ankimons = ankimons
         self.ankiwin = None
-        self.network = Network()
-        self.p = self.network.getP()
-        
-        aqt.utils.showInfo("You're attacked Ankimon has been healed 10%, and you have gained 150xp")
-        
+        self.trainer = trainer
         self.move = 0
-        self.engine = Engine(self.map.free_places, ankimons, self.win, self.map)
         
         self.players = {
             Player.Player1: PlayerType.Human,
@@ -83,9 +79,29 @@ class MultiPlayerRpg:
         self.selected_mon: Optional[Mob] = None
         self.counter = 0
         self.learned_cards = 0
+        self.network = Network()
+        self.game : Game= None
+        self.p = None
+        while self.p == None:
+            try:
+                self.p = int(self.network.getP())
+            except Exception as e:
+                print(e)
+            self.draw()
+            text = self.font.render("Server's are currently unavailable", True, (255,255,255))
+            self.win.blit(text, (self.win.get_width()/2-text.get_width()/2, 15))
+        
+            print(f"you are player: {self.p}")
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    mw.win = None
+                    return
+            pygame.display.flip()
+        self.idle()
+        
+        self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, trainers=trainer)
         self.learned_card_checker()
-        if load_save:
-            self.load()
 
 
     def learned_card_checker(self):
@@ -98,7 +114,42 @@ class MultiPlayerRpg:
         else:
             self.learned_cards = data['moves']
 
+    def idle(self):
+        while 1:
+            self.clock.tick(60)
+            self.draw()
+            pygame.display.flip()
+            self.game = self.network.send({'ankimons': self.ankimons, 'trainer':self.trainer})
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    mw.win = None
+                    return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pass
+            if self.game.data[not self.p]:
+                print(self.game.data)
+                print(f"not self.p: {int(not self.p)}")
+                print(f"self.p: {self.p}")
+                return 
     
+    def learn(self):
+        start_time = time.time()
+        while True:
+            self.clock.tick(60)
+            self.draw()
+            pygame.display.flip()
+            self.game = self.network.send({'cards_learned': self.cards_learned})
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    mw.win = None
+                    return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pass
+
     def run(self):
         self.running = True
         frame = 0 
@@ -112,43 +163,10 @@ class MultiPlayerRpg:
             self.events()
             self.update()
             self.draw()
+            pygame.display.flip()
             # print(self.clock.get_fps())
-        self.savewin = SaveWindow(self.save, self)
-        
-
-         
     
-    def save(self):
-        path = os.path.join(cwd, 'game.save')
-        for mob in self.engine.player1_mobs+self.engine.player2_mobs:
-            mob.img = None
-            mob.screen = None
-            mob.manager = None
-        data = {
-            "turn": self.engine.turn,
-            'player1_mobs' : self.engine.player1_mobs,
-            'player2_mobs' : self.engine.player2_mobs,
-            'ankiwin' : [self.ankiwin.action, self.ankiwin.required_cards, self.ankiwin.completed_cards] if self.ankiwin else None
-        }
-
         
-        pickle.dump(data, open(path, 'wb'))
-        
-    def load(self):
-        data = pickle.load(open(os.path.join(cwd, 'game.save'), 'rb'))
-        self.engine.turn = data['turn']
-        self.engine.player1_mobs = data['player1_mobs']
-        self.engine.player2_mobs = data['player2_mobs']
-        if data['ankiwin']:
-            self.ankiwin = ActionWindow(data['ankiwin'][0], data['ankiwin'][1])
-            self.ankiwin.completed_cards = data['ankiwin'][2]
-            self.completed_cards = data['ankiwin'][2]
-
-        for mob in self.engine.player1_mobs + self.engine.player2_mobs:
-            mob.img = mob.load_image()
-            mob.screen = self.win
-            mob.manager = EffectManager(self.win, self.map)
-
     def events(self):
         events = pygame.event.get()
         for event in events:
@@ -244,15 +262,24 @@ class MultiPlayerRpg:
                                 ], 2)
 
         # show whose turn it is
-        text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"
+        text = ""
+        try:
+            text = "Your turn" if self.engine.turn == Player.Player1 else "Opponent's turn"
+        except AttributeError:
+            if self.p != None:
+                text = "searching for oppenents"
+        
         text = self.font.render(text, True, Color("white"))
         self.win.blit(text, (self.win.get_width()/2 - text.get_width()/2, 10))
 
-        pygame.display.flip()
 
     def draw_arena(self):
-        for mob in self.engine.get_all_mobs():
-            mob.draw(self.map)
+        try:
+            for mob in self.engine.get_all_mobs():
+                mob.draw(self.map)
+        except AttributeError:
+            pass
+        
         if self.selected_mon and self.engine.mode == Mode.active:
             for i, j in self.attackable_tiles:
                 x, y = self.map.ortho_to_iso(j, i)
