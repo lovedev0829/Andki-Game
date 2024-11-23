@@ -4,7 +4,7 @@ import pickle
 import time
 import pygame
 from rpg.game import Game
-server = "localhost"
+server = "192.168.140.150"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
