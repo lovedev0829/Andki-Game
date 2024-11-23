@@ -101,7 +101,7 @@ class MultiPlayerRpg:
                     return
             pygame.display.flip()
         self.idle()
-        
+        self.learn() 
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, trainers=trainer)
         self.learned_card_checker()
 
@@ -131,23 +131,20 @@ class MultiPlayerRpg:
                     if event.key == pygame.K_ESCAPE:
                         pass
             if self.game.data[not self.p]:
-                print(self.game.data)
-                print(f"not self.p: {int(not self.p)}")
-                
-                print(f"self.p: {self.p}")
                 return 
     
     def learn(self):
-        start_time = time.time()
+        start_time = self.game.learning_start
         while True:
             self.clock.tick(60)
             self.draw()
+            text = self.font.render(f"Time left: {(time.time() - start_time)//60}:{(time.time() - start_time)%60}")
+            self.win.blit(text, (self.win.get_width()/2 - text.get_width()/2, 15))
             pygame.display.flip()
             self.game = self.network.send({'cards_learned': get_data().get('trainer_xp') - self.trainer_xp})
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-             
                     return
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
