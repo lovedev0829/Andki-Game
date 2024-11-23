@@ -1,6 +1,7 @@
 import socket
 from _thread import *
 import pickle
+import time
 import pygame
 from rpg.game import Game
 server = "localhost"
@@ -39,8 +40,15 @@ def threaded_client(conn, p, gameId):
 
                     if 'trainer' in data.keys() and 'ankimons' in data.keys():
                         games[gameId].add_data(data, p)
+                        if game.data[0] and game.data[1]:
+                            if not game.learning_start and game.learn:
+                                game.learning_start = time.time()
                     if 'cards_learned' in data.keys():
                         games[gameId].cards_learned[p] = data['cards_learned']
+                    if time.time() - game.learning_start > game.learn_time:
+                        game.set_turn(game.cards_learned.index(max(*game.cards_learned)))
+                        game.learn = False
+                        game.learning_start = False
                     message = pickle.dumps(game)
 
                     conn.sendall(message)
