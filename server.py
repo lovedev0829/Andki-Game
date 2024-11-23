@@ -39,7 +39,10 @@ def threaded_client(conn, p, gameId):
 
                     if 'trainer' in data.keys() and 'ankimons' in data.keys():
                         games[gameId].add_data(data, p)
+                    if 'cards_learned' in data.keys():
+                        games[gameId].cards_learned[p] = data['cards_learned']
                     message = pickle.dumps(game)
+
                     conn.sendall(message)
             else:
                 break

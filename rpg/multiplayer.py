@@ -18,6 +18,7 @@ import pytmx
 from pygame import Color
 import logging
 import PygameUIKit
+from scripts.utils import get_data
 from rpg.ParticleSystem import EffectManager, Particle
 from rpg.config import Colors
 from rpg.engine import Player, Engine, Mob, Mode
@@ -66,6 +67,7 @@ class MultiPlayerRpg:
         self.last_move = time.time()
         self.accessible_tiles = []
         self.attackable_tiles = []
+        self.trainer_xp = get_data().get('trainer_xp')
 
         self.font = pygame.font.SysFont('comicsans', 36)
         self.group = PygameUIKit.Group()
@@ -131,6 +133,7 @@ class MultiPlayerRpg:
             if self.game.data[not self.p]:
                 print(self.game.data)
                 print(f"not self.p: {int(not self.p)}")
+                
                 print(f"self.p: {self.p}")
                 return 
     
@@ -140,11 +143,11 @@ class MultiPlayerRpg:
             self.clock.tick(60)
             self.draw()
             pygame.display.flip()
-            self.game = self.network.send({'cards_learned': self.cards_learned})
+            self.game = self.network.send({'cards_learned': get_data().get('trainer_xp') - self.trainer_xp})
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    mw.win = None
+             
                     return
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
