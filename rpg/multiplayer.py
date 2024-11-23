@@ -101,6 +101,7 @@ class MultiPlayerRpg:
                     return
             pygame.display.flip()
         self.idle()
+        aqt.utils.showInfo('You have 10 minutes to learn the most cards whoever learns the most will have the first move')
         self.learn() 
         self.engine = Engine(self.map.free_places, ankimons, self.win, self.map, trainers=trainer)
         self.learned_card_checker()
