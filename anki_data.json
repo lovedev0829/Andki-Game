@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"cards_to_review": 169, "default_ankimon": ["AnkiNick", "Primus Nephritico", "Beekeeper Alder King"], "time_ordinal": 739212, "nb_cards_learned_today": 0, "Unlocked_Ankimons": ["AnkiNick", "Beekeeper Alder King", "Primus Nephritico"], "trainer_xp": 32, "Difficulty": 0, "gender": "Male", "indicies": [0, 0, 0, 0, 0, 0, 0, 0, 0], "unlocked_items": [[0, 1], [0], [0], [0], [0], [0], [0], [0, 1, 2, 3], [0, 1, 2, 3]], "token": "22|KLyXPkHcB8eDuT2XSPYaOZr4Ps8QSuMH4jSNv2Yl87677e71", "moves": 3.2000000000000015}
+=======
+{"cards_to_review": 126, "default_ankimon": ["AnkiNick", "Primus Nephritico", "Beekeeper Alder King"], "time_ordinal": 739212, "nb_cards_learned_today": 0, "Unlocked_Ankimons": ["AnkiNick", "Beekeeper Alder King", "Primus Nephritico"], "trainer_xp": 32, "Difficulty": 0, "gender": "Male", "indicies": [0, 0, 0, 0, 0, 0, 0, 0, 0], "unlocked_items": [[0, 1], [0], [0], [0], [0], [0], [0], [0, 1, 2, 3], [0, 1, 2, 3]], "token": "22|KLyXPkHcB8eDuT2XSPYaOZr4Ps8QSuMH4jSNv2Yl87677e71", "moves": 3.2000000000000015}
+>>>>>>> 9304a95a55895c135c8b9eb0cb12ccdc6d2b01d9
