@@ -2,6 +2,9 @@ from __future__ import annotations
 import datetime
 import os.path
 import sys
+addon_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, addon_dir)
+import pygame
 import json
 import aqt.qt
 sys.path.append(os.path.dirname(__file__))

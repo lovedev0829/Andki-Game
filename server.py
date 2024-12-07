@@ -2,6 +2,10 @@ import socket
 from _thread import *
 import pickle
 import time
+import sys
+import os
+addon_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, addon_dir)
 import pygame
 from rpg.game import Game
 server = "localhost"
